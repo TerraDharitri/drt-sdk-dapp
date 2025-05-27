@@ -1,15 +1,16 @@
 import BigNumber from 'bignumber.js';
 import { ZERO } from 'constants/index';
 
-export const stringIsFloat = (amount: string): boolean => {
-  if (amount == null) return false;
+export const stringIsFloat = (amount: unknown): boolean => {
+  if (typeof amount !== 'string' || amount.trim() === '') {
+    return false;
+  }
 
-  const strAmount = String(amount); // <-- Coerce to string safely
+  if (!isFinite(Number(amount)) || amount.includes('Infinity') || amount.includes('NaN')) {
+    return false;
+  }
 
-  if (isNaN(Number(strAmount))) return false;
-  if (strAmount.includes('Infinity')) return false;
-
-  let [wholes, decimals] = strAmount.split('.');
+  let [wholes, decimals] = amount.split('.');
   if (decimals) {
     while (decimals.length > 0 && decimals.charAt(decimals.length - 1) === ZERO) {
       decimals = decimals.slice(0, -1);
@@ -17,12 +18,17 @@ export const stringIsFloat = (amount: string): boolean => {
   }
 
   const number = decimals ? `${wholes}.${decimals}` : wholes;
+
   const bNparsed = new BigNumber(number);
 
-  if (bNparsed.isNaN()) return false;
+  if (bNparsed.isNaN()) {
+    return false;
+  }
 
   const comparison = bNparsed.comparedTo(0);
-  if (comparison === null) return false;
+  if (comparison === null) {
+    return false;
+  }
 
   return bNparsed.toString(10) === number && comparison >= 0;
 };

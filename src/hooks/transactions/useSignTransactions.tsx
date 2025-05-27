@@ -12,7 +12,6 @@ import {
   MISSING_PROVIDER_MESSAGE,
   PROVIDER_NOT_INITIALIZED,
   TRANSACTION_CANCELLED,
-  TRANSACTION_STATUS_TOAST_ID,
   WALLET_SIGN_SESSION
 } from 'constants/index';
 import { useGetAccount } from 'hooks/account';
@@ -30,7 +29,6 @@ import {
   clearTransactionsInfoForSessionId,
   moveTransactionsToSignedState,
   MoveTransactionsToSignedStatePayloadType,
-  removeCustomToast,
   setSignTransactionsCancelMessage
 } from 'reduxStore/slices';
 import {
@@ -40,6 +38,7 @@ import {
 
 import { builtCallbackUrl } from 'utils/transactions/builtCallbackUrl';
 import { parseTransactionAfterSigning } from 'utils/transactions/parseTransactionAfterSigning';
+import { getWindowLocation } from 'utils/window/getWindowLocation';
 
 import {
   useSetTransactionNonces,
@@ -79,7 +78,6 @@ export const useSignTransactions = () => {
 
     dispatch(clearAllTransactionsToSign());
     dispatch(clearTransactionsInfoForSessionId(sessionId));
-    dispatch(removeCustomToast(TRANSACTION_STATUS_TOAST_ID));
 
     isSigningRef.current = false;
 
@@ -123,8 +121,9 @@ export const useSignTransactions = () => {
     let callbackUrl = callbackRoute;
 
     if (window?.location) {
-      const searchParams = new URLSearchParams(window.location.search);
-      callbackUrl = `${window.location.origin}${callbackRoute}`;
+      const { search, origin } = getWindowLocation();
+      const searchParams = new URLSearchParams(search);
+      callbackUrl = `${origin}${callbackRoute}`;
 
       searchParams.forEach((value, key) => {
         urlParams[key] = value;
@@ -150,8 +149,9 @@ export const useSignTransactions = () => {
       customTransactionInformation
     } = transactionsToSign;
     const { redirectAfterSign } = customTransactionInformation;
-    const redirectRoute = callbackRoute || window?.location.pathname;
-    const isCurrentRoute = window?.location.pathname.includes(redirectRoute);
+    const { pathname } = getWindowLocation();
+    const redirectRoute = callbackRoute || pathname;
+    const isCurrentRoute = pathname.includes(redirectRoute);
     const shouldRedirectAfterSign = redirectAfterSign && !isCurrentRoute;
 
     try {
@@ -262,7 +262,7 @@ export const useSignTransactions = () => {
      * the callback will go to undefined,
      * we save the most recent one for a valid transaction
      */
-    savedCallback.current = callbackRoute || window?.location.pathname;
+    savedCallback.current = callbackRoute || getWindowLocation().pathname;
 
     try {
       const isSigningWithWebWallet = providerType === LoginMethodsEnum.wallet;

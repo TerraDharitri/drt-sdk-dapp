@@ -1,3 +1,4 @@
+import { getWindowLocation } from 'utils/window/getWindowLocation';
 import { OnLoginRedirectOptionsType, OnProviderLoginType } from '../../types';
 import { safeRedirect } from '../redirect';
 
@@ -16,18 +17,16 @@ export function optionalRedirect({
 
   const hasOnLoginRedirect = typeof onLoginRedirect === 'function';
 
-  const timeout = hasOnLoginRedirect ? 0 : DEFAULT_TIMEOUT;
-
   if (shouldRedirect && callbackRoute != null) {
-    setTimeout(() => {
-      // if onLoginRedirect is defined, it has priority over safeRedirect
-      if (hasOnLoginRedirect) {
-        return onLoginRedirect(callbackRoute, options);
-      }
+    // if onLoginRedirect is defined, it has priority over safeRedirect
+    if (hasOnLoginRedirect) {
+      return onLoginRedirect(callbackRoute, options);
+    }
 
-      if (!window?.location.pathname.includes(callbackRoute)) {
-        safeRedirect(callbackRoute);
-      }
-    }, timeout);
+    const { pathname } = getWindowLocation();
+
+    if (!pathname.includes(callbackRoute)) {
+      safeRedirect(callbackRoute, DEFAULT_TIMEOUT);
+    }
   }
 }

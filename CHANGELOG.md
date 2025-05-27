@@ -5,14 +5,138 @@ All notable changes will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+## [[v2.19.2]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/881)] - 2023-07-28
+
+- [Changed username fetching logic (skip fetching if already provided)](https://github.com/TerraDharitri/drt-sdk-dapp/pull/880)
+
+## [[v2.19.1]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/879)] - 2023-07-27
+
+- [Added usernames' support](https://github.com/TerraDharitri/drt-sdk-dapp/pull/878)
+
+## [[v2.19.0]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/877)] - 2023-07-26
+
+- [Fixed NextJS provider double mounting](https://github.com/TerraDharitri/drt-sdk-dapp/pull/876)
+
+## [[v2.18.5]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/875)] - 2023-07-24
+
+- [Fixed `optionalRedirect` `setTimout` usage and window redirect](https://github.com/TerraDharitri/drt-sdk-dapp/pull/873)
+- [Fixed ledger signing reconnect](https://github.com/TerraDharitri/drt-sdk-dapp/pull/874)
+- [Added ledger transport mock](https://github.com/TerraDharitri/drt-sdk-dapp/pull/871)
+- [Fixed clear navigation url after signing a message](https://github.com/TerraDharitri/drt-sdk-dapp/pull/872)
+
+## [[v2.18.4]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/870)] - 2023-07-18
+
+- [Fixed styles for the first sign screen buttons](https://github.com/TerraDharitri/drt-sdk-dapp/pull/869)
+- [Add support for signing messages with webviewProvider](https://github.com/TerraDharitri/drt-sdk-dapp/pull/868)
+
+## [[v2.18.3]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/867)] - 2023-07-14
+
+-- [Updated @terradharitri/sdk-wallet-connect-provider to 4.0.2](https://github.com/TerraDharitri/drt-sdk-dapp/pull/866)
+-- [Log the uri on debug env for WalletConnect](https://github.com/TerraDharitri/drt-sdk-dapp/pull/865)
+
+## [[v2.18.2]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/864)] - 2023-07-07
+
+-- [Added `signTransactionsWithGuardianResponse` to WebViewProviderRequestEnums](https://github.com/TerraDharitri/drt-sdk-dapp/pull/863)
+
+## [[v2.18.1]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/862)] - 2023-07-05
+
+- [Fix cancel transaction toast - close behavior. Add support for onClose handlers on custom toasts](https://github.com/TerraDharitri/drt-sdk-dapp/pull/861)
+
+## [[v2.18.0]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/860)] - 2023-07-05
+
+- [Fix cancel transaction toast. Display the toast in the same container as the transaction toasts](https://github.com/TerraDharitri/drt-sdk-dapp/pull/859)
+
+- [Updated @terradharitri/sdk-wallet-connect-provider to 4.0.0, Removed WalletConnect V1 Support](https://github.com/TerraDharitri/drt-sdk-dapp/pull/785)
+
+## [[v2.17.2]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/856)] - 2023-07-04
+
+- [Fix WS reconnect](https://github.com/TerraDharitri/drt-sdk-dapp/pull/857)
+- [Fix window undefined in NextJS apps](https://github.com/TerraDharitri/drt-sdk-dapp/pull/852)
+
+## [[v2.17.1]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/854)] - 2023-07-03
+
+- [Added `data-testid` to `AddressTable` component](https://github.com/TerraDharitri/drt-sdk-dapp/pull/853)
+
+## [[v2.17.0]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/851)] - 2023-06-30
+
+- [Update fontawesome to LTS](https://github.com/TerraDharitri/drt-sdk-dapp/pull/850)
+
+- [Fix batch transactions status update when the WS response is received](https://github.com/TerraDharitri/drt-sdk-dapp/pull/855)
+
+## [[v2.16.0]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/849)] - 2023-06-28
+
+- [Added support for component injection into custom toasts](https://github.com/TerraDharitri/drt-sdk-dapp/pull/848)
+
+## [[v2.15.2]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/843)] - 2023-06-27
+
+- [Fixed AuthenticatedRoutesWrapper redirect condition](https://github.com/TerraDharitri/drt-sdk-dapp/pull/846)
+- [Fixed AuthenticatedRoutesWrapper blocking render on failed wallet login attempt](https://github.com/TerraDharitri/drt-sdk-dapp/pull/845)
+- [Added `verifyMessage` test](https://github.com/TerraDharitri/drt-sdk-dapp/pull/844)
+
+## [[v2.15.1]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/843)] - 2023-06-20
+
+- [Fixed ledger init issue on Next.js](https://github.com/TerraDharitri/drt-sdk-dapp/pull/842)
+
+## [[v2.15.0]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/835)] - 2023-06-19
+
+- [Added `on-pull-request.yml` script](https://github.com/TerraDharitri/drt-sdk-dapp/pull/838)
+- [Changed local native auth service with drt-js-sdk-native-auth-client package](https://github.com/TerraDharitri/drt-sdk-dapp/pull/837)
+- [Changed usage of `dataTestid` to `data-testid`](https://github.com/TerraDharitri/drt-sdk-dapp/pull/836)
+
+## [[v2.14.13]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/835)] - 2023-06-15
+
+- [Fixed SignStep loading button for multiDcdtTransfers](https://github.com/TerraDharitri/drt-sdk-dapp/pull/834)
+
+## [[v2.14.12]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/833)] - 2023-06-14
+
+- [Fixed possible invalid calls to network config endpoint](https://github.com/TerraDharitri/drt-sdk-dapp/pull/832)
+- [Fixed double setting of ledger provider on page reload](https://github.com/TerraDharitri/drt-sdk-dapp/pull/827)
+
+## [[v2.14.11]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/831)] - 2023-06-13
+
+- [Fixed double signing same transaction in SignStep](https://github.com/TerraDharitri/drt-sdk-dapp/pull/830)
+
+## [[v2.14.10]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/828)] - 2023-06-09
+
+- [Fixed infinite page reload using nextjs navigation](https://github.com/TerraDharitri/drt-sdk-dapp/pull/822)
+
+## [[v2.14.9]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/826)] - 2023-06-08
+
+- [Added datatestids to login buttons](https://github.com/TerraDharitri/drt-sdk-dapp/pull/825)
+
+## [[v2.14.8]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/824)] - 2023-06-08
+
+- [Fixed miscalculation of USD value of amount in sign flow summary](https://github.com/TerraDharitri/drt-sdk-dapp/pull/823)
+
+## [[v2.14.7]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/821)] - 2023-06-07
+
+- [Fix nextjs hydration issue (duplicate DOM nodes)](https://github.com/TerraDharitri/drt-sdk-dapp/pull/820)
+
+## [[v2.14.6]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/819)] - 2023-06-06
+
+- [Fix children loading issue in NextJs when using DappProvider](https://github.com/TerraDharitri/drt-sdk-dapp/pull/818)
+
+## [[v2.14.5]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/814)] - 2023-06-01
+
+- [Added `data-testid` properties and improved `ConfirmAmount` component](https://github.com/TerraDharitri/drt-sdk-dapp/pull/815)
+- [Added extraInfo param for generating nativeAuth token](https://github.com/TerraDharitri/drt-sdk-dapp/pull/813)
+
 ## [[v2.14.4]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/812)] - 2023-05-29
+
 - [Added datatestids to toast elements](https://github.com/TerraDharitri/drt-sdk-dapp/pull/811)
 - [Fixed DCDTNFTTransaction parsedTransaction not assigning multiTxData on return object](https://github.com/TerraDharitri/drt-sdk-dapp/pull/810)
-
 
 ## [[v2.14.3]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/809)] - 2023-05-27
 
 - [Fixed batch transactions state after sending](https://github.com/TerraDharitri/drt-sdk-dapp/pull/808)
+
+- [Fixed default sign step title override](https://github.com/TerraDharitri/drt-sdk-dapp/pull/807)
+
+## [[v2.14.3]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/809)] - 2023-05-27
+
+- [Fix batch transactions state after sending](https://github.com/TerraDharitri/drt-sdk-dapp/pull/808)
 
 - [Fixed default sign step title override](https://github.com/TerraDharitri/drt-sdk-dapp/pull/807)
 

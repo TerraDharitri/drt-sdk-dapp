@@ -15,19 +15,18 @@ import {
   walletConnectV2OptionsSelector
 } from 'reduxStore/selectors/networkConfigSelectors';
 import { setWalletConnectLogin } from 'reduxStore/slices';
-import {
-  LoginMethodsEnum,
-  DappCoreWCV2CustomMethodsEnum
-} from 'types/enums.types';
+import { LoginMethodsEnum } from 'types/enums.types';
 import { getIsProviderEqualTo } from 'utils/account/getIsProviderEqualTo';
 import { getIsLoggedIn } from 'utils/getIsLoggedIn';
 import { optionalRedirect } from 'utils/internal';
 import { logout } from 'utils/logout';
 import {
+  WalletConnectOptionalMethodsEnum,
   WalletConnectV2Provider,
   SessionEventTypes,
   PairingTypes
 } from 'utils/walletconnect/__sdkWalletconnectProvider';
+import { getWindowLocation } from 'utils/window/getWindowLocation';
 import { LoginHookGenericStateType, OnProviderLoginType } from '../../types';
 import { useLoginService } from './useLoginService';
 
@@ -94,8 +93,14 @@ export const useWalletConnectV2Login = ({
   const isInitialisingRef = useRef<boolean>(false);
 
   const dappMethods: string[] = [
-    DappCoreWCV2CustomMethodsEnum.drt_cancelAction
+    WalletConnectOptionalMethodsEnum.CANCEL_ACTION
   ];
+  if (tokenToSign) {
+    dappMethods.push(WalletConnectOptionalMethodsEnum.SIGN_LOGIN_TOKEN);
+  }
+  if (hasNativeAuth) {
+    dappMethods.push(WalletConnectOptionalMethodsEnum.SIGN_NATIVE_AUTH_TOKEN);
+  }
 
   const uriDeepLink = !isLoading
     ? `${walletConnectDeepLink}?wallet-connect=${encodeURIComponent(wcUri)}`
@@ -142,6 +147,10 @@ export const useWalletConnectV2Login = ({
         return;
       }
 
+      if (isInitialisingRef.current) {
+        return;
+      }
+
       if (!canLoginRef.current) {
         try {
           await providerRef.current?.logout();
@@ -152,13 +161,13 @@ export const useWalletConnectV2Login = ({
         return;
       }
 
-      const address = await provider.getAddress();
+      const address = await providerRef.current?.getAddress();
       if (!address) {
         console.warn('Login cancelled.');
         return;
       }
 
-      const signature = await provider.getSignature();
+      const signature = await providerRef.current?.getSignature();
       const loginActionData = {
         address: address,
         loginMethod: LoginMethodsEnum.walletconnectv2
@@ -167,7 +176,7 @@ export const useWalletConnectV2Login = ({
       const loginData = {
         logoutRoute: logoutRoute,
         loginType: 'walletconnectv2',
-        callbackRoute: callbackRoute ?? window?.location.href
+        callbackRoute: callbackRoute ?? getWindowLocation().href
       };
 
       dispatch(setWalletConnectLogin(loginData));
@@ -183,7 +192,7 @@ export const useWalletConnectV2Login = ({
         options: { address, signature }
       });
     } catch (err) {
-      setError(WalletConnectV2Error.invalidAddress);
+      setError(WalletConnectV2Error.userRejected);
       console.error(err);
     }
   }
@@ -198,13 +207,27 @@ export const useWalletConnectV2Login = ({
       return;
     }
 
+    isInitialisingRef.current = true;
+
+    if (providerRef.current?.walletConnector) {
+      providerRef.current.init();
+
+      setAccountProvider(providerRef.current);
+      isInitialisingRef.current = false;
+      canLoginRef.current = true;
+
+      if (loginProvider) {
+        generateWcUri();
+      }
+
+      return;
+    }
+
     const providerHandlers = {
       onClientLogin: handleOnLogin,
       onClientLogout: handleOnLogout,
       onClientEvent: handleOnEvent
     };
-
-    isInitialisingRef.current = true;
     const newProvider = new WalletConnectV2Provider(
       providerHandlers,
       chainId,
@@ -212,16 +235,19 @@ export const useWalletConnectV2Login = ({
       walletConnectV2ProjectId,
       walletConnectV2Options
     );
-
     await newProvider.init();
+
+    setAccountProvider(newProvider);
+    providerRef.current = newProvider;
     isInitialisingRef.current = false;
     canLoginRef.current = true;
-    setAccountProvider(newProvider);
-    setWcPairings(newProvider.pairings);
-    providerRef.current = newProvider;
+
     if (loginProvider) {
+      setWcPairings(newProvider.pairings);
       generateWcUri();
     }
+
+    return;
   }
 
   async function connectExisting(pairing: PairingTypes.Struct) {
@@ -303,6 +329,10 @@ export const useWalletConnectV2Login = ({
       }
 
       setWcUri(uri);
+
+      if (walletConnectV2Options?.logger === 'debug') {
+        console.log('WalletConnect uri: ', uri);
+      }
 
       if (hasNativeAuth && !token) {
         token = await loginService.getNativeAuthLoginToken();

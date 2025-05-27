@@ -4,7 +4,7 @@
 
 [![NPM](https://img.shields.io/npm/v/@terradharitri/sdk-dapp.svg)](https://www.npmjs.com/package/@terradharitri/sdk-dapp) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
-See [Dapp template](https://dapp-template.dharitri.org/) for live demo or checkout usage in the [Github repo](https://github.com/TerraDharitri/drt-sdktemplate-dapp)
+See [Dapp template](https://template-dapp.dharitri.org/) for live demo or checkout usage in the [Github repo](https://github.com/TerraDharitri/drt-sdktemplate-dapp)
 
 # Installation
 
@@ -119,7 +119,6 @@ This allows using different APIs and different connection providers to configure
   digits?: string;
   gasPerDataByte?: string;
   walletConnectDeepLink?: string; // a string that will create a deeplink for an application that is used on a mobile phone, instead of generating the login QR code.
-  walletConnectBridgeAddresses?: string; // a string that is used to establish the connection to WalletConnect V1 library;
   walletConnectV2ProjectId?: string; // a unique ProjectID needed to access the WalletConnect 2.0 Relay Cloud
   walletAddress?: string;
   apiAddress?: string;
@@ -291,7 +290,6 @@ you can easily import and use them.
   token={token}
   onLoginRedirect={onLoginRedirect}
   onClose={onClose}
-  isWalletConnectV2={true} // by default is false and will use walletconnect version 1
 />
 ```
 
@@ -391,13 +389,13 @@ These hooks are exposed as named exports, which can be imported from sdk-dapp:
 ```typescript
 import {
   useExtensionLogin,
-  useWalletConnectLogin,
+  useWalletConnectV2Login,
   useLedgerLogin,
   useWebWalletLogin
 } from '@terradharitri/sdk-dapp/hooks';
 or;
 import { useExtensionLogin } from '@terradharitri/sdk-dapp/hooks/login/useExtensionLogin';
-import { useWalletConnectLogin } from '@terradharitri/sdk-dapp/hooks/login/useWebWalletLogin';
+import { useWalletConnectV2Login } from '@terradharitri/sdk-dapp/hooks/login/useWalletConnectV2Login';
 import { useLedgerLogin } from '@terradharitri/sdk-dapp/hooks/login/useLedgerLogin';
 import { useWebWalletLogin } from '@terradharitri/sdk-dapp/hooks/login/useWebWalletLogin';
 ```
@@ -405,7 +403,7 @@ import { useWebWalletLogin } from '@terradharitri/sdk-dapp/hooks/login/useWebWal
 There are 4 available hooks:
 
 - useExtensionLogin
-- useWalletConnectLogin
+- useWalletConnectV2Login
 - useLedgerLogin
 - useWebWalletLogin
 
@@ -438,9 +436,9 @@ const [initiateLogin, genericLoginReturnType, customLoginReturnType] =
 
   - null for useExtensionLogin;
 
-  - null for useWebWalletConnect;
+  - null for useWebWalletLogin;
 
-  - `{ uriDeepLink: string, qrCodeSvg: svgElement }` for useWalletConnectLogin;
+  - `{ uriDeepLink: string, qrCodeSvg: svgElement }` for useWalletConnectV2Login;
 
   -
 
@@ -531,66 +529,6 @@ It returns a Promise that will be fulfilled with `{error?: string; sessionId: st
 
 **Important! For the transaction to be signed, you will have to use either `SignTransactionsModals` defined above, in the `Prerequisites` section,
 or the `useSignTransactions` hook defined below. If you don't use one of these, the transactions won't be signed**
-
-</details>
-
-<details><summary>
-Sending Batch Transactions
-  </summary>
-
-### Sending Batch Transactions
-
-The API for sending batch transactions is a function called **sendBatchTransactions**:
-
-`import { sendBatchTransactions } from "@terradharitri/sdk-dapp/services/transactions/sendBatchTransactions";`
-
-Also, there is a hook that exposes the same functionality: `useSendBatchTransactions`.
-This hook returns a function that can be used to send a batch of transactions and the `batchId` resulted after sending the transactions.
-
-It can be used to send a batch of transactions with minimum information:
-
-  **Important! Each transaction from the batch should be signed and should contain the sender.**
-
-```typescript
-const { batchId, error, data } = await sendBatchTransactions({
-    transactions: [
-        [{
-          value: '1000000000000000000',
-          data: 'ping',
-          receiver: contractAddress,
-          signature: "asjjsajdjhsajdhjs",
-          sender: "drt1..."
-        }],
-        [{
-          value: '1000000000000000000',
-          data: 'pong',
-          receiver: contractAddress,
-          signature: "asjjsajdjhsajdhjs",
-          sender: "drt1..."
-        }],
-      ],
-      address: 'drt1...', // logged in user address
-      sessionId: "123433533", // unix timestamp
-      apiAddress: "https://api.dharitri.org",
-    });
-```
-
-It returns a Promise that will be fulfilled with
-```
-  {
-    error?: string;
-    batchId: string | null;
-    data?: BatchTransactionsResponseType | null;
-  }
-```
-
-- `batchId` is the transaction's batch id which can be used to track the transactions statuses (is composed of the `sessionId` and the `account address`).
-- `error` is the http post batch transactions error message or a default error message.
-- `data` is the http post batch transactions data response.
-
-**Important! For the transaction to be signed, you will have to use either `SignTransactionsModals` defined above, in the `Prerequisites` section,
-or the `useSignTransactions` hook defined below. If you don't use one of these, the transactions won't be signed**
-
 
 </details>
 
@@ -709,61 +647,6 @@ transactionStatus has the following information about the transaction:
 ```
 
 It's safe to pass in `null` as a sessionId, so if the transaction wasn't yet sent, the hook will just return an empty object.
-
-</details>
-
-<details><summary>
-Tracking batch of transactions
-  </summary>
-
-### Tracking batch transactions
-
-The library exposes a hook called `useTrackBatchTransactions`;
-
-```typescript
-import { useTrackBatchTransactions } from "@terradharitri/sdk-dapp/hooks/transactions/batch/useTrackBatchTransactions";
-
-const onSuccess = (batchId: string | null) => {
-  console.log("onSuccess", batchId);
-};
-const onFail = (batchId: string | null) => {
-  console.log("onFail", batchId);
-};
-
-const { getBatchStatus, batchStatus, batchTransactions } = useTrackBatchTransactions({
-  batchId,
-  apiAddress,
-  onSuccess,
-  onFail,
-});
-```
-
-- `getBatchStatus` is a function that can be used to get the batch status from the API on demand
-It returns a Promise (`Promise<BatchTransactionsResponseType | null>`) that will be fulfilled with
-```
-  {
-    id: string;
-    status: BatchTransactionStatus;
-    transactions: SignedTransactionType[] | SignedTransactionType[][];
-    error?: string;
-    message?: string;
-    statusCode?: string;
-  } | null
-```
-- `batchStatus` current batch status
-- `batchTransactions` the transactions in a batch. Each transaction has its own status.
-
-
-Extra: to access all the batches there is `useGetBatchesTransactions` hook.
-
-```typescript
-import { useGetBatches } from "@terradharitri/sdk-dapp/hooks/transactions/batch/useGetBatches";
-
-const { batches, batchTransactionsArray } = useGetBatches();
- ```
-
-- `batches` is an object with the batchId as key and the batch as value.
-- `batchTransactionsArray` is an array of objects containing batchId and batchTransactions.
 
 </details>
 
@@ -919,7 +802,7 @@ import {
 import {
   useExtensionLogin,
   useLedgerLogin,
-  useWalletConnectLogin,
+  useWalletConnectV2Login,
   useWebWalletLogin
 } from '@terradharitri/sdk-dapp/hooks/login';
 ```
@@ -1127,9 +1010,9 @@ If you are using [Next.js](https://nextjs.org/), make sure to check out the [REA
 
 Starting with the 2.0 version of the dApp SDK ( previously `@terradharitri/dapp-core@2.0.0` ) and `@terradharitri/sdk-dapp@2.2.8` [WalletConnect 2.0](https://docs.walletconnect.com/2.0/) is available as a login and signing provider, allowing users to login by scanning a QR code with the Mobile App
 
-This is an implementation of [sdk-wallet-connect-provider](https://github.com/TerraDharitri/drt-js-sdk-wallet-connect-provider/tree/providerV2) ( [docs](https://docs.dharitri.org/sdk-and-tools/sdk-js/sdk-js-signing-providers/#the-wallet-connect-provider) ) signing provider
+This is an implementation of [sdk-wallet-connect-provider](https://github.com/TerraDharitri/drt-js-sdk-wallet-connect-provider) ( [docs](https://docs.dharitri.org/sdk-and-tools/sdk-js/sdk-js-signing-providers/#the-wallet-connect-provider) ) signing provider
 
-As WalletConnect 2.0 is not enabled by default there are a few steps needed to enable it:
+As a ProjectID is needed for the complete functionality, the following change is needed:
 
 ### Set the `walletConnectV2ProjectId`
 
@@ -1149,44 +1032,7 @@ The Project ID can be generated for free here: [https://cloud.walletconnect.com/
 
 The WalletConnect Project ID grants you access to the [WalletConnect Cloud Relay](https://docs.walletconnect.com/2.0/cloud/relay) that securely manages communication between the device and the dApp.
 
-### Set the `isWalletConnectV2` flag
-
-Once the `walletConnectV2ProjectId` is set in the `DappProvider` global Context, the next step would be to activate the Walletconnect V2 functionality in the [Login UI](#login-ui).
-
-That means setting the `isWalletConnectV2` flag to `true` in the `<WalletConnectLoginButton>` component
-
-```jsx
-<WalletConnectLoginButton
-  callbackRoute='/dashboard'
-  loginButtonText='xPortal App'
-  isWalletConnectV2={true} // or simply isWalletConnectV2
-/>
-```
-
-Or, if you want access to the container without the button set the `isWalletConnectV2` flag to `true` in the `<WalletConnectLoginContainer>` component.
-
-```jsx
-<WalletConnectLoginContainer
-  callbackRoute={callbackRoute}
-  loginButtonText='Login with xPortal'
-  title='xPortal Login'
-  logoutRoute='/unlock'
-  className='wallect-connect-login-modal'
-  lead='Scan the QR code using xPortal'
-  wrapContentInsideModal={wrapContentInsideModal}
-  redirectAfterLogin={redirectAfterLogin}
-  token={token}
-  onLoginRedirect={onLoginRedirect}
-  onClose={onClose}
-  isWalletConnectV2={true} // or simply isWalletConnectV2
-/>
-```
-
-### That's it
-
-If the Project ID is valid and the `isWalletConnectV2` flag is `true` the new functionality will work out of the box with the [Transactions and Message signing](#transactions) flows.
-
-You can check out [this PR](https://github.com/TerraDharitri/drt-sdktemplate-dapp/commit/ca2826be499da892c1180d26f93e1497be77af09) on the [dApp Template](https://github.com/TerraDharitri/drt-sdktemplate-dapp) with the all the changes required to activate the updated functionality.
+If the Project ID is valid, the new functionality will work out of the box with the [Transactions and Message signing](#transactions) flows.
 
 ## Roadmap
 
