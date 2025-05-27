@@ -1,57 +1,36 @@
-import React, { useEffect, useState, ReactNode } from 'react';
+import React, { useEffect, useState } from 'react';
 import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames';
 import QRCode from 'qrcode';
 
 import Lighting from 'assets/icons/lightning.svg';
 import globalStyles from 'assets/sass/main.scss';
+import { DataTestIdsEnum } from 'constants/index';
 import { useWalletConnectV2Login } from 'hooks/login/useWalletConnectV2Login';
 import { getAuthorizationInfo } from 'services/nativeAuth/helpers';
-import { ModalContainer } from 'UI/ModalContainer';
 import { PageState } from 'UI/PageState';
 import { ScamPhishingAlert } from 'UI/ScamPhishingAlert';
 import { isMobileEnvironment } from 'utils/environment/isMobileEnvironment';
 import { getWindowLocation } from 'utils/window/getWindowLocation';
 
-import { WithClassnameType } from '../../types';
-import { InnerWalletConnectComponentsClassesType } from '../types';
-import { OnProviderLoginType } from './../../../types';
+import { Pairinglist } from '../PairingList';
+import { WalletConnectLoginModalPropsType } from '../types';
+import styles from '../walletConnectLoginContainerStyles.scss';
 
-import { Pairinglist } from './PairingList';
-
-import styles from './walletConnectLoginContainerStyles.scss';
-
-export interface WalletConnectLoginModalPropsType
-  extends OnProviderLoginType,
-    WithClassnameType {
-  lead?: string;
-  title?: string;
-  legacyMessage?: string;
-  logoutRoute?: string;
-  loginButtonText: string;
-  wrapContentInsideModal?: boolean;
-  isWalletConnectV2?: boolean;
-  onClose?: () => void;
-  innerWalletConnectComponentsClasses?: InnerWalletConnectComponentsClassesType;
-  customSpinnerComponent?: ReactNode;
-  showScamPhishingAlert?: boolean;
-}
-
-export const WalletConnectLoginContainer = ({
+export const WalletConnectLoginContent = ({
   callbackRoute,
-  loginButtonText = 'xPortal App',
-  title = 'Login with the xPortal App',
-  logoutRoute = '/unlock',
   className = 'dapp-wallet-connect-login-modal',
-  lead = 'Scan the QR code using the xPortal App',
-  wrapContentInsideModal = true,
-  token,
-  nativeAuth,
-  onClose,
-  onLoginRedirect,
-  innerWalletConnectComponentsClasses,
   customSpinnerComponent,
-  showScamPhishingAlert = true
+  innerWalletConnectComponentsClasses,
+  lead = 'Scan the QR code using the xPortal App',
+  loginButtonText = 'xPortal App',
+  logoutRoute,
+  nativeAuth,
+  onLoginRedirect,
+  showScamPhishingAlert = true,
+  title = 'Login with the xPortal App',
+  token,
+  canLoginRef
 }: WalletConnectLoginModalPropsType) => {
   const [
     initLoginWithWalletConnectV2,
@@ -59,17 +38,17 @@ export const WalletConnectLoginContainer = ({
     {
       connectExisting,
       removeExistingPairing,
-      cancelLogin: cancelLoginV2,
       uriDeepLink: walletConnectDeepLinkV2,
       walletConnectUri: walletConnectUriV2,
       wcPairings
     }
   ] = useWalletConnectV2Login({
-    logoutRoute,
     callbackRoute,
     token,
     nativeAuth,
-    onLoginRedirect
+    onLoginRedirect,
+    logoutRoute,
+    canLoginRef
   });
 
   const [qrCodeSvg, setQrCodeSvg] = useState<string>('');
@@ -113,11 +92,6 @@ export const WalletConnectLoginContainer = ({
     }
   };
 
-  const onCloseModal = () => {
-    cancelLoginV2();
-    onClose?.();
-  };
-
   useEffect(() => {
     generateQRCode();
   }, [walletConnectUriV2]);
@@ -130,7 +104,7 @@ export const WalletConnectLoginContainer = ({
     ? getAuthorizationInfo(token, containerScamPhishingAlertClassName)
     : undefined;
 
-  const content = (
+  return (
     <>
       {showScamPhishingAlert && (
         <ScamPhishingAlert
@@ -206,7 +180,7 @@ export const WalletConnectLoginContainer = ({
         {isMobileDevice && (
           <a
             id='accessWalletBtn'
-            data-testid='accessWalletBtn'
+            data-testid={DataTestIdsEnum.accessWalletBtn}
             href={walletConnectDeepLinkV2}
             rel='noopener noreferrer nofollow'
             target='_blank'
@@ -233,26 +207,5 @@ export const WalletConnectLoginContainer = ({
         )}
       </div>
     </>
-  );
-
-  return wrapContentInsideModal ? (
-    <ModalContainer
-      onClose={onCloseModal}
-      modalConfig={{
-        headerText: 'Login using the xPortal App',
-        showHeader: true,
-        modalContentClassName: styles.xPortalModalDialogContent,
-        modalHeaderClassName: styles.xPortalModalHeader,
-        modalHeaderTextClassName: styles.xPortalModalHeaderText,
-        modalCloseButtonClassName: styles.xPortalModalCloseButton,
-        modalBodyClassName: styles.xPortalModalBody,
-        modalDialogClassName: styles.xPortalLoginContainer
-      }}
-      className={className}
-    >
-      {content}
-    </ModalContainer>
-  ) : (
-    content
   );
 };

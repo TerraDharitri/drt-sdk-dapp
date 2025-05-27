@@ -85,6 +85,7 @@ export function useSignTransactionsWithDevice(
         })
       );
     }
+
     dispatch(setSignTransactionsError(errorMessage));
   }
 
@@ -133,7 +134,7 @@ export function useSignTransactionsWithDevice(
         customTransactionInformation?.redirectAfterSign &&
         !locationIncludesCallbackRoute
       ) {
-        safeRedirect(callbackRoute);
+        safeRedirect({ url: callbackRoute });
       }
     }
   }

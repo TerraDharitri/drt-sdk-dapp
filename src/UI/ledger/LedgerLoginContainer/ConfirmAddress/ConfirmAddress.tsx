@@ -1,13 +1,15 @@
 import React, { ReactNode } from 'react';
 import classNames from 'classnames';
+import { DataTestIdsEnum } from 'constants/index';
 
 import { useGetAccountInfo } from 'hooks';
 import { useSelector } from 'reduxStore/DappProviderContext';
 import { tokenLoginSelector } from 'reduxStore/selectors';
 
-import { WithClassnameType } from '../../types';
+import { WithClassnameType } from '../../../types';
 
 import styles from './confirmAddressStyles.scss';
+import { getAuthTokenText } from './helpers';
 
 export interface ConfirmAddressPropsType extends WithClassnameType {
   token?: string;
@@ -40,6 +42,11 @@ export const ConfirmAddress = ({
   const tokenLogin = useSelector(tokenLoginSelector);
   const loginToken = tokenLogin?.loginToken ?? token;
 
+  const authTokenText = getAuthTokenText({
+    loginToken,
+    version: ledgerAccount?.version
+  });
+
   return (
     <div
       className={classNames(
@@ -47,6 +54,7 @@ export const ConfirmAddress = ({
         ledgerModalConfirmContentClassName,
         className
       )}
+      data-testid={DataTestIdsEnum.ledgerConfirmAddress}
     >
       <h4
         className={classNames(
@@ -66,7 +74,7 @@ export const ConfirmAddress = ({
             ledgerModalConfirmDescriptionClassName
           )}
         >
-          For security, please confirm that your address:
+          {authTokenText?.confirmAddressText}
         </div>
 
         <div
@@ -75,42 +83,38 @@ export const ConfirmAddress = ({
             ledgerModalConfirmDataClassName
           )}
         >
-          <>{ledgerAccount?.address ?? ''}</>
+          {ledgerAccount?.address ?? ''}
         </div>
       </div>
 
-      {loginToken && (
-        <div className={styles.ledgerConfirmAddressSection}>
-          <div
-            className={classNames(
-              styles.ledgerConfirmAddressDescription,
-              ledgerModalConfirmDescriptionClassName
-            )}
-          >
-            and Auth Token:
-          </div>
-
-          <div
-            className={classNames(
-              styles.ledgerConfirmAddressData,
-              ledgerModalConfirmDataClassName
-            )}
-          >
-            {`${loginToken}{}`}
-          </div>
-
-          <div
-            className={classNames(
-              styles.ledgerConfirmAddressDescription,
-              ledgerModalConfirmDescriptionClassName
-            )}
-          >
-            {loginToken
-              ? 'are the one shown on your Ledger device screen now.'
-              : 'is the one shown on your Ledger device screen now.'}
-          </div>
+      <div className={styles.ledgerConfirmAddressSection}>
+        <div
+          className={classNames(
+            styles.ledgerConfirmAddressDescription,
+            ledgerModalConfirmDescriptionClassName
+          )}
+        >
+          {authTokenText?.authText}
         </div>
-      )}
+
+        <div
+          className={classNames(
+            styles.ledgerConfirmAddressData,
+            ledgerModalConfirmDataClassName
+          )}
+        >
+          {authTokenText?.data}
+        </div>
+
+        <div
+          className={classNames(
+            styles.ledgerConfirmAddressDescription,
+            ledgerModalConfirmDescriptionClassName
+          )}
+        >
+          {authTokenText?.areShownText}
+        </div>
+      </div>
 
       <div
         className={classNames(

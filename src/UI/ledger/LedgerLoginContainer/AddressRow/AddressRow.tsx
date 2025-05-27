@@ -5,7 +5,7 @@ import { FormatAmount } from 'UI/FormatAmount/FormatAmount';
 import { Trim } from 'UI/Trim';
 import { getRewaLabel } from 'utils/network/getRewaLabel';
 
-import { WithClassnameType } from '../../types';
+import { WithClassnameType } from '../../../types';
 
 import styles from './addressRowStyles.scss';
 

@@ -7,6 +7,12 @@ import {
 
 import { getNativeAuthConfig, getTokenExpiration } from './methods';
 
+interface NativeAuthInitType {
+  extraInfo?: { [key: string]: string };
+  latestBlockInfo?: LatestBlockHashType;
+  noCache?: boolean;
+}
+
 export const nativeAuth = (config?: NativeAuthConfigType) => {
   const {
     origin,
@@ -28,33 +34,30 @@ export const nativeAuth = (config?: NativeAuthConfigType) => {
   });
 
   const initialize = async (
-    extraInfo?: { [key: string]: string },
-    latestBlockInfo?: LatestBlockHashType
+    initProps?: NativeAuthInitType
   ): Promise<string> => {
     if (!apiAddress || !origin) {
-      throw new Error('Missing apiAddress or origin');
+      return '';
     }
 
     const getBlockHash = (): Promise<string> =>
       nativeAuthClient.getCurrentBlockHash();
-
     const response =
-      latestBlockInfo ??
-      (await getLatestBlockHash(apiAddress, blockHashShard, getBlockHash));
-
-    if (!response || !response.hash) {
-      throw new Error('Failed to retrieve latest block hash');
-    }
+      initProps?.latestBlockInfo ??
+      (await getLatestBlockHash(
+        apiAddress,
+        blockHashShard,
+        getBlockHash,
+        initProps?.noCache
+      ));
 
     const { hash, timestamp } = response;
-
     const encodedExtraInfo = nativeAuthClient.encodeValue(
       JSON.stringify({
-        ...(extraInfo ?? extraInfoFromConfig),
+        ...(initProps?.extraInfo ?? extraInfoFromConfig),
         ...(timestamp ? { timestamp } : {})
       })
     );
-
     const encodedOrigin = nativeAuthClient.encodeValue(origin);
 
     return `${encodedOrigin}.${hash}.${expirySeconds}.${encodedExtraInfo}`;

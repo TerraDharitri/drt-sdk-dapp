@@ -6,7 +6,7 @@ import classNames from 'classnames';
 import DharitriIcon from 'assets/icons/REWA.svg';
 import { NftEnumType } from 'types/tokens.types';
 
-import { getRewaLabel } from 'utils';
+import { getRewaLabel } from 'utils/network';
 import styles from './tokenAvatarStyles.scss';
 
 export interface TokenAvatarPropsType {
@@ -23,7 +23,7 @@ export const TokenAvatar = (props: TokenAvatarPropsType) => {
   const isRewa = type === rewaLabel;
 
   const tokenIcon = avatar ? (
-    <img src={avatar} />
+    <img src={avatar} alt={type} />
   ) : (
     <FontAwesomeIcon icon={faDiamond} />
   );

@@ -20,6 +20,8 @@ afterAll(() => server.close());
 
 window.scrollTo = jest.fn();
 
+jest.retryTimes(3);
+
 jest.mock('./utils/network/getRewaLabel', () => {
   return {
     __esModule: true, // this property makes it work

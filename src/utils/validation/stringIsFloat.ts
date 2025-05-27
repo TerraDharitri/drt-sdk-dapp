@@ -1,34 +1,25 @@
 import BigNumber from 'bignumber.js';
 import { ZERO } from 'constants/index';
 
-export const stringIsFloat = (amount: unknown): boolean => {
-  if (typeof amount !== 'string' || amount.trim() === '') {
+export const stringIsFloat = (amount: string) => {
+  if (isNaN(amount as any)) {
+    return false;
+  }
+  if (amount == null) {
+    return false;
+  }
+  if (String(amount).includes('Infinity')) {
     return false;
   }
 
-  if (!isFinite(Number(amount)) || amount.includes('Infinity') || amount.includes('NaN')) {
-    return false;
-  }
-
+  // eslint-disable-next-line
   let [wholes, decimals] = amount.split('.');
   if (decimals) {
-    while (decimals.length > 0 && decimals.charAt(decimals.length - 1) === ZERO) {
+    while (decimals.charAt(decimals.length - 1) === ZERO) {
       decimals = decimals.slice(0, -1);
     }
   }
-
-  const number = decimals ? `${wholes}.${decimals}` : wholes;
-
+  const number = decimals ? [wholes, decimals].join('.') : wholes;
   const bNparsed = new BigNumber(number);
-
-  if (bNparsed.isNaN()) {
-    return false;
-  }
-
-  const comparison = bNparsed.comparedTo(0);
-  if (comparison === null) {
-    return false;
-  }
-
-  return bNparsed.toString(10) === number && comparison >= 0;
+  return bNparsed.toString(10) === number && bNparsed.comparedTo(0) >= 0;
 };

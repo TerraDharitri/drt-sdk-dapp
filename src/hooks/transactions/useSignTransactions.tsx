@@ -11,6 +11,7 @@ import {
   ERROR_SIGNING_TX,
   MISSING_PROVIDER_MESSAGE,
   PROVIDER_NOT_INITIALIZED,
+  SENDER_DIFFERENT_THAN_LOGGED_IN_ADDRESS,
   TRANSACTION_CANCELLED,
   WALLET_SIGN_SESSION
 } from 'constants/index';
@@ -38,6 +39,7 @@ import {
 
 import { builtCallbackUrl } from 'utils/transactions/builtCallbackUrl';
 import { parseTransactionAfterSigning } from 'utils/transactions/parseTransactionAfterSigning';
+import { getDefaultCallbackUrl } from 'utils/window';
 import { getWindowLocation } from 'utils/window/getWindowLocation';
 
 import {
@@ -56,7 +58,7 @@ export const useSignTransactions = () => {
   const providerType = getProviderType(provider);
   const isSigningRef = useRef(false);
   const setTransactionNonces = useSetTransactionNonces();
-  const { isGuarded } = useGetAccount();
+  const { isGuarded, address } = useGetAccount();
 
   const signTransactionsCancelMessage = useSelector(
     signTransactionsCancelMessageSelector
@@ -149,9 +151,9 @@ export const useSignTransactions = () => {
       customTransactionInformation
     } = transactionsToSign;
     const { redirectAfterSign } = customTransactionInformation;
-    const { pathname } = getWindowLocation();
-    const redirectRoute = callbackRoute || pathname;
-    const isCurrentRoute = pathname.includes(redirectRoute);
+    const defaultCallbackUrl = getDefaultCallbackUrl();
+    const redirectRoute = callbackRoute || defaultCallbackUrl;
+    const isCurrentRoute = defaultCallbackUrl.includes(redirectRoute);
     const shouldRedirectAfterSign = redirectAfterSign && !isCurrentRoute;
 
     try {
@@ -257,6 +259,18 @@ export const useSignTransactions = () => {
       return;
     }
 
+    const isLoggedInWithDifferentAccount = transactions.some((tx) => {
+      const sender = tx.getSender().toString();
+      return sender && address !== sender;
+    });
+
+    // Prevent signing transactions with different account
+    if (isLoggedInWithDifferentAccount) {
+      console.error(SENDER_DIFFERENT_THAN_LOGGED_IN_ADDRESS);
+
+      return onCancel(SENDER_DIFFERENT_THAN_LOGGED_IN_ADDRESS);
+    }
+
     /*
      * if the transaction is cancelled
      * the callback will go to undefined,
@@ -297,6 +311,7 @@ export const useSignTransactions = () => {
       console.error(errorMessage, err);
     }
   };
+
   useEffect(() => {
     if (hasTransactions) {
       signTransactions();
