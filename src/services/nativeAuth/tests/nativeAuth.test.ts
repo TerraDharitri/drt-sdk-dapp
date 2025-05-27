@@ -1,59 +1,131 @@
-import { nativeAuth } from '../nativeAuth'; // Adjust path if needed
+import axios from 'axios';
+import MockAdapter from 'axios-mock-adapter';
+import { server, rest, mockResponse } from '__mocks__';
+import { nativeAuth } from '../nativeAuth';
 
-// Mock getLatestBlockHash to return a valid block hash and timestamp
-jest.mock('../helpers/getLatestBlockHash', () => ({
-  getLatestBlockHash: jest.fn().mockResolvedValue({
-    hash: 'mockedhash123',
-    timestamp: 1680000000000,
-  }),
-}));
+describe('Native Auth', () => {
+  let mock: MockAdapter;
+  const ADDRESS =
+    'drt13rrn3fwjds8r5260n6q3pd2qa6wqkudrhczh26d957c0edyzerms238v4e';
+  const ORIGIN = 'dharitri.org';
+  const SIGNATURE =
+    '4b445f287663b868e269aa0532c9fd73acb37cfd45f46e33995777e68e5ecc15d97318d9af09c4102f9b40ecf347a75e2d2e81acbcc3c72ae32fcf659c2acd0e';
+  const BLOCK_HASH =
+    'b3d07565293fd5684c97d2b96eb862d124fd698678f3f95b2515ed07178a27b4';
+  const TTL = 86400;
+  const ROUND = 6391457;
+  const TOKEN = `ZGhhcml0cmkub3Jn.${BLOCK_HASH}.${TTL}.eyJ0aW1lc3RhbXAiOjE2ODZ9`;
+  const ACCESS_TOKEN =
+    'ZHJ0MTNycm4zZndqZHM4cjUyNjBuNnEzcGQycWE2d3FrdWRyaGN6aDI2ZDk1N2MwZWR5emVybXMyMzh2NGU.WkdoaGNtbDBjbWt1YjNKbi5iM2QwNzU2NTI5M2ZkNTY4NGM5N2QyYjk2ZWI4NjJkMTI0ZmQ2OTg2NzhmM2Y5NWIyNTE1ZWQwNzE3OGEyN2I0Ljg2NDAwLmV5SjBhVzFsYzNSaGJYQWlPakUyT0RaOQ.4b445f287663b868e269aa0532c9fd73acb37cfd45f46e33995777e68e5ecc15d97318d9af09c4102f9b40ecf347a75e2d2e81acbcc3c72ae32fcf659c2acd0e';
 
-import { getLatestBlockHash } from '../helpers/getLatestBlockHash';
-import { NativeAuthClient } from '@terradharitri/sdk-native-auth-client';
+  const API_URL = 'https://api.dharitri.org';
+  const GATEWAY_URL = 'https://gateway.dharitri.org';
 
-// Mock NativeAuthClient.getCurrentBlockHash method
-NativeAuthClient.prototype.getCurrentBlockHash = jest.fn().mockResolvedValue('mockedhash123');
+  let timestampSpy: jest.SpyInstance;
+  const currentTimestamp = 1686847;
 
-describe('Native Auth Client', () => {
+  // Create and use the same instance of axios across all requests
+  const axiosAPI = axios.create();
+
   beforeEach(() => {
-    jest.clearAllMocks();
+    timestampSpy = jest.spyOn(Date, 'now').mockReturnValue(currentTimestamp);
   });
 
-  it('Latest block should return signable token - API', async () => {
-    const client = nativeAuth({
-      origin: 'https://example.com',
-      apiAddress: 'https://api.example.com',
-      expirySeconds: 3600,
-      blockHashShard: 0,
-      extraInfo: { user: 'test' },
-      gatewayUrl: '',
-      extraRequestHeaders: {},
-    });
-
-    // Call initialize without providing latestBlockInfo so it calls getLatestBlockHash internally
-    const token = await client.initialize();
-
-    // Check that the token contains the mocked hash
-    expect(token).toContain('mockedhash123');
-
-    // Verify that getLatestBlockHash was called once
-    expect(getLatestBlockHash).toHaveBeenCalledTimes(1);
+  beforeAll(() => {
+    mock = new MockAdapter(axiosAPI);
   });
 
-  it('Initialize should throw error if block hash is missing', async () => {
-    // Mock getLatestBlockHash to return null simulating failure
-    (getLatestBlockHash as jest.Mock).mockResolvedValueOnce(null);
+  afterEach(() => {
+    timestampSpy.mockRestore();
+    mock.reset();
+  });
 
-    const client = nativeAuth({
-      origin: 'https://example.com',
-      apiAddress: 'https://api.example.com',
-      expirySeconds: 3600,
-      blockHashShard: 0,
-      extraInfo: {},
-      gatewayUrl: '',
-      extraRequestHeaders: {},
+  const handlers = {
+    latestBlockApi: rest.get(`${API_URL}/blocks/latest`, (_, res, ctx) => {
+      return res(
+        ctx.status(200),
+        ctx.json([
+          {
+            hash: BLOCK_HASH
+          }
+        ])
+      );
+    }),
+    latestBlockGateway: rest.get(
+      `${GATEWAY_URL}/blocks/by-round/${ROUND}`,
+      mockResponse([
+        {
+          hash: BLOCK_HASH
+        }
+      ])
+    ),
+    serverError: [
+      rest.get(`${API_URL}/blocks/latest`, (_, res, ctx) => {
+        return res(ctx.status(500));
+      }),
+      rest.get(`${API_URL}/blocks`, (_, res, ctx) => {
+        return res(ctx.status(500));
+      })
+    ]
+  };
+
+  describe('Client', () => {
+    it('Latest block should return signable token - API', async () => {
+      server.use(handlers.latestBlockApi);
+
+      const client = nativeAuth({
+        origin: ORIGIN,
+        apiAddress: API_URL
+      });
+
+      const token = await client.initialize();
+
+      expect(token).toStrictEqual(TOKEN);
     });
 
-    await expect(client.initialize()).rejects.toThrow('Failed to retrieve latest block hash');
+    it('Latest block should return signable token - Gateway', async () => {
+      server.use(handlers.latestBlockGateway);
+
+      const client = nativeAuth({
+        origin: ORIGIN,
+        apiAddress: API_URL,
+        gatewayUrl: GATEWAY_URL,
+        blockHashShard: 1
+      });
+
+      const token = await client.initialize();
+
+      expect(token).toStrictEqual(TOKEN);
+    });
+
+    it('Internal server error', async () => {
+      server.use(...handlers.serverError);
+
+      //this will make sure to expire the cache
+      jest
+        .useFakeTimers()
+        .setSystemTime(new Date().setSeconds(new Date().getSeconds() + 60));
+      const client = nativeAuth({
+        origin: ORIGIN,
+        apiAddress: API_URL
+      });
+
+      await expect(client.initialize()).rejects.toThrow();
+    });
+
+    it('Generate Access token', () => {
+      const client = nativeAuth({
+        origin: ORIGIN,
+        apiAddress: API_URL
+      });
+
+      const accessToken = client.getToken({
+        address: ADDRESS,
+        token: TOKEN,
+        signature: SIGNATURE
+      });
+
+      expect(accessToken).toStrictEqual(ACCESS_TOKEN);
+    });
   });
 });

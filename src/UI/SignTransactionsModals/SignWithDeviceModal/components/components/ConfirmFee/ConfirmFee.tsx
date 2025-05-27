@@ -1,11 +1,15 @@
 import React from 'react';
 import { Transaction } from '@terradharitri/sdk-core/out';
 
-import { GAS_PER_DATA_BYTE, GAS_PRICE_MODIFIER } from 'constants/index';
+import {
+  DataTestIdsEnum,
+  GAS_PER_DATA_BYTE,
+  GAS_PRICE_MODIFIER
+} from 'constants/index';
 import { useGetRewaPrice } from 'hooks';
 import { FormatAmount } from 'UI/FormatAmount';
 import { LoadingDots } from 'UI/LoadingDots';
-import { calculateFeeInFiat, calculateFeeLimit } from 'utils';
+import { calculateFeeInFiat, calculateFeeLimit } from 'utils/operations';
 
 import { TokenAvatar } from '../TokenAvatar';
 import styles from './confirmFeeStyles.scss';
@@ -44,7 +48,7 @@ export const ConfirmFee = ({
             rewaLabel={rewaLabel}
             value={feeLimit}
             showLastNonZeroDecimal={true}
-            data-testid='confirmFee'
+            data-testid={DataTestIdsEnum.confirmFee}
           />
         </div>
       </div>

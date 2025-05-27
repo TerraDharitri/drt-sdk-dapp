@@ -43,7 +43,7 @@ export const Progress = ({
   }, []);
 
   const progressRef = useRef<HTMLDivElement | null>(null);
-  const intervalRef = useRef<NodeJS.Timer>();
+  const intervalRef = useRef<NodeJS.Timeout>();
   const percentRemainingRef = useRef(currentRemaining);
 
   useEffect(() => {
@@ -58,7 +58,7 @@ export const Progress = ({
     }
 
     return () => {
-      clearInterval(intervalRef.current as any);
+      clearInterval(intervalRef.current);
     };
   }, [progress, done]);
 
@@ -111,7 +111,7 @@ export const Progress = ({
       const value = existing - 1;
 
       if (value <= 0) {
-        clearInterval(intervalRef.current as any);
+        clearInterval(intervalRef.current);
         removeTxFromSession();
         setPercentRemaining(0);
       } else {
