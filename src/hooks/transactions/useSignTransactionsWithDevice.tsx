@@ -22,7 +22,8 @@ import {
 import { getIsProviderEqualTo } from 'utils/account/getIsProviderEqualTo';
 import { safeRedirect } from 'utils/redirect';
 import { parseTransactionAfterSigning } from 'utils/transactions/parseTransactionAfterSigning';
-import { checkNeedsGuardianSigning } from './helpers';
+import { getWindowLocation } from 'utils/window/getWindowLocation';
+import { checkNeedsGuardianSigning, useGetLedgerProvider } from './helpers';
 import { getShouldMoveTransactionsToSignedState } from './helpers/getShouldMoveTransactionsToSignedState';
 import { useClearTransactionsToSignWithWarning } from './helpers/useClearTransactionsToSignWithWarning';
 import { useSignTransactionsCommonData } from './useSignTransactionsCommonData';
@@ -57,11 +58,12 @@ export function useSignTransactionsWithDevice(
   const { transactionsToSign, hasTransactions } =
     useSignTransactionsCommonData();
   const network = useSelector(networkSelector);
+  const getLedgerProvider = useGetLedgerProvider();
 
   const rewaLabel = useSelector(rewaLabelSelector);
   const { account } = useGetAccountInfo();
   const { address, isGuarded, activeGuardianAddress } = account;
-  const { provider } = useGetAccountProvider();
+  const { provider, providerType } = useGetAccountProvider();
   const dispatch = useDispatch();
   const clearTransactionsToSignWithWarning =
     useClearTransactionsToSignWithWarning();
@@ -86,8 +88,9 @@ export function useSignTransactionsWithDevice(
     dispatch(setSignTransactionsError(errorMessage));
   }
 
+  const { pathname } = getWindowLocation();
   const locationIncludesCallbackRoute =
-    callbackRoute != null && window?.location.pathname.includes(callbackRoute);
+    callbackRoute != null && pathname.includes(callbackRoute);
 
   const allowGuardian = !customTransactionInformation?.skipGuardian;
 
@@ -141,7 +144,12 @@ export function useSignTransactionsWithDevice(
   }
 
   async function handleSignTransaction(transaction: Transaction) {
-    return await provider.signTransaction(transaction);
+    const connectedProvider =
+      providerType !== LoginMethodsEnum.ledger
+        ? provider
+        : await getLedgerProvider();
+
+    return await connectedProvider.signTransaction(transaction);
   }
 
   const signMultipleTxReturnValues = useSignMultipleTransactions({

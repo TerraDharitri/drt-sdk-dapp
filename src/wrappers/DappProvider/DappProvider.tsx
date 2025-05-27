@@ -1,9 +1,7 @@
 import React, { ReactElement } from 'react';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
-
-import { ProviderInitializer } from 'components/ProviderInitializer';
-
+import { ProviderInitializer } from 'components/ProviderInitializer/ProviderInitializer';
 import { setExternalProvider } from 'providers/accountProvider';
 import { webviewProvider } from 'providers/webviewProvider';
 import { DappCoreContext } from 'reduxStore/DappProviderContext';
@@ -11,7 +9,6 @@ import { persistor, store } from 'reduxStore/store';
 import { CustomNetworkType, EnvironmentsEnum, IDappProvider } from 'types';
 import { DappConfigType } from 'types/dappConfig.types';
 import { AppInitializer } from 'wrappers/AppInitializer';
-
 import { CustomComponents, CustomComponentsType } from './CustomComponents';
 
 export { DappConfigType };
@@ -50,18 +47,20 @@ export const DappProvider = ({
   return (
     <Provider context={DappCoreContext} store={store}>
       <PersistGate persistor={persistor} loading={null}>
-        <AppInitializer
-          environment={environment as EnvironmentsEnum}
-          customNetworkConfig={customNetworkConfig}
-          dappConfig={dappConfig}
-        >
-          <ProviderInitializer />
-          <CustomComponents
-            customComponents={customComponents}
-            enableBatchTransactions={enableBatchTransactions}
-          />
-          {children}
-        </AppInitializer>
+        {() => (
+          <AppInitializer
+            environment={environment as EnvironmentsEnum}
+            customNetworkConfig={customNetworkConfig}
+            dappConfig={dappConfig}
+          >
+            <ProviderInitializer />
+            <CustomComponents
+              customComponents={customComponents}
+              enableBatchTransactions={enableBatchTransactions}
+            />
+            {children}
+          </AppInitializer>
+        )}
       </PersistGate>
     </Provider>
   );

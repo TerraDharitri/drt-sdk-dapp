@@ -28,7 +28,7 @@ export async function getServerConfiguration(apiAddress: string) {
       return data;
     }
   } catch (err) {
-    console.error('error fetching configuration for ', configUrl);
+console.error(`Error fetching configuration for ${configUrl}:`, err);
   }
   return null;
 }

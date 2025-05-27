@@ -4,10 +4,7 @@ import classNames from 'classnames';
 
 import { useGetRewaPrice, useGetNetworkConfig } from 'hooks';
 import { useGetTokenDetails } from 'hooks/transactions/useGetTokenDetails';
-import type {
-  ActiveLedgerTransactionType,
-  MultiSignTransactionType
-} from 'types';
+import { ActiveLedgerTransactionType, MultiSignTransactionType } from 'types';
 import { NftEnumType } from 'types/tokens.types';
 import { TransactionData } from 'UI/TransactionData';
 import { getIdentifierType } from 'utils';
@@ -80,15 +77,23 @@ export const SignStepBody = ({
       tokenId: nonce && nonce?.length > 0 ? nftId : tokenId
     });
 
-  const formattedAmount = formatAmount({
-    input: isTokenTransaction
-      ? amount
-      : currentTransaction.transaction.getValue().toString(),
-    decimals: isTokenTransaction ? tokenDecimals : Number(network.decimals),
-    digits: Number(network.digits),
-    showLastNonZeroDecimal: false,
-    addCommas: true
-  });
+  const transactionReceiver = multiTxData
+    ? new Address(receiver).bech32()
+    : currentTransaction.transaction.getReceiver().toString();
+
+  const getFormattedAmount = ({ addCommas }: { addCommas: boolean }) =>
+    formatAmount({
+      input: isTokenTransaction
+        ? amount
+        : currentTransaction.transaction.getValue().toString(),
+      decimals: isTokenTransaction ? tokenDecimals : Number(network.decimals),
+      digits: Number(network.digits),
+      showLastNonZeroDecimal: false,
+      addCommas
+    });
+
+  const formattedAmount = getFormattedAmount({ addCommas: true });
+  const rawAmount = getFormattedAmount({ addCommas: false });
 
   const scamReport = currentTransaction.receiverScamInfo;
   const classes = useSignStepsClasses(scamReport);
@@ -128,11 +133,7 @@ export const SignStepBody = ({
 
         <ConfirmReceiver
           scamReport={scamReport}
-          receiver={
-            multiTxData
-              ? new Address(receiver).bech32()
-              : currentTransaction.transaction.getReceiver().toString()
-          }
+          receiver={transactionReceiver}
         />
 
         <div className={styles.columns}>
@@ -140,7 +141,8 @@ export const SignStepBody = ({
             <div className={styles.column}>
               <ConfirmAmount
                 tokenAvatar={tokenAvatar}
-                amount={shownAmount}
+                formattedAmount={shownAmount}
+                rawAmount={rawAmount}
                 token={token}
                 tokenType={isRewa ? rewaLabel : type}
                 tokenPrice={tokenPrice}

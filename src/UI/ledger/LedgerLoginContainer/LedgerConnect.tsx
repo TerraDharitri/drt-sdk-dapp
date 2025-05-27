@@ -4,7 +4,8 @@ import classNames from 'classnames';
 import LedgerLogo from 'assets/icons/ledger-nano.svg';
 
 import globalStyles from 'assets/sass/main.scss';
-import type { WithClassnameType } from '../../types';
+import { DataTestIdsEnum } from 'constants/index';
+import { WithClassnameType } from '../../types';
 
 import styles from './ledgerConnectStyles.scss';
 
@@ -69,7 +70,7 @@ export const LedgerConnect = ({
 
             <p
               className={classNames(
-                styles.loginConnectContaindrtescription,
+                styles.loginConnectContainerDescription,
                 ledgerModalSubtitleClassName
               )}
             >
@@ -109,7 +110,7 @@ export const LedgerConnect = ({
           <button
             onClick={onClick}
             disabled={disabled}
-            data-testid='connectBtn'
+            data-testid={DataTestIdsEnum.ledgerConnectBtn}
             className={classNames(
               globalStyles.btn,
               globalStyles.btnPrimary,

@@ -3,10 +3,7 @@ import { HWProvider } from '@terradharitri/sdk-hw-provider';
 import { OperaProvider } from '@terradharitri/sdk-opera-provider';
 import { WalletProvider } from '@terradharitri/sdk-web-wallet-provider';
 import { IDappProvider } from 'types';
-import {
-  WalletConnectProvider,
-  WalletConnectV2Provider
-} from 'utils/walletconnect/__sdkWalletconnectProvider';
+import { WalletConnectV2Provider } from 'utils/walletconnect/__sdkWalletconnectProvider';
 import { emptyProvider } from './utils';
 
 type ProvidersType =
@@ -15,7 +12,6 @@ type ProvidersType =
   | WalletProvider
   | HWProvider
   | OperaProvider
-  | WalletConnectProvider
   | WalletConnectV2Provider;
 
 let accountProvider: ProvidersType = emptyProvider;

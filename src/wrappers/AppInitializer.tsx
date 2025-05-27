@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Address } from '@terradharitri/sdk-core/out';
-
 import { getServerConfiguration } from 'apiCalls';
 import { fallbackNetworkConfigurations } from 'constants/network';
 import { useGetAccountInfo } from 'hooks/account/useGetAccountInfo';
@@ -17,20 +16,22 @@ import {
 } from 'types';
 import { logout } from 'utils/logout';
 
-export interface AppInitializerPropsType {
+export interface UseAppInitializerPropsType {
   customNetworkConfig?: CustomNetworkType;
-  children: any;
   externalProvider?: IDappProvider;
   environment: EnvironmentsEnum;
   dappConfig?: DappConfigType;
 }
 
-export function AppInitializer({
+export interface AppInitializerPropsType extends UseAppInitializerPropsType {
+  children?: any;
+}
+
+export const useAppInitializer = ({
   customNetworkConfig = {},
-  children,
   environment,
   dappConfig
-}: AppInitializerPropsType) {
+}: UseAppInitializerPropsType) => {
   const [initialized, setInitialized] = useState(false);
   const account = useGetAccountInfo();
   const isLoginSessionInvalid = useSelector(isLoginSessionInvalidSelector);
@@ -97,5 +98,27 @@ export function AppInitializer({
     }
   }, [isLoginSessionInvalid, account.address, logoutRoute]);
 
-  return initialized ? <>{children}</> : null;
+  return { initialized };
+};
+
+export function AppInitializer({
+  customNetworkConfig = {},
+  children,
+  environment,
+  dappConfig
+}: AppInitializerPropsType) {
+  const [isBrowser, setIsBrowser] = useState(!dappConfig?.isSSR);
+
+  const { initialized } = useAppInitializer({
+    customNetworkConfig,
+    environment,
+    dappConfig
+  });
+
+  // This is a hack to allow the app to render on the server side
+  useEffect(() => {
+    setIsBrowser(true);
+  }, []);
+
+  return isBrowser ? (initialized ? children : null) : children;
 }
