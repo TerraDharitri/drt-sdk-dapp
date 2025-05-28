@@ -5,6 +5,12 @@ describe('sanitizeLoginCallbackUrl tests', () => {
     const result = sanitizeCallbackUrl('https://wallet.dharitri.org');
     expect(result).toEqual('https://wallet.dharitri.org');
   });
+  test('Keeps the path and hash of the URL', () => {
+    const result = sanitizeCallbackUrl(
+      'https://wallet.dharitri.org/path#hash'
+    );
+    expect(result).toEqual('https://wallet.dharitri.org/path#hash');
+  });
   test('remove "address" item from query params when this is the only query item', () => {
     const result = sanitizeCallbackUrl(
       'https://localhost:3000/feed?address=drt1-address'

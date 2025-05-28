@@ -6,6 +6,82 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+## [[v2.21.1]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/939)] - 2023-09-29
+- [Added `getDefaultCallbackUrl` helper](https://github.com/TerraDharitri/drt-sdk-dapp/pull/936)
+- [Return native auth token when refreshing the token](https://github.com/TerraDharitri/drt-sdk-dapp/pull/938)
+
+## [[v2.21.0]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/933)] - 2023-09-21
+
+- [Prevent duplicate custom toasts with the same ID](https://github.com/TerraDharitri/drt-sdk-dapp/pull/932)
+- [Extend UI/CopyButton icons](https://github.com/TerraDharitri/drt-sdk-dapp/pull/931)
+
+## [[v2.20.6]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/928)] - 2023-09-14
+
+- [Add network option when refreshing a native auth token](https://github.com/TerraDharitri/drt-sdk-dapp/pull/927)
+
+## [[v2.20.5]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/925)] - 2023-09-14
+
+- [Fix refreshNativeAuthTokenLogin signature](https://github.com/TerraDharitri/drt-sdk-dapp/pull/924)
+
+## [[v2.20.4]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/923)] - 2023-09-14
+
+- [Fix custom transaction information overrides - missing properties on 'signed' state transition](https://github.com/TerraDharitri/drt-sdk-dapp/pull/922)
+
+## [[v2.20.3]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/920)] - 2023-09-13
+
+- [Add back cancelAction when cancelling a transaction and remove it from transaction toast discard](https://github.com/TerraDharitri/drt-sdk-dapp/pull/919)
+
+## [[v2.20.2]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/913)] - 2023-09-13
+
+- [Changed Ledger authentication texts for v.23 of Dharitri app](https://github.com/TerraDharitri/drt-sdk-dapp/pull/910)
+- [Fix transaction cancellation when a transaction toast is discarded](https://github.com/TerraDharitri/drt-sdkwallet-dapp/pull/915)
+
+## [[v2.20.1]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/913)] - 2023-09-08
+
+- [Fix double login when session is invalid and user is loggedout](https://github.com/TerraDharitri/drt-sdk-dapp/pull/912)
+
+## [[v2.20.0]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/911)] - 2023-09-07
+
+- [Add batch transactions documentation](https://github.com/TerraDharitri/drt-sdk-dapp/pull/909)
+- [Batch transactions improvements](https://github.com/TerraDharitri/drt-sdk-dapp/pull/905)
+
+## [[v2.19.9]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/908)] - 2023-09-06
+
+- [Changed `safeRedirect` method to force page reload on logout to ensure fresh states](https://github.com/TerraDharitri/drt-sdk-dapp/pull/907)
+- [Fix WalletConnect initialization on background regardless of the selected provider](https://github.com/TerraDharitri/drt-sdk-dapp/pull/906)
+
+## [[v2.19.8]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/904)] - 2023-09-04
+
+- [Removed `loginMethod` from the `isLoggedIn` check](https://github.com/TerraDharitri/drt-sdk-dapp/pull/903)
+
+## [[v2.19.7]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/901)] - 2023-09-01
+
+- [Added ledger usernames validation](https://github.com/TerraDharitri/drt-sdk-dapp/pull/900)
+
+## [[v2.19.6]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/899)] - 2023-08-31
+
+- [Updated `sdk-web-wallet-provider` to support usernames](https://github.com/TerraDharitri/drt-sdk-dapp/pull/898)
+- [Added deprecated warnings for login button callbacks](https://github.com/TerraDharitri/drt-sdk-dapp/commit/2e71fbeeebabe479f897db38f10972c55aca44af)
+
+## [[v2.19.5]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/897)] - 2023-08-29
+
+- [Fixed Ledger and Walletconnect login with modals](https://github.com/TerraDharitri/drt-sdk-dapp/pull/895)
+-
+
+## [[v2.19.4]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/896)] - 2023-08-28
+
+- [Memoize dappConfig in order to not trigger initializeApp on every DappProvider rerender](https://github.com/TerraDharitri/drt-sdk-dapp/pull/894)
+
+## [[v2.19.3]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/890)] - 2023-08-21
+
+- [Added `DataTestIdsEnum` to `data-testid` HTML tags](https://github.com/TerraDharitri/drt-sdk-dapp/pull/889)
+- [Added `addOriginToLocationPath` helper to parse redirect URLs](https://github.com/TerraDharitri/drt-sdk-dapp/pull/888)
+- [Prevent signing transactions with sender different from current account](https://github.com/TerraDharitri/drt-sdk-dapp/pull/887)
+- [Added ledger login improvements and added support for bluetooth connect](https://github.com/TerraDharitri/drt-sdk-dapp/pull/882)
+- [Fixed WalletConnect Provider default logoutRoute](https://github.com/TerraDharitri/drt-sdk-dapp/pull/886)
+- [Bumped @terradharitri/sdk-native-auth-client to fix RN issues](https://github.com/TerraDharitri/drt-sdk-dapp/pull/885)
+- [Fixed the malformed url due to the missing callbackRoute](https://github.com/TerraDharitri/drt-sdk-dapp/pull/884)
+- [Updated the @terradharitri packages to their latest versions](https://github.com/TerraDharitri/drt-sdk-dapp/pull/883)
 
 ## [[v2.19.2]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/881)] - 2023-07-28
 

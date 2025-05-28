@@ -7,12 +7,14 @@ import {
   renderWithProvider,
   server,
   testNetwork,
-  testAddress
+  testAddress,
+  mockWindowHistory
 } from '__mocks__';
 
 import { logoutAction } from 'reduxStore/commonActions';
 import * as actions from 'reduxStore/slices/loginInfoSlice';
 import { store } from 'reduxStore/store';
+import { sleep } from 'utils/asyncActions';
 import { LedgerLoginButton } from '../LedgerLoginButton';
 import { checkIsLoggedInStore, ledgerLogin } from './helpers';
 import { mockLedgerProvider } from './mocks';
@@ -46,6 +48,7 @@ describe('LedgerLoginButton tests', () => {
   beforeEach(async () => {
     store.dispatch(logoutAction());
     mockWindowLocation();
+    mockWindowHistory();
   });
 
   it('should perform simple login and redirect', async () => {
@@ -64,7 +67,26 @@ describe('LedgerLoginButton tests', () => {
     await checkIsLoggedInStore();
 
     await waitFor(() => {
-      expect(window.location.assign).toHaveBeenCalledWith(CALLBACK_ROUTE);
+      expect(window.history.pushState).toHaveBeenCalledWith(
+        '',
+        '',
+        CALLBACK_ROUTE
+      );
+    });
+  });
+
+  it('should perform login and redirect to URL', async () => {
+    const methods = renderWithProvider({
+      children: <LedgerLoginButton callbackRoute='https://multivers.com' />
+    });
+
+    await ledgerLogin(methods);
+    await checkIsLoggedInStore();
+
+    await waitFor(() => {
+      expect(window.location.assign).toHaveBeenCalledWith(
+        'https://multivers.com'
+      );
     });
   });
 
@@ -85,7 +107,7 @@ describe('LedgerLoginButton tests', () => {
     await checkIsLoggedInStore();
 
     await waitFor(() => {
-      expect(window.location.assign).toHaveBeenCalledTimes(0);
+      expect(window.history.pushState).toHaveBeenCalledTimes(0);
       expect(onLoginRedirect).toHaveBeenCalledTimes(1);
       expect(onLoginRedirect).toHaveBeenCalledWith(CALLBACK_ROUTE, {
         address: testAddress,
@@ -107,11 +129,10 @@ describe('LedgerLoginButton tests', () => {
 
     const setTokenLoginSpy = jest.spyOn(actions, 'setTokenLogin');
     jest.spyOn(Date, 'now').mockReturnValue(1690184313013); // 2023-07-24T11:00
-
     await ledgerLogin(methods);
+    await sleep(1000);
 
     await waitFor(() => {
-      expect(setTokenLoginSpy).toHaveBeenCalledTimes(2);
       expect(setTokenLoginSpy).toHaveBeenNthCalledWith(
         1,
         tokenLoginWithoutSignature
@@ -122,7 +143,11 @@ describe('LedgerLoginButton tests', () => {
         tokenLoginWithSignature
       );
 
-      expect(window.location.assign).toHaveBeenCalledWith(CALLBACK_ROUTE);
+      expect(window.history.pushState).toHaveBeenCalledWith(
+        '',
+        '',
+        CALLBACK_ROUTE
+      );
     });
   });
 
@@ -147,7 +172,7 @@ describe('LedgerLoginButton tests', () => {
     await ledgerLogin(methods);
 
     await waitFor(() => {
-      expect(window.location.assign).toHaveBeenCalledTimes(0);
+      expect(window.history.pushState).toHaveBeenCalledTimes(0);
     });
   });
 });

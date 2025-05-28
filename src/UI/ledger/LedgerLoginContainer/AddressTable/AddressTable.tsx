@@ -9,16 +9,13 @@ import classNames from 'classnames';
 import globalStyles from 'assets/sass/main.scss';
 import { DataTestIdsEnum } from 'constants/index';
 import { getAccountBalance } from 'utils/account/getAccountBalance';
-import { WithClassnameType } from '../../types';
+import { WithClassnameType } from '../../../types';
 
-import { AddressRow } from './AddressRow';
+import { AddressRow } from '../AddressRow';
 
+import { LedgerColumnsEnum } from '../enums';
+import { LedgerLoading } from '../LedgerLoading';
 import styles from './addressTableStyles.scss';
-import { LedgerColumnsEnum } from './enums';
-
-import { LedgerLoading } from './LedgerLoading';
-import { accountSelector } from 'reduxStore/selectors';
-import { store } from 'reduxStore/store';
 
 const ADDRESSES_PER_PAGE = 10;
 
@@ -87,32 +84,14 @@ export const AddressTable = ({
     }
   }, [accounts, selectedAddress, loading, startIndex]);
 
-  const fetchBalance = async (address?: string) => {
-    // If no address provided, get from store
-    let accountAddress = address;
-    if (!accountAddress) {
-      const account = accountSelector(store.getState());
-      if (!account || !account.address) {
-        console.error('User not logged in');
-        throw new Error('User not logged in');
-      }
-      accountAddress = account.address;
-    }
+  const fetchBalance = async (address: string) => {
     try {
-      const balance = await getAccountBalance(accountAddress);
-    
-      if (balance == null) {
-        // Show fallback or skip rendering
-        return;
-      }
-    
-      return { address: accountAddress, balance };
+      const balance = await getAccountBalance(address);
+      return { address, balance };
     } catch (err) {
       console.error('error fetching balance', err);
-      // Optional: show error UI
-      return;
+      throw accountsWithBalance;
     }
-    
   };
 
   useEffect(() => {
@@ -121,12 +100,8 @@ export const AddressTable = ({
       accounts.map((account) => ({ address: account, balance: '...' }))
     );
     Promise.all(balancePromises).then((balances) => {
-      const filledBalances = balances.map((balance, idx) =>
-        balance ?? { address: accounts[idx], balance: '0' }
-      );
-      setAccountsWithBalance(filledBalances);
+      setAccountsWithBalance(balances);
     });
-    
   }, [accounts]);
 
   if (loading) {
@@ -214,7 +189,7 @@ export const AddressTable = ({
           <button
             type='button'
             onClick={onGoToPrevPage}
-            data-testid='prevBtn'
+            data-testid={DataTestIdsEnum.prevBtn}
             className={classNames(
               styles.ledgerAddressTableNavigationButton,
               {
@@ -236,7 +211,7 @@ export const AddressTable = ({
           <button
             type='button'
             onClick={onGoToNextPage}
-            data-testid='nextBtn'
+            data-testid={DataTestIdsEnum.nextBtn}
             className={classNames(
               styles.ledgerAddressTableNavigationButton,
               {

@@ -18,7 +18,7 @@ export async function getAccountFromApi(address?: string) {
     const { data } = await accountFetcher(address);
     return data;
   } catch (err) {
-    console.warn(`No account data found for ${address}`);
+    console.error('error fetching configuration for ', address);
   }
   return null;
 }
