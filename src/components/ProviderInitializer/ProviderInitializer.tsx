@@ -1,5 +1,10 @@
 import { useEffect, useRef } from 'react';
-import { getNetworkConfigFromApi } from 'apiCalls';
+import { getNetworkConfigFromApi, useGetAccountFromApi } from 'apiCalls';
+import {
+  DEVNET_CHAIN_ID,
+  MAINNET_CHAIN_ID,
+  TESTNET_CHAIN_ID
+} from 'constants/index';
 import { useLoginService } from 'hooks/login/useLoginService';
 import { useWalletConnectV2Login } from 'hooks/login/useWalletConnectV2Login';
 import { useWebViewLogin } from 'hooks/login/useWebViewLogin';
@@ -14,12 +19,12 @@ import {
   ledgerAccountSelector
 } from 'reduxStore/selectors/accountInfoSelectors';
 import {
-  loginMethodSelector,
   walletConnectLoginSelector,
   walletLoginSelector,
   ledgerLoginSelector,
   isLoggedInSelector,
-  tokenLoginSelector
+  tokenLoginSelector,
+  loginInfoSelector
 } from 'reduxStore/selectors/loginInfoSelectors';
 import {
   chainIDSelector,
@@ -41,7 +46,6 @@ import { decodeNativeAuthToken } from 'services/nativeAuth/helpers';
 import { LoginMethodsEnum } from 'types/enums.types';
 import {
   getAddress,
-  getAccount,
   getLatestNonce,
   newWalletProvider,
   emptyProvider,
@@ -67,7 +71,7 @@ export function ProviderInitializer() {
   const network = useSelector(networkSelector);
   const walletAddress = useSelector(walletAddressSelector);
   const walletConnectLogin = useSelector(walletConnectLoginSelector);
-  const loginMethod = useSelector(loginMethodSelector);
+  const { loginMethod, iframeLoginType } = useSelector(loginInfoSelector);
   const walletLogin = useSelector(walletLoginSelector);
   const address = useSelector(addressSelector);
   const ledgerAccount = useSelector(ledgerAccountSelector);
@@ -79,6 +83,11 @@ export function ProviderInitializer() {
   const loginService = useLoginService(
     nativeAuthConfig ? nativeAuthConfig : false
   );
+  const {
+    data: account,
+    isLoading: isAccountLoading,
+    error: accountError
+  } = useGetAccountFromApi(address);
 
   const initializedAccountRef = useRef(false);
   const dispatch = useDispatch();
@@ -107,15 +116,31 @@ export function ProviderInitializer() {
   }, [tokenLogin?.nativeAuthToken, address]);
 
   useEffect(() => {
-    fetchAccount();
-  }, [address, network]);
+    setupAccount();
+  }, [account, isAccountLoading]);
 
   useEffect(() => {
     // prevent balance double fetching by handling ledgerAccount data separately
     setLedgerAccountInfo();
   }, [ledgerAccount, isLoggedIn, ledgerData]);
 
+  // We need to get the roundDuration for networks that do not support websocket (e.g. sovereign)
+  // The round duration is used for polling interval
   async function refreshNetworkConfig() {
+    const needsRoundDurationForPollingInterval =
+      network.chainId &&
+      ![DEVNET_CHAIN_ID, TESTNET_CHAIN_ID, MAINNET_CHAIN_ID].includes(
+        network.chainId
+      ) &&
+      !network.roundDuration;
+
+    const shouldGetConfig =
+      !network.chainId || needsRoundDurationForPollingInterval;
+
+    if (!shouldGetConfig) {
+      return;
+    }
+
     try {
       const networkConfig = await getNetworkConfigFromApi();
       const hasDifferentNetworkConfig =
@@ -173,8 +198,17 @@ export function ProviderInitializer() {
     }
   }
 
-  async function fetchAccount() {
-    dispatch(setIsAccountLoading(true));
+  async function setupAccount() {
+    if (isAccountLoading) {
+      dispatch(setIsAccountLoading(true));
+      return;
+    }
+
+    if (accountError) {
+      dispatch(setAccountLoadingError('Failed getting account'));
+      console.error('Failed getting account ', accountError);
+      return;
+    }
 
     if (initializedAccountRef.current) {
       // account was recently initialized, skip refetching
@@ -183,26 +217,17 @@ export function ProviderInitializer() {
       return;
     }
 
-    if (address) {
-      try {
-        const account = await getAccount(address);
-
-        if (account) {
-          dispatch(
-            setAccount({
-              ...account,
-              address,
-              nonce: account.nonce.valueOf()
-            })
-          );
-        } else if (!isLoggedIn) {
-          // Clear the address and publicKey if account is not found
-          dispatch(setAddress(''));
-        }
-      } catch (e) {
-        dispatch(setAccountLoadingError('Failed getting account'));
-        console.error('Failed getting account ', e);
-      }
+    if (account) {
+      dispatch(
+        setAccount({
+          ...account,
+          address,
+          nonce: account.nonce.valueOf()
+        })
+      );
+    } else if (!isLoggedIn) {
+      // Clear the address and publicKey if account is not found
+      dispatch(setAddress(''));
     }
 
     dispatch(setIsAccountLoading(false));
@@ -326,7 +351,8 @@ export function ProviderInitializer() {
     }
     const provider = await getIframeProvider({
       address,
-      walletUrl: network.metamaskSnapWalletAddress
+      walletUrl: network.metamaskSnapWalletAddress,
+      loginType: iframeLoginType
     });
     if (provider) {
       setAccountProvider(provider);

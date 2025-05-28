@@ -9,7 +9,6 @@ import { ExtensionProvider } from '@terradharitri/sdk-extension-provider';
 import { MetamaskProvider } from '@terradharitri/sdk-metamask-provider/out/metamaskProvider';
 
 import { PasskeyProvider } from '@terradharitri/sdk-passkey-provider/out';
-import { IframeProvider } from '@terradharitri/sdk-web-wallet-iframe-provider/out';
 import uniq from 'lodash/uniq';
 import { useGetAccountFromApi } from 'apiCalls/accounts/useGetAccountFromApi';
 import {
@@ -25,6 +24,7 @@ import { useGetAccount } from 'hooks/account';
 import { useGetAccountProvider } from 'hooks/account/useGetAccountProvider';
 import { useParseSignedTransactions } from 'hooks/transactions/useParseSignedTransactions';
 import { CrossWindowProvider } from 'lib/sdkWebWalletCrossWindowProvider';
+import { IframeProvider } from 'lib/sdkWebWalletIframeProvider';
 import { ExperimentalWebviewProvider } from 'providers/experimentalWebViewProvider';
 import { getProviderType } from 'providers/utils';
 

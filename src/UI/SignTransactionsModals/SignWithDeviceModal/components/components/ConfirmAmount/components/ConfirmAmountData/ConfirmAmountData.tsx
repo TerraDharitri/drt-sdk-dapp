@@ -3,7 +3,7 @@ import { faCoins } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames';
 
-import { DataTestIdsEnum } from 'constants/index';
+import { DataTestIdsEnum, MULTI_TRANSFER_REWA_TOKEN } from 'constants/index';
 import { withStyles } from 'hocs/withStyles';
 import { TokenOptionType, useGetNetworkConfig } from 'hooks';
 import { ActiveLedgerTransactionType } from 'types';
@@ -47,17 +47,19 @@ const ConfirmAmountDataComponent = ({
       addCommas
     });
 
+  const isRewaToken =
+    isRewa || tokenDetails.identifier === MULTI_TRANSFER_REWA_TOKEN;
   const formattedAmount = getFormattedAmount({ addCommas: true });
   const rawAmount = getFormattedAmount({ addCommas: false });
 
   return (
     <div className={styles?.confirmAmountData}>
       <div className={styles?.confirmAmountDataWrapper}>
-        {!isRewa && tokenAvatar && (
+        {!isRewaToken && tokenAvatar && (
           <img src={tokenAvatar} className={styles?.confirmAmountDataIcon} />
         )}
 
-        {!isRewa && !tokenAvatar && (
+        {!isRewaToken && !tokenAvatar && (
           <div
             className={classNames(
               styles?.confirmAmountDataIcon,
@@ -77,11 +79,11 @@ const ConfirmAmountDataComponent = ({
         >
           <Balance
             amount={formattedAmount}
-            rewaIcon={isRewa}
+            rewaIcon={isRewaToken}
             data-testid={DataTestIdsEnum.confirmAmount}
             showTokenLabel
             showTokenLabelSup
-            tokenLabel={isRewa ? network.rewaLabel : identifier}
+            tokenLabel={isRewaToken ? network.rewaLabel : identifier}
             className={styles?.confirmAmountDataBalance}
           />
         </div>
