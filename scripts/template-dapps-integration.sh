@@ -17,7 +17,7 @@ echo "cd drt-sdk-dapp..."
 cd drt-sdk-dapp
 git checkout development
 
-echo "Installing dependencies for drt-sdk-dapp..."
+echo "Installing dependencies for "
 yarn install
 
 echo "Building drt-sdk-dapp..."
