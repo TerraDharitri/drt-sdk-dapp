@@ -1,3 +1,5 @@
+import { safeWindow } from 'lib/sdkDappUtils';
+
 export const getIsExtensionAvailable = () => {
-  return Boolean(window?.numbatWallet);
+  return Boolean(safeWindow?.numbatWallet);
 };

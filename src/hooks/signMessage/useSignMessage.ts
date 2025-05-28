@@ -14,7 +14,8 @@ import {
 import {
   clearSignedMessageInfo,
   setSignSession,
-  setSignSessionState
+  setSignSessionState,
+  setSignTransactionsCancelMessage
 } from 'reduxStore/slices';
 import {
   LoginMethodsEnum,
@@ -28,6 +29,7 @@ import {
 import { parseNavigationParams } from 'utils/parseNavigationParams';
 import { getWindowLocation } from 'utils/window/getWindowLocation';
 import {
+  addOriginToLocationPath,
   getAccountProvider,
   getAddress,
   removeSearchParamsFromUrl
@@ -50,7 +52,7 @@ export interface SignedMessageParamsType {
  * 2. Signing from dapp logged in with web wallet (redirect to web wallet)
  * 3. Signing from web wallet as hook after redirect and replying back with signature
  */
-export const useSignMessage = () => {
+export const useSignMessage = (options?: { hasConsentPopup?: boolean }) => {
   const dispatch = useDispatch();
   const [currentSessionId, setCurrentSessionId] = useState<string>('');
   const signedMessageInfo = useSelector(signedMessageInfoSliceSelector);
@@ -93,6 +95,7 @@ export const useSignMessage = () => {
         }
       })
     );
+    dispatch(setSignTransactionsCancelMessage(errorMessage));
   };
 
   const checkCallbackSessionId = (
@@ -103,9 +106,9 @@ export const useSignMessage = () => {
       return '';
     }
 
-    // Make sure callbackURL has sessionId
-    const callbackUrl = new URL(callbackRoute);
+    const callbackUrl = new URL(addOriginToLocationPath(callbackRoute));
 
+    // Make sure callbackURL has sessionId
     if (!callbackUrl.searchParams.get(SignedMessageQueryParamsEnum.sessionId)) {
       callbackUrl.searchParams.append(
         SignedMessageQueryParamsEnum.sessionId,
@@ -123,20 +126,13 @@ export const useSignMessage = () => {
       return;
     }
 
-    try {
-      const isProviderInitialized = await provider?.init?.();
+    const isProviderInitialized = await provider?.init?.();
 
-      if (!isProviderInitialized) {
-        return;
-      }
-    } catch (error) {
-      const errorMessage =
-        (error as Error)?.message ||
-        (error as string) ||
-        PROVIDER_NOT_INITIALIZED;
-
-      console.error(errorMessage);
+    if (!isProviderInitialized) {
+      return;
     }
+
+    return isProviderInitialized;
   };
 
   const signMessageWithWallet = async ({
@@ -186,8 +182,15 @@ export const useSignMessage = () => {
     try {
       await checkProviderIsInitialized();
     } catch (error) {
+      const errorMessage =
+        (error as Error)?.message ||
+        (error as string) ||
+        PROVIDER_NOT_INITIALIZED;
+
+      console.error(errorMessage);
+
       onCancel({
-        errorMessage: String(error),
+        errorMessage: PROVIDER_NOT_INITIALIZED,
         callbackRoute
       });
 
@@ -197,10 +200,11 @@ export const useSignMessage = () => {
     try {
       const signedMessage = await signMessageWithProvider({
         ...props,
-        callbackRoute
+        callbackRoute,
+        options
       });
 
-      if (signedMessage.signature) {
+      if (signedMessage?.signature) {
         dispatch(
           setSignSession({
             sessionId,
@@ -223,9 +227,10 @@ export const useSignMessage = () => {
     } catch (error) {
       const errorMessage =
         (error as Error)?.message || (error as string) || ERROR_SIGNING;
+      console.error(errorMessage);
 
       onCancel({
-        errorMessage,
+        errorMessage: ERROR_SIGNING,
         callbackRoute
       });
     }
@@ -270,7 +275,7 @@ export const useSignMessage = () => {
         // Message was signed successfully
         dispatch(
           setSignSession({
-            sessionId: currentSessionId,
+            sessionId,
             signedSession: {
               signature,
               status

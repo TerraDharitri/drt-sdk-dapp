@@ -5,8 +5,14 @@ import {
   Address,
   TokenPayment
 } from '@terradharitri/sdk-core';
-import { NetworkConfig } from '@terradharitri/sdk-network-providers';
-import { GAS_LIMIT, GAS_PRICE, ZERO } from 'constants/index';
+import BigNumber from 'bignumber.js';
+import {
+  EXTRA_GAS_LIMIT_GUARDED_TX,
+  GAS_LIMIT,
+  GAS_PRICE,
+  ZERO
+} from 'constants/index';
+import { isGuardianTx } from 'utils/transactions/isGuardianTx';
 import { stringIsFloat, stringIsInteger } from 'utils/validation';
 
 export interface CalculateFeeLimitType {
@@ -35,6 +41,13 @@ export function calculateFeeLimit({
 }: CalculateFeeLimitType) {
   const data = inputData || '';
   const validGasLimit = stringIsInteger(gasLimit) ? gasLimit : minGasLimit;
+
+  // We need to add extra gas fee for guardian transactions
+  const extraGasLimit = isGuardianTx({ data }) ? EXTRA_GAS_LIMIT_GUARDED_TX : 0;
+  const usedGasLimit = new BigNumber(validGasLimit)
+    .plus(extraGasLimit)
+    .toNumber();
+
   const validGasPrice = stringIsFloat(gasPrice) ? gasPrice : defaultGasPrice;
   const transaction = new Transaction({
     nonce: 0,
@@ -42,21 +55,22 @@ export function calculateFeeLimit({
     receiver: new Address(placeholderData.to),
     sender: new Address(placeholderData.to),
     gasPrice: parseInt(validGasPrice),
-    gasLimit: parseInt(validGasLimit),
+    gasLimit: usedGasLimit,
     data: new TransactionPayload(data.trim()),
     chainID: chainId,
     version: new TransactionVersion(1)
   });
 
-  const networkConfig = new NetworkConfig();
-  networkConfig.MinGasLimit = parseInt(minGasLimit);
-  networkConfig.GasPerDataByte = parseInt(gasPerDataByte);
-  networkConfig.GasPriceModifier = parseFloat(gasPriceModifier);
   try {
-    const bNfee = transaction.computeFee(networkConfig);
-    const fee = bNfee.toString(10);
-    return fee;
+    const bNfee = transaction.computeFee({
+      GasPerDataByte: parseInt(gasPerDataByte),
+      MinGasLimit: parseInt(minGasLimit),
+      GasPriceModifier: parseFloat(gasPriceModifier),
+      ChainID: chainId
+    });
+    return bNfee.toString(10);
   } catch (err) {
+    console.error(err);
     return ZERO;
   }
 }

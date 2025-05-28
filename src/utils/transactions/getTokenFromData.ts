@@ -31,8 +31,10 @@ export function getTokenFromData(data?: string): {
   }
 
   const isTokenTransfer = data.startsWith(TransactionTypesEnum.DCDTTransfer);
-  const nftTransfer =
+  const isNftTransfer =
     data.startsWith(TransactionTypesEnum.DCDTNFTTransfer) && data.includes('@');
+  const isNftBurn =
+    data.startsWith(TransactionTypesEnum.DCDTNFTBurn) && data.includes('@');
 
   if (isTokenTransfer) {
     const [, encodedToken, encodedAmount] = data.split('@');
@@ -56,7 +58,7 @@ export function getTokenFromData(data?: string): {
     }
   }
 
-  if (nftTransfer) {
+  if (isNftTransfer) {
     try {
       const [, /*DCDTNFTTransfer*/ collection, nonce, quantity, receiver] =
         decodeData(data);
@@ -70,6 +72,20 @@ export function getTokenFromData(data?: string): {
           collection,
           nonce,
           receiver: new Address(receiver).bech32()
+        };
+      }
+    } catch (err) {}
+  }
+
+  if (isNftBurn) {
+    try {
+      const [, /*DCDTNFTBurn*/ collection, nonce, quantity] = decodeData(data);
+      if ([collection, nonce, quantity].every((el) => Boolean(el))) {
+        return {
+          tokenId: `${collection}-${nonce}`,
+          amount: new BigNumber(quantity, 16).toString(10),
+          collection,
+          nonce
         };
       }
     } catch (err) {}

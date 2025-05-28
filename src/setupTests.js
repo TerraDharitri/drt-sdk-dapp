@@ -1,7 +1,7 @@
 /**************
  * MSW config code
  ***************/
-
+import 'isomorphic-fetch';
 import { server } from './__mocks__/server';
 
 // Establish API mocking before all tests.
@@ -61,7 +61,9 @@ jest.mock(
 );
 
 jest.mock('react-redux/lib/utils/Subscription', () => {
-  const { createSubscription } = require('./__mocks__');
+  const {
+    createSubscription
+  } = require('./__mocks__/packages/createSubscription');
   return {
     __esModule: true,
     createSubscription

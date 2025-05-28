@@ -4,7 +4,7 @@
 
 [![NPM](https://img.shields.io/npm/v/@terradharitri/sdk-dapp.svg)](https://www.npmjs.com/package/@terradharitri/sdk-dapp) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
-See [Dapp template](https://template-dapp.dharitri.org/) for live demo or checkout usage in the [Github repo](https://github.com/TerraDharitri/drt-sdktemplate-dapp)
+See [Dapp template](https://template-dapp.dharitri.org/) for live demo or checkout usage in the [Github repo](https://github.com/TerraDharitri/drt-tempelate-dap)
 
 # Installation
 
@@ -34,6 +34,8 @@ yarn add @terradharitri/sdk-dapp --no-optional
 ```
 
 ### **If you're transitioning from dapp-core 1.x to @terradharitri/sdk-dapp (dapp-core 2.0), please read the [Migration guide](https://github.com/TerraDharitri/drt-sdk-dapp/wiki/Migration-guide-2.0)**
+
+### **As of @terradharitri/sdk-dapp@2.28.0 Node >=18 is required since Node 16 [reached its EOL](https://nodejs.org/en/blog/announcements/nodejs16-eol).**
 
 # Usage
 
@@ -311,6 +313,16 @@ you can easily import and use them.
 >
 ```
 
+If you have a custom Web Wallet provider you can integrate it by using the `customWalletAddress` prop:
+
+```jsx
+<WebWalletLoginButton
+  callbackRoute="/dashboard"
+  loginButtonText="Custom Web Wallet login"
+  customWalletAddress="https://custom-web-wallet.com"
+>
+```
+
 All login buttons and hooks accept a prop called `redirectAfterLogin` which specifies of the user should be redirected automatically after login.
 The default value for this boolean is false, since most apps listen for the "isLoggedIn" boolean and redirect programmatically.
 
@@ -545,7 +557,6 @@ The API for sending sync transactions is a function called **sendBatchTransactio
 
 It can be used to send a group of transactions (that ca be synchronized) with minimum information:
 
-
 ```typescript
 const { batchId, error } = await sendBatchTransactions({
     transactions: [
@@ -609,9 +620,11 @@ It returns a Promise that will be fulfilled with `{error?: string; batchId: stri
 - `error` is the error that can appear during the signing/sending process.
 
 ### How to synchronize transactions ?
+
 `sendBatchTransactions` accepts an argument `transactions` which is an array of transactions arrays.
 Each transaction array will be sent to the blockchain in the order they are provided.
 Having the example above, the transactions will be sent in the following order:
+
 - `tx1`
 - `tx2, tx3`
 
@@ -624,7 +637,6 @@ Be sure to save the `sessionId` passed to the batch. We recommend to generate a 
 ```typescript
 import { sendBatchTransactions } from '@terradharitri/sdk-dapp/services/transactions/sendBatchTransactions';
 import { useSendBatchTransactions } from '@terradharitri/sdk-dapp/hooks/transactions/batch/useSendBatchTransactions';
-
 
 const { send: sendBatchToBlockchain } = useSendBatchTransactions();
 
@@ -776,8 +788,10 @@ import { TransactionsTracker } from "your/module";
     }
   }}
 >
-````
+```
+
 The props passed to the `TransactionsTracker` component are:
+
 ```typescript
 export interface TransactionsTrackerType {
   getTransactionsByHash?: GetTransactionsByHashesType;
@@ -785,6 +799,7 @@ export interface TransactionsTrackerType {
   onFail?: (sessionId: string | null, errorMessage?: string) => void;
 }
 ```
+
 Also, the same props can be passed to the `useTransactionsTracker` and `useBatchTransactionsTracker` hooks.
 
 ```typescript
@@ -941,7 +956,12 @@ The sdk-dapp library exposes bundles for both CommonJS and ESModules, however, i
 moduleNameMapper: {
     '@terradharitri/sdk-dapp/(.*)':
       '<rootDir>/node_modules/@terradharitri/sdk-dapp/__commonjs/$1.js'
-}
+},
+```
+
+You may need in your setupJest.js file do:
+```javascript
+import 'isomorphic-fetch';
 ```
 
 # sdk-dapp exports
@@ -1192,7 +1212,7 @@ Due to this, you cannot yet use the DappProvider wrapping logic in a React Nativ
 
 We have a couple of solutions in mind and are actively working on exploring ways to overcome these limitations.
 Until then, you can use @terradharitri/drtjs libraries and @walletconnect to connect to the xPortal App.
-There are also guide for doing this from the [community](https://github.com/S4F-IT/durian-integration/blob/master/README.md)
+There are also guide for doing this from the [community](https://github.com/sash20m/react-native-xportal)
 
 ## Next.js support
 
@@ -1225,6 +1245,88 @@ The Project ID can be generated for free here: [https://cloud.walletconnect.com/
 The WalletConnect Project ID grants you access to the [WalletConnect Cloud Relay](https://docs.walletconnect.com/2.0/cloud/relay) that securely manages communication between the device and the dApp.
 
 If the Project ID is valid, the new functionality will work out of the box with the [Transactions and Message signing](#transactions) flows.
+
+# Experimental features
+## ExperimentalWebviewProvider
+Serves as an interface for communication between a dApp and a parent window within an iframe or webview context.
+Its primary purpose is to enable embedding the dApp in a parent window and facilitating communication with it.
+
+### Usage
+The ExperimentalWebviewProvider is primarily utilized by the WebWallet Hub and the xPortal Hub.
+It implements all the methods of a signing provider, sending the transactions or messages to the parent window for signing.
+
+### Implementation
+The parent window must implement specific methods to handle requests, such as `signTransaction` and `signMessage`.
+These methods are called by the ExperimentalWebviewProvider to initiate the signing process.
+
+```jsx
+const handleMessages = (event: MessageEvent<RequestMessageType>) => {
+  const { type, payload } = event.data;
+
+  switch (type) {
+    case CrossWindowProviderRequestEnums.loginRequest:
+      // handle login request resulting in accessToken
+      iframe.target.contentWindow.postMessage({
+        type: CrossWindowProviderResponseEnums.loginResponse,
+        payload: {
+          data: {
+            address,
+            accessToken
+          }
+        },
+      })
+      break;
+    case CrossWindowProviderRequestEnums.signTransactionsRequest:
+      const transactions = payload.map((plainTransactionObject) =>
+        Transaction.fromPlainObject(plainTransactionObject)
+      );
+
+      // handle transaction signing resulting in signedTransactions
+
+      iframe.target.contentWindow.postMessage({
+        type: CrossWindowProviderResponseEnums.signTransactionsResponse,
+        payload: {
+          data: signedTransactions
+        },
+      })
+      break;
+    case CrossWindowProviderRequestEnums.signMessageRequest:
+      const messageToSign = payload?.message;
+
+      // handle message signing resulting in signature
+
+      windowTarget.postMessage({
+        type: CrossWindowProviderResponseEnums.signMessageResponse,
+        payload: {
+          data: {
+            signature,
+            status: SignMessageStatusEnum.signed
+          }
+        },
+      })
+      break;
+    default:
+      // handle other message types
+      break;
+  }
+};
+
+window.addEventListener('message', handleMessages);
+```
+
+### Development Status
+It's important to note that the `ExperimentalWebviewProvider` is still under development and should be used with caution.
+As such, it may undergo changes or updates that could affect its functionality.
+
+### Integration Guide
+For applications utilizing `@terradharitri/sdk-dapp` and aiming to interact with the parent window, integration involves upgrading to the latest version of `@terradharitri/sdk-dapp`
+and setting the iframe or webview URL. This URL should include the access token as a query parameter.
+
+### Example Integration
+```jsx
+<iframe src="https://your-dapp.com?accessToken=yourAccessToken" />
+<Webview source={{ uri: "https://your-dapp.com?accessToken=yourAccessToken" }} />
+```
 
 ## Roadmap
 

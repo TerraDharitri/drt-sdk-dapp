@@ -1,40 +1,22 @@
-import React, { useRef } from 'react';
-
-import { useWalletConnectV2Login } from 'hooks/login/useWalletConnectV2Login';
+import React from 'react';
+import { withStyles, WithStylesImportType } from 'hocs/withStyles';
 import { ModalContainer } from 'UI/ModalContainer';
-
 import { WalletConnectLoginModalPropsType } from './types';
-import styles from './walletConnectLoginContainerStyles.scss';
 import { WalletConnectLoginContent } from './WalletConnectLoginContent';
 
-export const WalletConnectLoginContainer = (
-  props: WalletConnectLoginModalPropsType
+const WalletConnectLoginContainerComponent = (
+  props: WalletConnectLoginModalPropsType & WithStylesImportType
 ) => {
   const {
-    onClose,
     className,
+    onClose,
     showLoginContent,
+    showLoginModal,
     wrapContentInsideModal,
-    callbackRoute,
-    token,
-    nativeAuth,
-    onLoginRedirect,
-    logoutRoute
+    styles
   } = props;
 
-  const canLoginRef = useRef<boolean>(true);
-
-  const [, , { cancelLogin }] = useWalletConnectV2Login({
-    callbackRoute,
-    token,
-    nativeAuth,
-    onLoginRedirect,
-    logoutRoute,
-    canLoginRef
-  });
-
-  const onCloseModal = async () => {
-    await cancelLogin();
+  const onCloseModal = () => {
     onClose?.();
   };
 
@@ -43,7 +25,7 @@ export const WalletConnectLoginContainer = (
   }
 
   if (!wrapContentInsideModal) {
-    return <WalletConnectLoginContent {...props} canLoginRef={canLoginRef} />;
+    return <WalletConnectLoginContent {...props} />;
   }
 
   return (
@@ -52,16 +34,30 @@ export const WalletConnectLoginContainer = (
       modalConfig={{
         headerText: 'Login using the xPortal App',
         showHeader: true,
-        modalContentClassName: styles.xPortalModalDialogContent,
-        modalHeaderClassName: styles.xPortalModalHeader,
-        modalHeaderTextClassName: styles.xPortalModalHeaderText,
-        modalCloseButtonClassName: styles.xPortalModalCloseButton,
-        modalBodyClassName: styles.xPortalModalBody,
-        modalDialogClassName: styles.xPortalLoginContainer
+        modalContentClassName: styles?.xPortalModalDialogContent,
+        modalHeaderClassName: styles?.xPortalModalHeader,
+        modalHeaderTextClassName: styles?.xPortalModalHeaderText,
+        modalCloseButtonClassName: styles?.xPortalModalCloseButton,
+        modalBodyClassName: styles?.xPortalModalBody,
+        modalDialogClassName: styles?.xPortalLoginContainer
       }}
       onClose={onCloseModal}
+      visible={showLoginModal}
     >
-      <WalletConnectLoginContent {...props} canLoginRef={canLoginRef} />
+      <WalletConnectLoginContent {...props} />
     </ModalContainer>
   );
 };
+
+export const WalletConnectLoginContainer = withStyles(
+  WalletConnectLoginContainerComponent,
+  {
+    ssrStyles: () =>
+      import(
+        'UI/walletConnect/WalletConnectLoginContainer/walletConnectLoginContainerStyles.scss'
+      ),
+    clientStyles: () =>
+      require('UI/walletConnect/WalletConnectLoginContainer/walletConnectLoginContainerStyles.scss')
+        .default
+  }
+);

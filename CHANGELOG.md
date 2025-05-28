@@ -6,7 +6,372 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
+## [[v2.32.5]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1173)] - 2024-03-14
+- [Fixed username trim removes information after dot](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1172)
+
+## [[v2.32.4]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1171)] - 2024-05-13
+  - [Fixed webview custom message method](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1170)
+
+## [[v2.32.3]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1169)] - 2024-04-25
+- [Fixed sdk-web-wallet-cross-window-provider `console.log`](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1169)
+
+## [[v2.32.2]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1168)] - 2024-04-25
+- [Changed sdk-web-wallet-cross-window-provider imports & upgraded package](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1167)
+
+## [[v2.32.1]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1166)] - 2024-04-25
+- [ExperimentalWebviewProvider: Fix incoming messages from android webview](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1165)
+- [Added FF Windows to browser constants](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1164)
+
+## [[v2.32.0]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1161)] - 2024-04-23
+- [ExperimentalWebviewProvider: fix android communication](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1163)
+- [Added `sdk-dapp-utils` and removed Cross-Window export files](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1162)
+- [Extract MultiDcdtTrasfer parser for multiple transactions in a separate function](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1157)
+- [Fixed `AuthenticatedRoutesWrapper` redirects to unlock route during webview login](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1160)
+
+## [[v2.31.6]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1159)] - 2024-04-23
+- [Changed sdk-web-wallet-cross-window-provider imports & upgraded package](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1158)
+
+## [[v2.31.5]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1156)] - 2024-04-18
+- [Removed sdk-web-wallet-cross-window-provider with `lit` webcomponents](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1155)
+
+## [[v2.31.4]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1154)] - 2024-04-18
+
+- [Removed unnecessary address check](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1153)
+- [Updated the WalletConnect provider to 4.1.2 (@walletconnect 2.12.2)](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1152)
+
+## [[v2.31.3]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1151)] - 2024-04-16
+
+- [Fix webview-provider SSR support](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1150)
+
+## [[v2.31.2]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1149)] - 2024-04-16
+
+- [Upgrade sdk-web-wallet-cross-window-provider with webcomponents](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1148)
+
+## [[v2.31.1]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1147)] - 2024-04-16
+
+- [Upgrade sdk-web-wallet-cross-window-provider with webcomponents](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1146)
+
+## [[v2.31.0]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1145)] - 2024-04-12
+
+- [Integrate sdk-webview-provider](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1116)
+
+## [[v2.30.2]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1143)] - 2024-04-11
+
+- [ExperimentalWebviewProvider: fix mobile webview communication](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1144)
+- [Fixed address table select area](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1142)
+
+## [[v2.30.1]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1141)] - 2024-04-11
+
+- [ExperimentalWebviewProvider: fix mobile response](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1140)
+
+## [[v2.30.0]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1139)] - 2024-04-10
+
+- [ExperimentalWebviewProvider: Enhance mobile webview compatibility to provide comprehensive support.](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1138)
+
+## [[v2.29.2]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1137)] - 2024-04-09
+
+## [[v2.29.1]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1136)] - 2024-04-09
+
+- [Reverted ledger 2FA code to redirect URL instead of Cross-Window](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1135)
+
+## [[v2.29.0]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1134)] - 2024-04-09
+
+- [Added version version 2.29.0](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1133)
+
+## [[v2.29.0-beta.30]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1132)] - 2024-04-08
+
+- [Sync signed transactions fields with the corresponding fields from the API](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1131)
+- [Updated sdk-core version to 13.0.0](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1129)
+
+## [[v2.29.0-beta.29]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1128)] - 2024-04-08
+
+- [Fix error handling on sign message flow](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1127)
+
+## [[v2.29.0-beta.28]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1126)] - 2024-04-04
+
+- [ExperimentalWebviewProvider: fix cancel action on sign transactions flow](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1125)
+
+## [[v2.29.0-beta.27]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1124)] - 2024-04-04
+
+- [Changed signTransactions to prevent re-fetching of account during validation](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1123)
+
+## [[v2.29.0-beta.26]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1120)] - 2024-04-03
+
+- [Added SWR API calls](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1117)
+
+## [[v2.29.0-beta.25]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1119)] - 2024-04-03
+
+- [Fix transactions toast status in case of some failed transactions](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1118)
+
+## [[v2.29.0-beta.24]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1115)] - 2024-04-01
+
+- [Added sdk-core to peer dependencies](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1114)
+
+## [[v2.29.0-beta.23]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1113)] - 2024-04-01
+
+## [[v2.29.0-beta.22]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1112)] - 2024-04-01
+
+- [Added esbuild compilation options](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1111)
+
+## [[v2.29.0-beta.20]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1109)] - 2024-03-29
+
+- [Added metamask provider](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1108)
+
+## [[v2.29.0-beta.20]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1107)] - 2024-03-27
+
+- [Fixed Safari popup signing for CrossWindowProvider](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1106)
+
+## [[v2.29.0-beta.19]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1105)] - 2024-03-26
+
+- [Fixed cross-window ledger re-login when device is locked](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1104)
+
+## [[v2.29.0-beta.18]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1103)] - 2024-03-26
+
+- [Changed `logout()` with an extendable `options` parameter](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1102)
+
+## [[v2.29.0-beta.17]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1101)] - 2024-03-26
+
+- [Added LogoutListener to CustomComponents configuration](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1100)
+
+## [[v2.29.0-beta.16]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1099)] - 2024-03-25
+
+- [ExperimentalWebviewProvider: fix cancel actions](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1098)
+
+## [[v2.29.0-beta.15]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1097)] - 2024-03-25
+
+- [Fixed ledger cross-window login](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1096)
+
+## [[v2.29.0-beta.14]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1095)] - 2024-03-25
+
+- [Fixed sdk-core ledger signing issue](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1094)
+
+## [[v2.29.0-beta.13]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1093)] - 2024-03-23
+
+- [ExperimentalWebviewProvider: Fix cancel sign transactions flow](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1092)
+
+## [[v2.29.0-beta.12]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1091)] - 2024-03-21
+
+- [Upgrade sdk-core](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1090)
+
+## [[v2.29.0-beta.11]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1089)] - 2024-03-21
+
+- [Add protobufjs as dependency](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1088)
+
+## [[v2.29.0-beta.10]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1087)] - 2024-03-21
+
+- [ExperimentalWebviewProvider: "Cancel response" handling for the signTransactions and signMessage actions](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1086)
+
+## [[v2.29.0-beta.9]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1085)] - 2024-03-19
+
+- [Reverted change](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1085)
+
+## [[v2.29.0-beta.8]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1084)] - 2024-03-19
+
+- [Fixed wrong redirect to wallet on logout](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1083)
+
+## [[v2.29.0-beta.7]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1082)] - 2024-03-15
+
+- [Fixed nextjs build issue](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1081)
+
+## [[v2.29.0-beta.6]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1080)] - 2024-03-14
+
+- [Fixed web wallet URL construction on logout action](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1079)
+
+## [[v2.29.0-beta.5]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1078)] - 2024-03-14
+
+- [Added 2FA signing cancel action](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1077)
+
+## [[v2.29.0-beta.4]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1073)] - 2024-03-14
+
+- [Fixed different address than account address in account info](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1076)
+- [Changed 2FA signing to use wallet cross-window provider](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1075)
+
+## [[v2.29.0-beta.3]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1073)] - 2024-03-12
+
+- [Fixed WebWallet logout not working](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1074)
+
+## [[v2.29.0-beta.2]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1073)] - 2024-03-12
+
+- [Move axios in peerDependencies](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1023)
+- [Upgrade sdk packages](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1072)
+
+## [[v2.29.0-beta.1]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1071)] - 2024-03-12
+
+- [Added getOperationsDetails for retrieving visible operations](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1054)
+- [Fixed experimental webview provider initialization](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1070)
+
+## [[v2.29.0-beta.0]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1069)] - 2024-03-11
+
+- [Fixed types and file names](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1068)
+- [Add support for the new cross window functionality in web wallet](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1067)
+- [Update WalletConnect package and functionality](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1064)
+- [Fixed sign step signing and labels](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1060)
+- [Fixed signing multiple transactions with guarded ledger](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1059)
+- [Added getHasNativeAuth in order to see if nativeAuth has been configured on development mode](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1051)
+- [Added support for nativeAuth impersonate](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1049)
+- [Updated WalletConnectV2 account provider to be updated on new or existing session](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1050)
+
+## [[v2.28.8]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1062)] - 2024-03-07
+
+- [Fixed base64 utils conversion](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1061)
+
+## [[v2.28.7]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1048)] - 2024-02-13
+
+- [Updated AddressRow data-testids](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1047)
+
+## [[v2.28.6]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1044)] - 2024-02-08
+
+- [Added option to access URL search param from application load time in `useParseSignedTransactions`](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1042)
+- [Fixed wallet connect breaks login with other providers](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1043)
+- [Fixed possibly undefined payload on custom toasts](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1036)
+
+## [[v2.28.5]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1036)] - 2024-02-01
+
+- [Fixed logout with web wallet infinite loop](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1036)
+
+## [[v2.28.4]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1035)] - 2024-02-01
+
+- [Reverted setting walletconnectV2 `accountProvider` on init](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1036)
+- [Fixed setting `loginToken` in `nativeAuthService` losing previous state](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1034)
+- [Fixed setting walletconnectV2 `accountProvider` on init](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1033)
+
+## [[v2.28.3]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1032)] - 2024-01-30
+
+- [Added transaction toast wrapper id](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1031)
+
+## [[v2.28.2]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1030)] - 2024-01-26
+
+- [Added support for `checkIsValidSender` with array option](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1029)
+
+## [[v2.28.1]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1028)] - 2024-01-25
+
+- [Added support for Web Wallet multisig token login](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1027)
+- [Changed postMessage payload from string to plain object](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1025)
+
+## [[v2.28.0]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1022)] - 2024-01-11
+
+- [Updated the min required Node version to 18, updated packages](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1021)
+
+## [[v2.27.1]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1020)] - 2024-01-10
+
+- [Remove native auth token legacy support](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1018)
+
+## [[v2.27.0]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1017)] - 2024-01-09
+
+- [Added Experimental Webview Provider](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1012)
+
+## [[v2.26.7]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1013)] - 2024-01-08
+
+- [Prevent logout before webview login](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1012)
+
+## [[v2.26.6]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1011)] - 2024-01-05
+
+- [Add custom request option for WC button](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1010)
+
+## [[v2.26.5]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1009)] - 2024-01-04
+
+- [Fixed provider initialised check](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1008)
+
+## [[v2.26.4]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1007)] - 2024-01-04
+
+- [Prevent redirects on logout if the provider is both of wallet type and initialised](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1006)
+
+## [[v2.26.3]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1005)] - 2024-01-03
+
+- [Fix logout issue with web-wallet](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1004)
+
+## [[v2.26.2]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1003)] - 2023-12-21
+
+- [Adds custom message request capability to webview provider](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1002)
+
+## [[v2.26.1]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1001)] - 2023-12-21
+
+- [Remove sdk-network-providers from the dependencies](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1000)
+
+## [[v2.26.0]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/998)] - 2023-12-20
+
+- [Prevent logout action when not logged in or provider not initialized](https://github.com/TerraDharitri/drt-sdk-dapp/pull/997)
+- [Fix cancel sign message toast](https://github.com/TerraDharitri/drt-sdk-dapp/pull/995)
+- [⚠️ Breaking change: message signing URL to use `addOriginToLocationPath`](https://github.com/TerraDharitri/drt-sdk-dapp/pull/994)
+
+## [[v2.25.2]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/993)] - 2023-12-18
+
+- [Upgrade sdks versions](https://github.com/TerraDharitri/drt-sdk-dapp/pull/992)
+
+## [[v2.25.1]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/991)] - 2023-12-14
+
+- [Prevent provider logout when not logged in or initialized](https://github.com/TerraDharitri/drt-sdk-dapp/pull/990)
+
+## [[v2.25.0]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/988)] - 2023-12-14
+
+- [Added latest `axios` version](https://github.com/TerraDharitri/drt-sdk-dapp/pull/989)
+- [Prevent redirect on logout if `callbackURL` is the current URL](https://github.com/TerraDharitri/drt-sdk-dapp/pull/987)
+- [Fix sign message with web wallet provider](https://github.com/TerraDharitri/drt-sdk-dapp/pull/985)
+- [⚠️ Breaking change: Fix typo in AxiosInterceptor](https://github.com/TerraDharitri/drt-sdk-dapp/pull/984)
+
+## [[v2.24.4]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/983)] - 2023-12-11
+
+- [Add entire dappConfig into redux store](https://github.com/TerraDharitri/drt-sdk-dapp/pull/982)
+- [Fix CSS injection on SSR/Client side](https://github.com/TerraDharitri/drt-sdk-dapp/pull/981)
+
+## [[v2.24.3]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/979)] - 2023-11-29
+
+- [Removed `senderUsername` and `receiverUsername` for `SetGuardian` tx](https://github.com/TerraDharitri/drt-sdk-dapp/pull/978)
+- [Added extra gas fee for guardian transactions](https://github.com/TerraDharitri/drt-sdk-dapp/pull/977)
+
+## [[v2.24.2]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/976)] - 2023-11-28
+
+- [Fixed logout for wallet provider](https://github.com/TerraDharitri/drt-sdk-dapp/pull/975)
+
+## [[v2.24.1]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/974)] - 2023-11-28
+
+- [Fixed logout redirect loop](https://github.com/TerraDharitri/drt-sdk-dapp/pull/973)
+
+## [[v2.24.0]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/972)] - 2023-11-24
+
+- [Full SSR support](https://github.com/TerraDharitri/drt-sdk-dapp/pull/971)
+
+## [[v2.23.1]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/970)] - 2023-11-20
+
+- [Changed transaction sender validation](https://github.com/TerraDharitri/drt-sdk-dapp/pull/969)
+
+## [[v2.23.0]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/956)] - 2023-10-13
+
+- [Added xAlias login methods](https://github.com/TerraDharitri/drt-sdk-dapp/pull/966)
+- [Added `sdk-dapp-version` to web wallet communication](https://github.com/TerraDharitri/drt-sdk-dapp/pull/964)
+- [Fixed missing `await` for `refreshAccount` in `useCheckTransactionStatus`](https://github.com/TerraDharitri/drt-sdk-dapp/pull/960)
+- [Fixed `MultiDCDTNFTTransfer` data field highlight and signing](https://github.com/TerraDharitri/drt-sdk-dapp/pull/958)
+
+## [[v2.22.5]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/956)] - 2023-10-13
+
+- [Prevent "document/window is undefined" issue on Next.js](https://github.com/TerraDharitri/drt-sdk-dapp/pull/955)
+- [Update the WalletConnect provider to 4.0.4 (@walletconnect 2.10.2)](https://github.com/TerraDharitri/drt-sdk-dapp/pull/957)
+
+## [[v2.22.4]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/954)] - 2023-10-13
+
+- [Integration tests](https://github.com/TerraDharitri/drt-sdk-dapp/pull/953)
+
+## [[v2.22.3]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/949)] - 2023-10-12
+
+- [Add used indexes to addressTable component](https://github.com/TerraDharitri/drt-sdk-dapp/pull/948)
+
+## [[v2.22.2]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/947)] - 2023-10-12
+
+- [Added `DCDTNFTBurn` to `getTokenFromData` helper](https://github.com/TerraDharitri/drt-sdk-dapp/pull/946)
+- [Added page reload on login redirect](https://github.com/TerraDharitri/drt-sdk-dapp/pull/944)
+- [Fixed `ModalContainer` not working in `StrictMode`](https://github.com/TerraDharitri/drt-sdk-dapp/pull/943)
+
+## [[v2.22.1]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/942)] - 2023-10-02
+
+- [Fixed `WebWalletLoginButtonPropsType` interface](https://github.com/TerraDharitri/drt-sdk-dapp/pull/942)
+
+## [[v2.22.0]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/941)] - 2023-10-02
+
+- [Added support for custom Web Wallet address](https://github.com/TerraDharitri/drt-sdk-dapp/pull/940)
+
 ## [[v2.21.1]](https://github.com/TerraDharitri/drt-sdk-dapp/pull/939)] - 2023-09-29
+
 - [Added `getDefaultCallbackUrl` helper](https://github.com/TerraDharitri/drt-sdk-dapp/pull/936)
 - [Return native auth token when refreshing the token](https://github.com/TerraDharitri/drt-sdk-dapp/pull/938)
 

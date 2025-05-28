@@ -1,21 +1,24 @@
 import React from 'react';
 import classNames from 'classnames';
-import globalStyles from 'assets/sass/main.scss';
+import { withStyles, WithStylesImportType } from 'hocs/withStyles';
 import { useGetAccount, useSignTransactionsWithDevice } from 'hooks';
 import { SignModalPropsType } from 'types';
 import { ModalContainer } from 'UI/ModalContainer/ModalContainer';
+import { Loader } from '../../Loader';
 import { SignStep } from './SignStep';
-import styles from './signWithDeviceModalStyles.scss';
 
-export const SignWithDeviceModal = ({
+const SignWithDeviceModalComponent = ({
   handleClose,
+  handleSubmit,
   error,
   className = 'dapp-device-modal',
   verifyReceiverScam = true,
   GuardianScreen,
   title = 'Confirm transaction',
-  signStepInnerClasses
-}: SignModalPropsType) => {
+  signStepInnerClasses,
+  globalStyles,
+  styles
+}: SignModalPropsType & WithStylesImportType) => {
   const { address } = useGetAccount();
 
   const {
@@ -35,10 +38,17 @@ export const SignWithDeviceModal = ({
     verifyReceiverScam,
     hasGuardianScreen: Boolean(GuardianScreen)
   });
+
+  const isLoading = currentTransaction == null;
+
   const classes = {
-    wrapper: classNames(styles.modalContainer, styles.walletConnect, className),
-    container: classNames(globalStyles.card, globalStyles.container),
-    cardBody: globalStyles.cardBody
+    wrapper: classNames(
+      styles?.modalContainer,
+      styles?.walletConnect,
+      className
+    ),
+    container: classNames(globalStyles?.card, globalStyles?.container),
+    cardBody: globalStyles?.cardBody
   };
 
   return (
@@ -47,28 +57,43 @@ export const SignWithDeviceModal = ({
       modalConfig={{
         modalDialogClassName: classes.wrapper
       }}
-      visible={currentTransaction != null}
+      visible
     >
       <div className={classes.cardBody}>
-        <SignStep
-          address={address}
-          onSignTransaction={onSignTransaction}
-          allTransactions={allTransactions}
-          onPrev={onPrev}
-          GuardianScreen={GuardianScreen}
-          signedTransactions={signedTransactions}
-          setSignedTransactions={setSignedTransactions}
-          waitingForDevice={waitingForDevice}
-          currentStep={currentStep}
-          isLastTransaction={isLastTransaction}
-          callbackRoute={callbackRoute}
-          currentTransaction={currentTransaction}
-          handleClose={onAbort}
-          error={error}
-          title={title}
-          signStepInnerClasses={signStepInnerClasses}
-        />
+        {isLoading ? (
+          <Loader />
+        ) : (
+          <SignStep
+            address={address}
+            allTransactions={allTransactions}
+            callbackRoute={callbackRoute}
+            currentStep={currentStep}
+            currentTransaction={currentTransaction}
+            error={error}
+            GuardianScreen={GuardianScreen}
+            handleClose={onAbort}
+            handleSubmit={handleSubmit}
+            isLastTransaction={isLastTransaction}
+            onPrev={onPrev}
+            onSignTransaction={onSignTransaction}
+            setSignedTransactions={setSignedTransactions}
+            signStepInnerClasses={signStepInnerClasses}
+            signedTransactions={signedTransactions}
+            title={title}
+            waitingForDevice={waitingForDevice}
+          />
+        )}
       </div>
     </ModalContainer>
   );
 };
+
+export const SignWithDeviceModal = withStyles(SignWithDeviceModalComponent, {
+  ssrStyles: () =>
+    import(
+      'UI/SignTransactionsModals/SignWithDeviceModal/signWithDeviceModalStyles.scss'
+    ),
+  clientStyles: () =>
+    require('UI/SignTransactionsModals/SignWithDeviceModal/signWithDeviceModalStyles.scss')
+      .default
+});

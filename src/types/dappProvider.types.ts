@@ -1,14 +1,14 @@
-import { SignableMessage, Transaction } from '@terradharitri/sdk-core';
+import { Transaction } from '@terradharitri/sdk-core';
+import type { IDAppProviderBase } from '@terradharitri/sdk-dapp-utils/out/models/dappProviderBase';
 import { EngineTypes } from 'utils/walletconnect/__sdkWalletconnectProvider';
+import { Nullable } from './transactions.types';
 
 export interface DappOptions {
   callbackUrl?: string;
 }
 
-export interface IDappProvider {
+export interface IDappProvider extends IDAppProviderBase {
   init?(): Promise<boolean>;
-  login?(options?: DappOptions): Promise<string>;
-  logout(options?: DappOptions): Promise<boolean>;
   getAddress(): Promise<string>;
   isInitialized(): boolean;
   isConnected(): Promise<boolean>;
@@ -16,18 +16,6 @@ export interface IDappProvider {
     transaction: Transaction,
     options?: DappOptions
   ): Promise<Transaction | void>;
-  signTransaction(
-    transaction: Transaction,
-    options?: DappOptions
-  ): Promise<Transaction>;
-  signTransactions(
-    transactions: Transaction[],
-    options?: DappOptions
-  ): Promise<Transaction[]>;
-  signMessage<T extends SignableMessage>(
-    message: T,
-    options: DappOptions
-  ): Promise<T>;
   sendCustomMessage?({
     method,
     params
@@ -39,5 +27,6 @@ export interface IDappProvider {
     request: EngineTypes.RequestParams['request'];
   }): Promise<any>;
   ping?(): Promise<boolean>;
-  relogin?: () => Promise<void>;
+  relogin?: () => Promise<Nullable<string | void>>;
+  setShouldShowConsentPopup?: (shouldShow: boolean) => void;
 }

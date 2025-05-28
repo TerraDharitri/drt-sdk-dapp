@@ -2,22 +2,12 @@ import React from 'react';
 import { Address } from '@terradharitri/sdk-core/out';
 import classNames from 'classnames';
 
-import { useGetRewaPrice, useGetNetworkConfig } from 'hooks';
-import { useGetTokenDetails } from 'hooks/transactions/useGetTokenDetails';
+import { withStyles, WithStylesImportType } from 'hocs/withStyles';
 import { ActiveLedgerTransactionType, MultiSignTransactionType } from 'types';
-import { NftEnumType } from 'types/tokens.types';
 import { TransactionData } from 'UI/TransactionData';
-import { getRewaLabel } from 'utils/network/getRewaLabel';
-import { formatAmount } from 'utils/operations/formatAmount';
-import { isTokenTransfer } from 'utils/transactions/isTokenTransfer';
-import { getIdentifierType } from 'utils/validation/getIdentifierType';
 
 import { useSignStepsClasses } from '../hooks';
-import { ConfirmAmount } from './components/ConfirmAmount';
-import { ConfirmFee } from './components/ConfirmFee';
-import { ConfirmReceiver } from './components/ConfirmReceiver';
-import { NftSftPreviewComponent } from './components/NftSftPreviewComponent';
-import styles from './signStepBodyStyles.scss';
+import { ConfirmAmount, ConfirmFee, ConfirmReceiver } from './components';
 
 export interface SignStepInnerClassesType {
   buttonsWrapperClassName?: string;
@@ -40,18 +30,17 @@ export interface SignStepBodyPropsType {
   isGuarded?: boolean;
 }
 
-export const SignStepBody = ({
+const SignStepBodyComponent = ({
   currentTransaction,
   error,
-  signStepInnerClasses
-}: SignStepBodyPropsType) => {
-  const rewaLabel = getRewaLabel();
-
+  signStepInnerClasses,
+  globalStyles,
+  styles
+}: SignStepBodyPropsType & WithStylesImportType) => {
   if (!currentTransaction) {
     return null;
   }
 
-  const { network } = useGetNetworkConfig();
   const {
     inputGroupClassName,
     inputLabelClassName,
@@ -59,112 +48,37 @@ export const SignStepBody = ({
     errorClassName
   } = signStepInnerClasses || {};
 
-  const { tokenId, nonce, amount, multiTxData, receiver } =
+  const { tokenId, multiTxData, receiver, amount } =
     currentTransaction.transactionTokenInfo;
-
-  const isTokenTransaction = Boolean(
-    tokenId && isTokenTransfer({ tokenId, drtLabel: rewaLabel })
-  );
-
-  const { isNft, isRewa, isDcdt } = getIdentifierType(tokenId);
-
-  // If the token has a nonce means that this is an NFT. Eg: TokenId=TOKEN-1hfr, nonce=123 => NFT id=TOKEN-1hfr-123
-  const appendedNonce = nonce ? `-${nonce}` : '';
-  const nftId = `${tokenId}${appendedNonce}`;
-
-  const { tokenDecimals, tokenAvatar, tokenLabel, type, dcdtPrice } =
-    useGetTokenDetails({
-      tokenId: nonce && nonce?.length > 0 ? nftId : tokenId
-    });
 
   const transactionReceiver = multiTxData
     ? new Address(receiver).bech32()
     : currentTransaction.transaction.getReceiver().toString();
 
-  const getFormattedAmount = ({ addCommas }: { addCommas: boolean }) =>
-    formatAmount({
-      input: isTokenTransaction
-        ? amount
-        : currentTransaction.transaction.getValue().toString(),
-      decimals: isTokenTransaction ? tokenDecimals : Number(network.decimals),
-      digits: Number(network.digits),
-      showLastNonZeroDecimal: false,
-      addCommas
-    });
-
-  const formattedAmount = getFormattedAmount({ addCommas: true });
-  const rawAmount = getFormattedAmount({ addCommas: false });
-
   const scamReport = currentTransaction.receiverScamInfo;
-  const classes = useSignStepsClasses(scamReport);
-
-  const token = isNft ? nftId : tokenId || rewaLabel;
-  const shownAmount = isNft ? amount : formattedAmount;
-
-  const { price: rewaPrice } = useGetRewaPrice();
-  let tokenPrice;
-
-  if (isRewa && rewaPrice) {
-    tokenPrice = rewaPrice;
-  }
-
-  if (isNft) {
-    tokenPrice = null;
-  }
-
-  if (isDcdt && type) {
-    tokenPrice = dcdtPrice ?? null;
-  }
-
-  const shouldShowAmount =
-    isRewa || isDcdt || (Boolean(type) && type !== NftEnumType.NonFungibleDCDT);
+  const classes = useSignStepsClasses(scamReport, globalStyles);
+  const data = currentTransaction.transaction.getData().toString();
 
   return (
-    <div className={styles.summary}>
-      <div className={styles.fields}>
-        {isNft && type && (
-          <NftSftPreviewComponent
-            txType={type}
-            tokenLabel={tokenLabel}
-            tokenId={tokenId}
-            tokenAvatar={tokenAvatar}
-          />
-        )}
+    <div className={styles?.summary}>
+      <div className={styles?.fields}>
+        <ConfirmAmount currentTransaction={currentTransaction} />
 
         <ConfirmReceiver
           scamReport={scamReport}
           receiver={transactionReceiver}
+          amount={amount}
         />
 
-        <div className={styles.columns}>
-          {shouldShowAmount && (
-            <div className={styles.column}>
-              <ConfirmAmount
-                tokenAvatar={tokenAvatar}
-                formattedAmount={shownAmount}
-                rawAmount={rawAmount}
-                token={token}
-                tokenType={isRewa ? rewaLabel : type}
-                tokenPrice={tokenPrice}
-              />
-            </div>
-          )}
+        <ConfirmFee transaction={currentTransaction.transaction} />
 
-          <div className={styles.column}>
-            <ConfirmFee
-              tokenAvatar={tokenAvatar}
-              rewaLabel={rewaLabel}
-              transaction={currentTransaction.transaction}
-            />
-          </div>
-        </div>
-
-        {currentTransaction.transaction.getData() && (
+        {data && (
           <TransactionData
-            isScCall={!tokenId}
-            data={currentTransaction.transaction.getData().toString()}
-            highlight={multiTxData}
             className={inputGroupClassName}
+            data={data}
+            highlight={multiTxData}
+            isScCall={!tokenId}
+            transactionIndex={currentTransaction.transactionIndex}
             innerTransactionDataClasses={{
               transactionDataInputLabelClassName: inputLabelClassName,
               transactionDataInputValueClassName: inputValueClassName
@@ -181,3 +95,13 @@ export const SignStepBody = ({
     </div>
   );
 };
+
+export const SignStepBody = withStyles(SignStepBodyComponent, {
+  ssrStyles: () =>
+    import(
+      'UI/SignTransactionsModals/SignWithDeviceModal/components/signStepBodyStyles.scss'
+    ),
+  clientStyles: () =>
+    require('UI/SignTransactionsModals/SignWithDeviceModal/components/signStepBodyStyles.scss')
+      .default
+});

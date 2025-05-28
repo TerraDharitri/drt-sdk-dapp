@@ -1,35 +1,44 @@
 import React from 'react';
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import classNames from 'classnames';
+import BigNumber from 'bignumber.js';
 
+import { useGetAccountFromApi, ACCOUNTS_ENDPOINT } from 'apiCalls';
+import DharitriIconSimple from 'assets/icons/drt-icon-simple.svg';
 import { DataTestIdsEnum } from 'constants/index';
-import { useGetAccountFromApi } from 'hooks';
+import { withStyles } from 'hocs/withStyles';
+import { trimUsernameDomain } from 'hooks/account/helpers';
+import { CopyButton } from 'UI/CopyButton';
+import { ExplorerLink } from 'UI/ExplorerLink';
 import { LoadingDots } from 'UI/LoadingDots';
-import { isContract } from 'utils/smartContracts';
+import { Trim } from 'UI/Trim';
+import { isContract } from 'utils';
 
-import { ReceiverSubValue } from './components/ReceiverSubValue';
-import { ReceiverValue } from './components/ReceiverValue';
-import styles from './confirmReceiverStyles.scss';
+import { WithStylesImportType } from '../../../../../../hocs/useStyles';
 
-export interface ConfirmReceiverPropsType {
+export interface ConfirmReceiverPropsType extends WithStylesImportType {
+  amount: string;
+  label?: React.ReactNode;
   receiver: string;
-  scamReport: string | null;
   receiverUsername?: string;
+  scamReport: string | null;
 }
 
-export const ConfirmReceiver = ({
+const ConfirmReceiverComponent = ({
+  amount,
+  label,
   receiver,
+  receiverUsername,
   scamReport,
-  receiverUsername
+  styles
 }: ConfirmReceiverPropsType) => {
   const isSmartContract = isContract(receiver);
-
   const skipFetchingAccount = Boolean(isSmartContract || receiverUsername);
+  const isAmountZero = new BigNumber(amount).isZero();
 
   const {
-    account: usernameAccount,
-    loading: usernameAccountLoading,
+    data: usernameAccount,
+    isLoading: usernameAccountLoading,
     error: usernameAccountError
   } = useGetAccountFromApi(skipFetchingAccount ? null : receiver);
 
@@ -39,47 +48,80 @@ export const ConfirmReceiver = ({
     receiver && Boolean(foundReceiverUsername) && !usernameAccountError
   );
 
+  const defaultReceiverLabel = isAmountZero ? 'To interact with' : 'To';
+
   return (
-    <div className={styles.receiver}>
-      <span className={styles.label}>Receiver</span>
+    <div className={styles?.receiver}>
+      <div className={styles?.receiverLabelWrapper}>
+        <div className={styles?.receiverLabel}>
+          {label ?? defaultReceiverLabel}
+        </div>
 
-      {usernameAccountLoading ? (
-        <LoadingDots className={styles.loadingDots} />
-      ) : (
-        <span
-          data-testid={DataTestIdsEnum.confirmReceiver}
-          className={styles.valueWrapper}
-        >
-          <ReceiverValue
-            hasUsername={hasUsername}
-            receiverAddress={receiver}
-            receiverValue={receiverValue}
-          />
-        </span>
-      )}
+        {scamReport && (
+          <div className={styles?.receiverLabelScam}>
+            <span
+              className={styles?.receiverLabelScamText}
+              data-testid={DataTestIdsEnum.confirmScamReport}
+            >
+              {scamReport}
+            </span>
 
-      {usernameAccountLoading ? (
-        <LoadingDots
-          className={classNames(styles.loadingDots, styles.absolute)}
-        />
-      ) : (
-        <ReceiverSubValue hasUsername={hasUsername} receiver={receiver} />
-      )}
-
-      {scamReport && (
-        <div className={styles.scam}>
-          <span>
             <FontAwesomeIcon
               icon={faExclamationTriangle}
-              className={styles.icon}
+              className={styles?.receiverLabelScamIcon}
             />
+          </div>
+        )}
+      </div>
 
-            <small data-testid={DataTestIdsEnum.confirmScamReport}>
-              {scamReport}
-            </small>
-          </span>
+      {usernameAccountLoading ? (
+        <div className={styles?.receiverWrapper}>
+          <LoadingDots className={styles?.receiverLoading} />
+        </div>
+      ) : (
+        <div
+          className={styles?.receiverWrapper}
+          data-testid={DataTestIdsEnum.confirmReceiver}
+        >
+          <Trim text={receiver} className={styles?.receiverTrim} />
+
+          {hasUsername && !isSmartContract && (
+            <span className={styles?.receiverData}>
+              (<DharitriIconSimple className={styles?.receiverDataIcon} />
+              <span className={styles?.receiverDataUsername}>
+                {trimUsernameDomain(receiverValue)}
+              </span>
+              )
+            </span>
+          )}
+
+          {isSmartContract && (
+            <span className={styles?.receiverData}>
+              (
+              <span className={styles?.receiverDataUsername}>
+                Smart Contract
+              </span>
+              )
+            </span>
+          )}
+
+          <CopyButton text={receiver} className={styles?.receiverCopy} />
+          <ExplorerLink
+            page={`/${ACCOUNTS_ENDPOINT}/${receiver}`}
+            className={styles?.receiverExternal}
+          />
         </div>
       )}
     </div>
   );
 };
+
+export const ConfirmReceiver = withStyles(ConfirmReceiverComponent, {
+  ssrStyles: () =>
+    import(
+      'UI/SignTransactionsModals/SignWithDeviceModal/components/components/ConfirmReceiver/confirmReceiverStyles.scss'
+    ),
+  clientStyles: () =>
+    require('UI/SignTransactionsModals/SignWithDeviceModal/components/components/ConfirmReceiver/confirmReceiverStyles.scss')
+      .default
+});

@@ -3,7 +3,7 @@ import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { ProviderInitializer } from 'components/ProviderInitializer/ProviderInitializer';
 import { setExternalProvider } from 'providers/accountProvider';
-import { webviewProvider } from 'providers/webviewProvider';
+import { ExperimentalWebviewProvider } from 'providers/experimentalWebViewProvider/ExperimentalWebviewProvider';
 import { DappCoreContext } from 'reduxStore/DappProviderContext';
 import { persistor, store } from 'reduxStore/store';
 import { CustomNetworkType, EnvironmentsEnum, IDappProvider } from 'types';
@@ -12,6 +12,12 @@ import { AppInitializer } from 'wrappers/AppInitializer';
 import { CustomComponents, CustomComponentsType } from './CustomComponents';
 
 export { DappConfigType };
+
+const setWebviewProvider = () => {
+  const providerInstance = ExperimentalWebviewProvider.getInstance();
+  providerInstance.init?.();
+  setExternalProvider(providerInstance);
+};
 
 export interface DappProviderPropsType {
   children: React.ReactNode | ReactElement;
@@ -39,7 +45,7 @@ export const DappProvider = ({
   if (externalProvider != null) {
     setExternalProvider(externalProvider);
   } else if (dappConfig?.shouldUseWebViewProvider) {
-    setExternalProvider(webviewProvider);
+    setWebviewProvider();
   }
 
   return (

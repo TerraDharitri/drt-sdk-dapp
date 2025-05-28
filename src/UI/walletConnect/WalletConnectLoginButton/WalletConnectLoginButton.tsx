@@ -30,14 +30,16 @@ export const WalletConnectLoginButton = ({
   showScamPhishingAlert,
   title = 'Login with the xPortal App',
   token,
-  wrapContentInsideModal = true
+  wrapContentInsideModal = true,
+  customRequestMethods = []
 }: WalletConnectLoginButtonPropsType) => {
   const {
     disabledConnectButton,
     handleCloseModal,
     handleOpenModal,
     shouldRenderButton,
-    showContent
+    showContent,
+    showModal
   } = useGetModalLoginMethods({
     hideButtonWhenModalOpens,
     onContentHide,
@@ -78,10 +80,12 @@ export const WalletConnectLoginButton = ({
         onClose={handleCloseModal}
         onLoginRedirect={onLoginRedirect}
         showLoginContent={showContent}
+        showLoginModal={showModal}
         showScamPhishingAlert={showScamPhishingAlert}
         title={title}
         token={token}
         wrapContentInsideModal={wrapContentInsideModal}
+        customRequestMethods={customRequestMethods}
       />
     </>
   );

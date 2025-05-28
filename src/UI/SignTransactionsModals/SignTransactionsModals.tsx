@@ -4,9 +4,11 @@ import { useGetLoginInfo } from 'hooks';
 import { LoginMethodsEnum } from 'types';
 
 import { ConfirmationScreen, DeviceConfirmationScreen } from './components';
+import { SignWithCrossWindowWalletModal } from './SignWithCrossWindowWalletModal';
 import { SignWithExtensionModal } from './SignWithExtensionModal';
 import { SignWithExtraModal } from './SignWithExtraModal';
 import { SignWithLedgerModal } from './SignWithLedgerModal';
+import { SignWithMetamaskModal } from './SignWithMetamaskModal';
 import { SignWithOperaModal } from './SignWithOperaModal';
 import { SignWithWalletConnectModal } from './SignWithWalletConnectModal';
 import {
@@ -35,7 +37,10 @@ export const SignTransactionsModals = ({
     WalletConnect:
       CustomConfirmScreens?.WalletConnect ?? SignWithWalletConnectModal,
     Extension: CustomConfirmScreens?.Extension ?? SignWithExtensionModal,
+    Metamask: CustomConfirmScreens?.Metamask ?? SignWithMetamaskModal,
     Opera: CustomConfirmScreens?.Opera ?? SignWithOperaModal,
+    CrossWindow:
+      CustomConfirmScreens?.CrossWindow ?? SignWithCrossWindowWalletModal,
     // The purpose of having this is to have a consistent flow of transaction signing.
     // The logic for redirecting to the web wallet is placed in the ConfirmationScreen component,
     // so we have to render that component when we are logged in with the web wallet provider
@@ -60,7 +65,6 @@ export const SignTransactionsModals = ({
     },
     [verifyReceiverScam, className]
   );
-
   switch (loginMethod) {
     case LoginMethodsEnum.ledger:
       return renderScreen({ Screen: ConfirmScreens.Ledger, isDevice: true });
@@ -68,8 +72,12 @@ export const SignTransactionsModals = ({
       return renderScreen({ Screen: ConfirmScreens.WalletConnect });
     case LoginMethodsEnum.extension:
       return renderScreen({ Screen: ConfirmScreens.Extension });
+    case LoginMethodsEnum.metamask:
+      return renderScreen({ Screen: ConfirmScreens.Metamask });
     case LoginMethodsEnum.opera:
       return renderScreen({ Screen: ConfirmScreens.Opera });
+    case LoginMethodsEnum.crossWindow:
+      return renderScreen({ Screen: ConfirmScreens.CrossWindow });
     case LoginMethodsEnum.wallet:
       return renderScreen({ Screen: ConfirmScreens.Wallet });
     case LoginMethodsEnum.extra:
