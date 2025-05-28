@@ -1,3 +1,8 @@
+import {
+  CrossWindowProviderRequestEnums,
+  CrossWindowProviderResponseEnums
+} from 'lib/sdkDappUtils';
+
 export enum TransactionServerStatusesEnum {
   pending = 'pending',
   fail = 'fail',
@@ -30,7 +35,9 @@ export enum LoginMethodsEnum {
   walletconnect = 'walletconnect',
   walletconnectv2 = 'walletconnectv2',
   wallet = 'wallet',
+  crossWindow = 'crossWindow',
   extension = 'extension',
+  metamask = 'metamask',
   opera = 'opera',
   extra = 'extra',
   none = ''
@@ -61,6 +68,7 @@ export enum ToastsEnum {
 export enum TransactionTypesEnum {
   MultiDCDTNFTTransfer = 'MultiDCDTNFTTransfer',
   DCDTTransfer = 'DCDTTransfer',
+  DCDTNFTBurn = 'DCDTNFTBurn',
   DCDTNFTTransfer = 'DCDTNFTTransfer',
   dcdtTransaction = 'dcdtTransaction',
   nftTransaction = 'nftTransaction',
@@ -79,20 +87,25 @@ export enum TransactionsDefaultTitles {
 export enum PlatformsEnum {
   ios = 'ios',
   reactNative = 'reactNative',
-  web = 'web'
+  web = 'web',
+  webWallet = 'webWallet'
 }
 
-export enum WebViewProviderRequestEnums {
-  signTransactionsRequest = 'SIGN_TRANSACTIONS_REQUEST',
+export enum WebViewProviderRequestBaseEnums {
   signTransactionsWithGuardianResponse = 'SIGN_TRANSACTIONS_WITH_GUARDIAN_RESPONSE',
-  signMessageRequest = 'SIGN_MESSAGE_REQUEST',
-  loginRequest = 'LOGIN_REQUEST',
-  logoutRequest = 'LOGOUT_REQUEST',
   reloginRequest = 'RELOGIN_REQUEST'
 }
-export enum WebViewProviderResponseEnums {
-  signTransactionsResponse = 'SIGN_TRANSACTIONS_RESPONSE',
-  signMessageResponse = 'SIGN_MESSAGE_RESPONSE',
-  loginResponse = 'LOGIN_RESPONSE',
+
+export const WebViewProviderRequestEnums = {
+  ...CrossWindowProviderRequestEnums,
+  ...WebViewProviderRequestBaseEnums
+};
+
+export enum WebViewProviderResponseBaseEnums {
   reloginResponse = 'RELOGIN_RESPONSE'
 }
+
+export const WebViewProviderResponseEnums = {
+  ...CrossWindowProviderResponseEnums,
+  ...WebViewProviderResponseBaseEnums
+};

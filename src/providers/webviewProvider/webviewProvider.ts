@@ -11,9 +11,9 @@ const notInitializedError = (caller: string) => () => {
 };
 
 const currentPlatform = detectCurrentPlatform();
-export const targetOrigin = isWindowAvailable()
-  ? window?.parent?.origin ?? '*'
-  : '*';
+export const getTargetOrigin = () => {
+  return isWindowAvailable() ? window?.parent?.origin ?? '*' : '*';
+};
 
 const messageType = 'message';
 
@@ -21,7 +21,7 @@ const handleWaitForMessage = (cb: (eventData: any) => void) => {
   const handleMessageReceived = (event: any) => {
     let eventData = event.data;
     if (
-      event.target.origin != targetOrigin &&
+      event.target.origin != getTargetOrigin() &&
       currentPlatform != PlatformsEnum.reactNative
     ) {
       return;
@@ -94,6 +94,11 @@ export const webviewProvider: any = {
   isInitialized: () => true,
   isConnected: async () => true,
   sendTransaction: notInitializedError('sendTransaction'),
+  sendCustomRequest: async (payload: {
+    request: { method: string; params: any };
+  }) => {
+    requestMethods.sendCustomRequest[currentPlatform](payload);
+  },
   signMessage: async (message: string) => {
     try {
       requestMethods.signMessage[currentPlatform](message);

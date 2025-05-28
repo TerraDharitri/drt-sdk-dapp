@@ -6,27 +6,28 @@ import {
   GAS_PER_DATA_BYTE,
   GAS_PRICE_MODIFIER
 } from 'constants/index';
+import { withStyles, WithStylesImportType } from 'hocs/withStyles';
 import { useGetRewaPrice } from 'hooks';
-import { FormatAmount } from 'UI/FormatAmount';
+import { Balance } from 'UI/Balance';
 import { LoadingDots } from 'UI/LoadingDots';
-import { calculateFeeInFiat, calculateFeeLimit } from 'utils/operations';
-
-import { TokenAvatar } from '../TokenAvatar';
-import styles from './confirmFeeStyles.scss';
+import { getRewaLabel } from 'utils';
+import {
+  calculateFeeInFiat,
+  calculateFeeLimit,
+  formatAmount
+} from 'utils/operations';
 
 export interface FeePropsType {
   transaction: Transaction;
-  rewaLabel: string;
-  tokenAvatar?: string;
 }
 
-export const ConfirmFee = ({
+const ConfirmFeeComponent = ({
   transaction,
-  tokenAvatar,
-  rewaLabel
-}: FeePropsType) => {
+  styles
+}: FeePropsType & WithStylesImportType) => {
   const { price } = useGetRewaPrice();
 
+  const rewaLabel = getRewaLabel();
   const feeLimit = calculateFeeLimit({
     gasPerDataByte: String(GAS_PER_DATA_BYTE),
     gasPriceModifier: String(GAS_PRICE_MODIFIER),
@@ -36,33 +37,61 @@ export const ConfirmFee = ({
     chainId: transaction.getChainID().valueOf()
   });
 
+  const feeLimitFormatted = formatAmount({
+    input: feeLimit,
+    showLastNonZeroDecimal: true
+  });
+
+  const feeInFiatLimit = price
+    ? calculateFeeInFiat({
+        feeLimit,
+        rewaPriceInUsd: price,
+        hideEqualSign: true
+      })
+    : null;
+
   return (
-    <div className={styles.fee}>
-      <span className={styles.label}>Fee</span>
+    <div className={styles?.confirmFee}>
+      <div className={styles?.confirmFeeLabel}>Transaction Fee</div>
 
-      <div className={styles.token}>
-        <TokenAvatar type={rewaLabel} avatar={tokenAvatar} />
+      <div className={styles?.confirmFeeData}>
+        <Balance
+          className={styles?.confirmFeeDataBalance}
+          data-testid={DataTestIdsEnum.confirmFee}
+          rewaIcon
+          showTokenLabel
+          showTokenLabelSup
+          tokenLabel={rewaLabel}
+          amount={feeLimitFormatted}
+        />
 
-        <div className={styles.value}>
-          <FormatAmount
-            rewaLabel={rewaLabel}
-            value={feeLimit}
-            showLastNonZeroDecimal={true}
-            data-testid={DataTestIdsEnum.confirmFee}
-          />
-        </div>
-      </div>
-
-      <span className={styles.price}>
-        {price ? (
-          calculateFeeInFiat({
-            feeLimit,
-            rewaPriceInUsd: price
-          })
+        {feeInFiatLimit ? (
+          <span className={styles?.confirmFeeDataPriceWrapper}>
+            (
+            <Balance
+              amount={feeInFiatLimit}
+              displayAsUsd
+              addEqualSign
+              className={styles?.confirmFeeDataPrice}
+            />
+            )
+          </span>
         ) : (
-          <LoadingDots />
+          <span className={styles?.confirmFeeDataPriceWrapper}>
+            <LoadingDots />
+          </span>
         )}
-      </span>
+      </div>
     </div>
   );
 };
+
+export const ConfirmFee = withStyles(ConfirmFeeComponent, {
+  ssrStyles: () =>
+    import(
+      'UI/SignTransactionsModals/SignWithDeviceModal/components/components/ConfirmFee/confirmFeeStyles.scss'
+    ),
+  clientStyles: () =>
+    require('UI/SignTransactionsModals/SignWithDeviceModal/components/components/ConfirmFee/confirmFeeStyles.scss')
+      .default
+});

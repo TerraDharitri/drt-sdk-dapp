@@ -3,7 +3,6 @@ import { expect } from '@storybook/jest';
 import { fireEvent, waitFor } from '@testing-library/react';
 import { rest } from 'msw';
 import {
-  mockWindowHistory,
   mockWindowLocation,
   renderWithProvider,
   server,
@@ -16,6 +15,13 @@ import { store } from 'reduxStore/store';
 import { sleep } from 'utils/asyncActions';
 import { ExtensionLoginButton } from '../';
 import { checkIsLoggedInStore } from './helpers';
+
+jest.mock('reduxStore/slices/loginInfoSlice', () => {
+  return {
+    __esModule: true, //    <----- this __esModule: true is important
+    ...jest.requireActual('reduxStore/slices/loginInfoSlice')
+  };
+});
 
 jest.mock('@terradharitri/sdk-extension-provider', () => {
   const { ExtensionProvider } = require('./mocks/mockExtensionProvider');
@@ -54,7 +60,10 @@ describe('ExtensionLoginButton tests', () => {
   beforeEach(() => {
     store.dispatch(logoutAction());
     mockWindowLocation();
-    mockWindowHistory();
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
   });
 
   it('should perform simple login and redirect', async () => {
@@ -69,11 +78,7 @@ describe('ExtensionLoginButton tests', () => {
     await checkIsLoggedInStore();
 
     await waitFor(() => {
-      expect(window.history.pushState).toHaveBeenCalledWith(
-        '',
-        '',
-        CALLBACK_ROUTE
-      );
+      expect(window?.location.assign).toHaveBeenCalledWith(CALLBACK_ROUTE);
     });
   });
 
@@ -89,7 +94,7 @@ describe('ExtensionLoginButton tests', () => {
     await checkIsLoggedInStore();
 
     await waitFor(() => {
-      expect(window.location.assign).toHaveBeenCalledWith(
+      expect(window?.location.assign).toHaveBeenCalledWith(
         'https://multivers.com'
       );
     });
@@ -114,7 +119,7 @@ describe('ExtensionLoginButton tests', () => {
     await checkIsLoggedInStore();
 
     await waitFor(() => {
-      expect(window.history.pushState).toHaveBeenCalledTimes(0);
+      expect(window?.location.assign).toHaveBeenCalledTimes(0);
       expect(onLoginRedirect).toHaveBeenCalledTimes(1);
       expect(onLoginRedirect).toHaveBeenCalledWith(CALLBACK_ROUTE, {
         address: testAddress,
@@ -123,7 +128,7 @@ describe('ExtensionLoginButton tests', () => {
     });
   });
 
-  it('should perform login with nativeAuth', async () => {
+  it('extension should perform login with nativeAuth', async () => {
     const methods = renderWithProvider({
       children: (
         <ExtensionLoginButton callbackRoute={CALLBACK_ROUTE} nativeAuth />
@@ -147,11 +152,7 @@ describe('ExtensionLoginButton tests', () => {
         tokenLoginWithSignature
       );
 
-      expect(window.history.pushState).toHaveBeenCalledWith(
-        '',
-        '',
-        CALLBACK_ROUTE
-      );
+      expect(window?.location.assign).toHaveBeenCalledWith(CALLBACK_ROUTE);
     });
   });
 
@@ -174,7 +175,7 @@ describe('ExtensionLoginButton tests', () => {
     fireEvent.click(loginButton);
 
     await waitFor(() => {
-      expect(window.history.pushState).toHaveBeenCalledTimes(0);
+      expect(window?.location.assign).toHaveBeenCalledTimes(0);
     });
   });
 });

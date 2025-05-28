@@ -1,56 +1,112 @@
 import React from 'react';
+import classNames from 'classnames';
 
-import { DataTestIdsEnum } from 'constants/index';
+import { withStyles } from 'hocs/withStyles';
+import { useGetRewaPrice, useGetTokenDetails } from 'hooks';
+import { ActiveLedgerTransactionType } from 'types';
+import { NftEnumType } from 'types/tokens.types';
 import { LoadingDots } from 'UI/LoadingDots';
-import { TokenDetails } from 'UI/TokenDetails';
-import { UsdValue } from 'UI/UsdValue';
-import { TokenAvatar, TokenAvatarPropsType } from '../TokenAvatar';
-import styles from './confirmAmountStyles.scss';
 
-export interface ConfirmAmountPropsType {
-  token: string;
-  formattedAmount: string;
-  rawAmount: string;
-  tokenAvatar?: string;
-  tokenType: TokenAvatarPropsType['type'];
-  tokenPrice?: number | null;
+import { WithStylesImportType } from '../../../../../../hocs/useStyles';
+
+import {
+  ConfirmAmountData,
+  ConfirmAmountLabel,
+  ConfirmAmountNftSft
+} from './components';
+import { useHandleAmountReference } from './hooks';
+
+export interface ConfirmAmountPropsType extends WithStylesImportType {
+  currentTransaction: ActiveLedgerTransactionType;
 }
 
-export const ConfirmAmount = ({
-  token,
-  tokenAvatar,
-  tokenType,
-  formattedAmount,
-  rawAmount,
-  tokenPrice
+const ConfirmAmountComponent = ({
+  styles,
+  currentTransaction
 }: ConfirmAmountPropsType) => {
-  const isValidTokenPrice = tokenPrice != null;
-  const isLoadingTokenPrice = !isValidTokenPrice && tokenPrice !== null;
+  const { tokenId, nonce, amount } = currentTransaction.transactionTokenInfo;
+  const { isFontSizeLoading, handleAmountReference } =
+    useHandleAmountReference();
+
+  // If the token has a nonce means that this is an NFT. Eg: TokenId=TOKEN-1hfr, nonce=123 => NFT id=TOKEN-1hfr-123
+  const tokenIdForTokenDetails =
+    nonce && nonce.length > 0 ? `${tokenId}-${nonce}` : tokenId;
+
+  const tokenDetails = useGetTokenDetails({
+    tokenId: tokenIdForTokenDetails
+  });
+
+  const { price: rewaPrice } = useGetRewaPrice();
+  const {
+    type,
+    dcdtPrice,
+    isLoading: isTokenDetailsLoading,
+    identifier
+  } = tokenDetails;
+
+  const isRewa = !tokenId;
+  const tokenPrice = isRewa ? rewaPrice : dcdtPrice;
+  const isNftOrSft = type
+    ? [NftEnumType.SemiFungibleDCDT, NftEnumType.NonFungibleDCDT].includes(type)
+    : false;
 
   return (
-    <div className={styles.amount}>
-      <span className={styles.label}>Amount</span>
-
-      <div className={styles.token}>
-        <TokenAvatar type={tokenType} avatar={tokenAvatar} />
-
-        <div
-          className={styles.value}
-          data-testid={DataTestIdsEnum.confirmAmount}
-        >
-          {formattedAmount} <TokenDetails.Label token={token} />
-        </div>
+    <div className={styles?.confirmAmount}>
+      <div className={styles?.confirmAmountLabel}>
+        {isTokenDetailsLoading ? (
+          <LoadingDots />
+        ) : (
+          <ConfirmAmountLabel
+            amount={amount}
+            type={type}
+            identifier={identifier}
+          />
+        )}
       </div>
 
-      {isLoadingTokenPrice && <LoadingDots className={styles.price} />}
-      {isValidTokenPrice && (
-        <UsdValue
-          amount={rawAmount}
-          usd={tokenPrice}
-          data-testid={DataTestIdsEnum.confirmUsdValue}
-          className={styles.price}
+      <div className={styles?.confirmAmountWrapper}>
+        <LoadingDots
+          className={classNames(styles?.confirmAmountLoading, {
+            [styles?.confirmAmountLoadingVisible]:
+              isTokenDetailsLoading || isFontSizeLoading
+          })}
         />
-      )}
+
+        <div
+          className={classNames(styles?.confirmAmountContent, {
+            [styles?.confirmAmountContentHidden]:
+              isTokenDetailsLoading || isFontSizeLoading
+          })}
+        >
+          {isNftOrSft ? (
+            <ConfirmAmountNftSft
+              amount={amount}
+              type={type}
+              tokenDetails={tokenDetails}
+            />
+          ) : (
+            <ConfirmAmountData
+              isNftOrSft={isNftOrSft}
+              isRewa={isRewa}
+              amount={amount}
+              handleReference={handleAmountReference}
+              currentTransaction={currentTransaction}
+              tokenDetails={tokenDetails}
+              tokenPrice={tokenPrice}
+            />
+          )}
+        </div>
+      </div>
     </div>
   );
 };
+
+export const ConfirmAmount = withStyles(ConfirmAmountComponent, {
+  ssrStyles: () =>
+    import(
+      'UI/SignTransactionsModals/SignWithDeviceModal/components/components/ConfirmAmount/confirmAmountStyles.scss'
+    ),
+  clientStyles: () =>
+    require('UI/SignTransactionsModals/SignWithDeviceModal/components/components/ConfirmAmount/confirmAmountStyles.scss')
+      .default
+});

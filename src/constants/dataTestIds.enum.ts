@@ -1,5 +1,6 @@
 export enum DataTestIdsEnum {
   accessWalletBtn = 'accessWalletBtn',
+  accessCrossWindowWalletBtn = 'accessCrossWindowWalletBtn',
   addressTableContainer = 'addressTableContainer',
   closeButton = 'closeButton',
   confirmAmount = 'confirmAmount',
@@ -61,5 +62,6 @@ export enum DataTestIdsEnum {
   transactionValue = 'transactionValue',
   transactionValueIcon = 'transactionValueIcon',
   transactionsTable = 'transactionsTable',
-  'trim-text-component' = 'trim-text-component'
+  'trim-text-component' = 'trim-text-component',
+  xAliasLoginButton = 'xAliasLoginButton'
 }

@@ -1,13 +1,11 @@
 import React, { Component } from 'react';
 import { faDiamond } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-
 import RewaIcon from 'assets/icons/REWA.svg';
+import { withStyles, WithStylesImportType } from 'hocs/withStyles';
 import { getRewaLabel } from 'utils/network/getRewaLabel';
-
 import { getIdentifierType } from 'utils/validation/getIdentifierType';
 import { WithClassnameType } from '../types';
-import styles from './tokenDetailsStyles.scss';
 import { Combined, Simple } from './TokenSymbol';
 
 const getIdentifierWithoutNonce = (identifier: string) => {
@@ -31,12 +29,24 @@ export interface TokenIconType extends TokenIconPropsType {
   icon: () => JSX.Element;
 }
 
-function getIcon(isRewaTransfer: boolean, tokenAvatar?: string) {
+function getIconComponent({
+  isRewaTransfer,
+  tokenAvatar,
+  styles
+}: {
+  isRewaTransfer: boolean;
+  tokenAvatar?: string;
+} & WithStylesImportType) {
   if (tokenAvatar && tokenAvatar !== 'undefined') {
-    return <img className={styles.tokenSymbolCustomToken} src={tokenAvatar} />;
+    return <img className={styles?.tokenSymbolCustomToken} src={tokenAvatar} />;
   }
   return isRewaTransfer ? <RewaIcon /> : <FontAwesomeIcon icon={faDiamond} />;
 }
+
+const getIcon = withStyles(getIconComponent, {
+  ssrStyles: () => import('UI/TokenDetails/tokenDetailsStyles.scss'),
+  clientStyles: () => require('UI/TokenDetails/tokenDetailsStyles.scss').default
+});
 
 const getDetails = (token: string, tokenAvatar?: string): TokenIconType => {
   const rewaLabel = getRewaLabel();
@@ -46,8 +56,7 @@ const getDetails = (token: string, tokenAvatar?: string): TokenIconType => {
     token,
     symbol: token ? token.split('-')[0] : '',
     label: token,
-    // eslint-disable-next-line react/display-name
-    icon: () => getIcon(isRewaTransfer, tokenAvatar)
+    icon: () => getIcon({ isRewaTransfer, tokenAvatar })
   };
 };
 

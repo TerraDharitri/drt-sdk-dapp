@@ -1,6 +1,13 @@
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState
+} from 'react';
 import classNames from 'classnames';
 import { createPortal } from 'react-dom';
+import { withStyles, WithStylesImportType } from 'hocs/withStyles';
 import { useGetSignedTransactions } from 'hooks/transactions/useGetSignedTransactions';
 import { useDispatch, useSelector } from 'reduxStore/DappProviderContext';
 import {
@@ -30,7 +37,6 @@ import {
   TransactionToastGuard,
   TransactionToastGuardPropsType
 } from './components';
-import styles from './transactionsToastList.styles.scss';
 
 export interface TransactionsToastListPropsType extends WithClassnameType {
   toastProps?: any;
@@ -43,15 +49,17 @@ export interface TransactionsToastListPropsType extends WithClassnameType {
   children?: React.ReactNode;
 }
 
-export const TransactionsToastList = ({
+export const TransactionsToastListComponent = ({
   className = 'transactions-toast-list',
   transactionToastClassName,
   customToastClassName,
   signedTransactions,
   successfulToastLifetime,
   parentElement,
-  children
-}: TransactionsToastListPropsType) => {
+  children,
+  styles
+}: TransactionsToastListPropsType & WithStylesImportType) => {
+  const [isBrowser, setIsBrowser] = useState(false);
   const customToasts = useSelector(customToastsSelector);
   const transactionsToasts = useSelector(transactionToastsSelector);
   const dispatch = useDispatch();
@@ -173,6 +181,8 @@ export const TransactionsToastList = ({
   };
 
   useEffect(() => {
+    setIsBrowser(true);
+
     window?.addEventListener(
       'beforeunload',
       clearNotPendingTransactionsFromStorage
@@ -186,12 +196,28 @@ export const TransactionsToastList = ({
     };
   }, []);
 
-  return createPortal(
-    <div className={classNames(styles.toasts, className)}>
-      {customToastsList}
-      {MemoizedTransactionsToastsList}
-      {children}
-    </div>,
-    parentElement || document?.body
+  return (
+    <>
+      {isBrowser &&
+        createPortal(
+          <div className={classNames(styles?.toasts, className)}>
+            {customToastsList}
+            {MemoizedTransactionsToastsList}
+            {children}
+          </div>,
+          parentElement || document?.body
+        )}
+    </>
   );
 };
+
+export const TransactionsToastList = withStyles(
+  TransactionsToastListComponent,
+  {
+    ssrStyles: () =>
+      import('UI/TransactionsToastList/transactionsToastList.styles.scss'),
+    clientStyles: () =>
+      require('UI/TransactionsToastList/transactionsToastList.styles.scss')
+        .default
+  }
+);

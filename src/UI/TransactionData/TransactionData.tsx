@@ -1,34 +1,43 @@
 import React from 'react';
 import classNames from 'classnames';
-
-import globalStyles from 'assets/sass/main.scss';
-
 import { DataTestIdsEnum, N_A } from 'constants/index';
+import { withStyles, WithStylesImportType } from 'hocs/withStyles';
+import { CopyButton } from 'UI/CopyButton';
 import { decodePart } from 'utils/decoders/decodePart';
+import { getUnHighlightedDataFieldParts } from 'utils/transactions/getUnHighlightedDataFieldParts';
 import { WithClassnameType } from '../types';
 
-import styles from './TransactionDataStyles.scss';
+const allOccurences = (sourceStr: string, searchStr: string) => {
+  const occurrences = [...sourceStr.matchAll(new RegExp(searchStr, 'gi'))].map(
+    (result) => result.index
+  );
 
-const allOccurences = (sourceStr: string, searchStr: string) =>
-  [...sourceStr.matchAll(new RegExp(searchStr, 'gi'))].map((a) => a.index);
+  return occurrences.filter((search) => Number.isFinite(search)) as number[];
+};
 
 export interface TransactionDataPropsType extends WithClassnameType {
   data: string;
   highlight?: string;
-  isScCall?: boolean;
   innerTransactionDataClasses?: {
     transactionDataInputLabelClassName?: string;
     transactionDataInputValueClassName?: string;
   };
+  isScCall?: boolean;
+  label?: React.ReactNode;
+  transactionIndex: number;
 }
 
-export const TransactionData = ({
-  data,
-  highlight,
-  isScCall,
+const TransactionDataComponent = ({
   className = 'dapp-transaction-data',
-  innerTransactionDataClasses
-}: TransactionDataPropsType) => {
+  data,
+  globalStyles,
+  highlight,
+  innerTransactionDataClasses,
+  isScCall,
+  label,
+  transactionIndex,
+  styles
+}: TransactionDataPropsType & WithStylesImportType) => {
   const {
     transactionDataInputLabelClassName,
     transactionDataInputValueClassName
@@ -39,37 +48,66 @@ export const TransactionData = ({
   const [encodedScCall, ...remainingDataFields] =
     highlight && isScCall ? highlight.split('@') : [];
 
-  if (data && highlight && allOccurences(data, highlight).length === 1) {
+  const isHighlightedData = data && highlight;
+  const occurrences = isHighlightedData ? allOccurences(data, highlight) : [];
+  const showHighlight = isHighlightedData && occurrences.length > 0;
+
+  const handleElementReference = (element: HTMLElement | null) => {
+    if (!element) {
+      return;
+    }
+
+    element.scrollIntoView();
+  };
+
+  if (showHighlight) {
     switch (true) {
       case data.startsWith(highlight): {
         const [, rest] = data.split(highlight);
+
         output = (
           <>
-            {highlight}
-            <span className={globalStyles.textMuted}>{rest}</span>
+            <span className={globalStyles?.highlighted}>{highlight}</span>
+            <span className={globalStyles?.textMuted}>{rest}</span>
           </>
         );
         break;
       }
       case data.endsWith(highlight): {
         const [rest] = data.split(highlight);
+
         output = (
           <>
-            <span className={globalStyles.textMuted}>{rest}</span>
-            {highlight}
+            <span className={globalStyles?.textMuted}>{rest}</span>
+            <span
+              className={globalStyles?.highlighted}
+              ref={handleElementReference}
+            >
+              {highlight}
+            </span>
           </>
         );
         break;
       }
 
       default: {
-        const [start, end] = data.split(highlight);
+        const { start, end } = getUnHighlightedDataFieldParts({
+          occurrences,
+          transactionIndex,
+          data,
+          highlight
+        });
 
         output = (
           <>
-            <span className={globalStyles.textMuted}>{start}</span>
-            <span className={globalStyles.highlighted}>{highlight}</span>
-            <span className={globalStyles.textMuted}>{end}</span>
+            <span className={globalStyles?.textMuted}>{start}</span>
+            <span
+              className={globalStyles?.highlighted}
+              ref={handleElementReference}
+            >
+              {highlight}
+            </span>
+            <span className={globalStyles?.textMuted}>{end}</span>
           </>
         );
         break;
@@ -77,51 +115,84 @@ export const TransactionData = ({
     }
   }
 
+  const decodedScCall = [
+    decodePart(encodedScCall),
+    ...remainingDataFields
+  ].join('@');
+
   return (
     <>
       {encodedScCall && (
-        <div className={classNames(styles.data, className)}>
+        <div className={classNames(styles?.transactionData, className)}>
           <span
             className={classNames(
-              styles.label,
+              styles?.transactionDataLabel,
               transactionDataInputLabelClassName
             )}
           >
-            SC Call
+            Smart Contract Call
           </span>
 
-          <div
-            data-testid={DataTestIdsEnum.confirmScCall}
-            className={classNames(
-              styles.value,
-              transactionDataInputValueClassName
-            )}
-          >
-            {[decodePart(encodedScCall), ...remainingDataFields].join('@')}
+          <div className={styles?.transactionDataValueWrapper}>
+            <div
+              data-testid={DataTestIdsEnum.confirmScCall}
+              className={classNames(
+                styles?.transactionDataValue,
+                transactionDataInputValueClassName
+              )}
+            >
+              <span className={styles?.transactionDataValueText}>
+                {decodedScCall}
+              </span>
+
+              {data && (
+                <CopyButton
+                  text={decodedScCall}
+                  className={styles?.transactionDataValueCopy}
+                />
+              )}
+            </div>
           </div>
         </div>
       )}
 
-      <div className={styles.data}>
+      <div className={classNames(styles?.transactionData, className)}>
         <span
           className={classNames(
-            styles.label,
+            styles?.transactionDataLabel,
             transactionDataInputLabelClassName
           )}
         >
-          Data
+          {label ?? 'Data'}
         </span>
 
-        <div
-          data-testid={DataTestIdsEnum.confirmData}
-          className={classNames(
-            styles.value,
-            transactionDataInputValueClassName
-          )}
-        >
-          {data ? output : N_A}
+        <div className={styles?.transactionDataValueWrapper}>
+          <div
+            data-testid={DataTestIdsEnum.confirmData}
+            className={classNames(
+              styles?.transactionDataValue,
+              transactionDataInputValueClassName
+            )}
+          >
+            <span className={styles?.transactionDataValueText}>
+              {data ? output : N_A}
+            </span>
+
+            {data && (
+              <CopyButton
+                text={data}
+                className={styles?.transactionDataValueCopy}
+              />
+            )}
+          </div>
         </div>
       </div>
     </>
   );
 };
+
+export const TransactionData = withStyles(TransactionDataComponent, {
+  ssrStyles: () => import('UI/TransactionData/TransactionDataStyles.scss'),
+  clientStyles: () =>
+    require('UI/TransactionData/TransactionDataStyles.scss').default
+});

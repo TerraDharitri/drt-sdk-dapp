@@ -1,7 +1,7 @@
-import axios from 'axios';
 import useSwr from 'swr';
 
 import { NFTS_ENDPOINT, TOKENS_ENDPOINT } from 'apiCalls/endpoints';
+import { axiosFetcher } from 'apiCalls/utils/axiosFetcher';
 import { useGetNetworkConfig } from 'hooks/useGetNetworkConfig';
 import { NftEnumType } from 'types/tokens.types';
 import { getIdentifierType } from 'utils/validation/getIdentifierType';
@@ -25,7 +25,7 @@ export interface TokenMediaType {
   fileSize?: number;
 }
 
-interface TokenOptionType {
+export interface TokenOptionType {
   tokenLabel: string;
   tokenDecimals: number;
   tokenAvatar: string;
@@ -33,6 +33,10 @@ interface TokenOptionType {
   type?: NftEnumType;
   error?: string;
   dcdtPrice?: number;
+  ticker?: string;
+  identifier?: string;
+  name?: string;
+  isLoading?: boolean;
 }
 
 interface TokenInfoResponse {
@@ -46,8 +50,11 @@ interface TokenInfoResponse {
   price: number;
 }
 
-const fetcher = (url: string) =>
-  axios.get(url).then((response) => response.data);
+interface TokenInfoResponseDataType {
+  data?: TokenInfoResponse;
+  error?: string;
+  isLoading?: boolean;
+}
 
 export function useGetTokenDetails({
   tokenId
@@ -62,12 +69,13 @@ export function useGetTokenDetails({
 
   const {
     data: selectedToken,
-    error
-  }: { data?: TokenInfoResponse; error?: string } = useSwr(
+    error,
+    isLoading
+  }: TokenInfoResponseDataType = useSwr(
     Boolean(tokenIdentifier)
       ? `${network.apiAddress}/${tokenEndpoint}/${tokenIdentifier}`
       : null,
-    fetcher
+    axiosFetcher
   );
 
   if (!tokenIdentifier) {
@@ -87,12 +95,16 @@ export function useGetTokenDetails({
     : '';
 
   return {
+    isLoading,
     tokenDecimals: tokenDecimals,
     tokenLabel,
     type: selectedToken?.type,
     tokenAvatar,
+    identifier: selectedToken?.identifier,
     assets: selectedToken?.assets,
     dcdtPrice: selectedToken?.price,
+    ticker: selectedToken?.ticker,
+    name: selectedToken?.name,
     error
   };
 }

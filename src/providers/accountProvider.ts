@@ -1,7 +1,9 @@
 import { ExtensionProvider } from '@terradharitri/sdk-extension-provider';
 import { HWProvider } from '@terradharitri/sdk-hw-provider';
+import { MetamaskProvider } from '@terradharitri/sdk-metamask-provider/out/metamaskProvider';
 import { OperaProvider } from '@terradharitri/sdk-opera-provider';
 import { WalletProvider } from '@terradharitri/sdk-web-wallet-provider';
+import { CrossWindowProvider } from 'lib/sdkWebWalletCrossWindowProvider';
 import { IDappProvider } from 'types';
 import { WalletConnectV2Provider } from 'utils/walletconnect/__sdkWalletconnectProvider';
 import { emptyProvider } from './utils';
@@ -9,7 +11,9 @@ import { emptyProvider } from './utils';
 export type ProvidersType =
   | IDappProvider
   | ExtensionProvider
+  | MetamaskProvider
   | WalletProvider
+  | CrossWindowProvider
   | HWProvider
   | OperaProvider
   | WalletConnectV2Provider;

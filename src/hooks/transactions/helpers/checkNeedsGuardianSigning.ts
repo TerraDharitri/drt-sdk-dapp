@@ -32,17 +32,12 @@ export const checkNeedsGuardianSigning = ({
     transactions
   });
 
-  /**
-   * Redirect to wallet for signing if:
-   * - account is guarded &
-   * - 2FA will not be provided locally &
-   * - transactions were not signed by guardian
-   */
+  const chainId = transactions[0].getChainID().valueOf();
+  const environment = getEnvironmentForChainId(chainId);
+  const walletProviderAddress =
+    walletAddress ?? fallbackNetworkConfigurations[environment].walletAddress;
+
   const sendTransactionsToGuardian = () => {
-    const chainId = transactions[0].getChainID().valueOf();
-    const environment = getEnvironmentForChainId(chainId);
-    const walletProviderAddress =
-      walletAddress ?? fallbackNetworkConfigurations[environment].walletAddress;
     const walletProvider = newWalletProvider(walletProviderAddress);
     const urlParams = { [WALLET_SIGN_SESSION]: String(sessionId) };
     const { origin } = getWindowLocation();

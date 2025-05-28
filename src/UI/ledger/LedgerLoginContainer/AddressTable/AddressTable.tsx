@@ -5,22 +5,19 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames';
-
-import globalStyles from 'assets/sass/main.scss';
 import { DataTestIdsEnum } from 'constants/index';
+import { withStyles, WithStylesImportType } from 'hocs/withStyles';
 import { getAccountBalance } from 'utils/account/getAccountBalance';
 import { WithClassnameType } from '../../../types';
-
 import { AddressRow } from '../AddressRow';
-
 import { LedgerColumnsEnum } from '../enums';
 import { LedgerLoading } from '../LedgerLoading';
-import styles from './addressTableStyles.scss';
 
 const ADDRESSES_PER_PAGE = 10;
 
 export interface AddressTablePropsType extends WithClassnameType {
   accounts: string[];
+  disabledIndexes?: number[];
   addressTableClassNames?: {
     ledgerModalTitleClassName?: string;
     ledgerModalSubtitleClassName?: string;
@@ -42,7 +39,7 @@ export interface AddressTablePropsType extends WithClassnameType {
   startIndex: number;
 }
 
-export const AddressTable = ({
+const AddressTableComponent = ({
   accounts,
   addressTableClassNames,
   className = 'dapp-ledger-address-table',
@@ -54,8 +51,11 @@ export const AddressTable = ({
   onGoToPrevPage,
   onSelectAddress,
   selectedAddress,
-  startIndex
-}: AddressTablePropsType) => {
+  startIndex,
+  disabledIndexes = [],
+  globalStyles,
+  styles
+}: AddressTablePropsType & WithStylesImportType) => {
   const {
     ledgerModalTitleClassName,
     ledgerModalSubtitleClassName,
@@ -69,6 +69,15 @@ export const AddressTable = ({
   const [accountsWithBalance, setAccountsWithBalance] = useState<
     Array<{ address: string; balance: string }>
   >([]);
+
+  const getFirstUnusedIndex = () => {
+    let indexToCheck = 0;
+    while (disabledIndexes.includes(indexToCheck)) {
+      indexToCheck++;
+    }
+    return indexToCheck;
+  };
+
   useEffect(() => {
     const isAccountsLoaded = accounts.length > 0 && !loading;
 
@@ -78,7 +87,7 @@ export const AddressTable = ({
     const shouldSelectFirstAddress =
       isAccountsLoaded && isFirstPageAndNoAddressSelected;
     if (shouldSelectFirstAddress) {
-      const index = 0;
+      const index = getFirstUnusedIndex();
       const address = accounts[index];
       onSelectAddress({ address, index });
     }
@@ -124,13 +133,13 @@ export const AddressTable = ({
 
   return (
     <div
-      className={classNames(styles.ledgerAddressTableWrapper, className)}
+      className={classNames(styles?.ledgerAddressTableWrapper, className)}
       data-testid={dataTestId}
     >
-      <div className={styles.ledgerAddressTableTop}>
+      <div className={styles?.ledgerAddressTableTop}>
         <div
           className={classNames(
-            styles.ledgerAddressTableHeading,
+            styles?.ledgerAddressTableHeading,
             ledgerModalTitleClassName
           )}
           data-testid={`${dataTestId}Title`}
@@ -140,7 +149,7 @@ export const AddressTable = ({
 
         <p
           className={classNames(
-            styles.ledgerAddressTableDescription,
+            styles?.ledgerAddressTableDescription,
             ledgerModalSubtitleClassName
           )}
           data-testid={`${dataTestId}SubTitle`}
@@ -151,26 +160,27 @@ export const AddressTable = ({
 
       {customContentComponent}
 
-      <div className={styles.ledgerAddressTable}>
+      <div className={styles?.ledgerAddressTable}>
         <div
           className={classNames(
-            styles.ledgerAddressTableHeader,
+            styles?.ledgerAddressTableHeader,
             ledgerModalTableHeadClassName
           )}
         >
           {columns.map((column) => (
-            <div key={column} className={styles.ledgerAddressTableHeaderItem}>
+            <div key={column} className={styles?.ledgerAddressTableHeaderItem}>
               {column}
             </div>
           ))}
         </div>
 
-        <div className={styles.ledgerAddressTableBody}>
+        <div className={styles?.ledgerAddressTableBody}>
           {accountsWithBalance &&
             accountsWithBalance.map(({ address, balance }, index) => (
               <AddressRow
                 address={address}
                 balance={balance}
+                disabled={disabledIndexes.includes(index)}
                 key={index + startIndex * ADDRESSES_PER_PAGE}
                 index={index + startIndex * ADDRESSES_PER_PAGE}
                 selectedAddress={selectedAddress}
@@ -184,18 +194,18 @@ export const AddressTable = ({
         </div>
       </div>
 
-      <div className={styles.ledgerAddressTableBottom}>
-        <div className={styles.ledgerAddressTableNavigation}>
+      <div className={styles?.ledgerAddressTableBottom}>
+        <div className={styles?.ledgerAddressTableNavigation}>
           <button
             type='button'
             onClick={onGoToPrevPage}
             data-testid={DataTestIdsEnum.prevBtn}
             className={classNames(
-              styles.ledgerAddressTableNavigationButton,
+              styles?.ledgerAddressTableNavigationButton,
               {
                 [ledgerModalTableNavigationButtonDisabledClassName ?? '']:
                   startIndex === 0,
-                [styles.ledgerAddressTableNavigationButtonDisabled]:
+                [styles?.ledgerAddressTableNavigationButtonDisabled ?? '']:
                   startIndex === 0
               },
               ledgerModalTableNavigationButtonClassName
@@ -203,7 +213,7 @@ export const AddressTable = ({
           >
             <FontAwesomeIcon size='1x' icon={faChevronLeft} />
 
-            <span className={styles.ledgerAddressTableNavigationButtonLabel}>
+            <span className={styles?.ledgerAddressTableNavigationButtonLabel}>
               Prev
             </span>
           </button>
@@ -213,15 +223,15 @@ export const AddressTable = ({
             onClick={onGoToNextPage}
             data-testid={DataTestIdsEnum.nextBtn}
             className={classNames(
-              styles.ledgerAddressTableNavigationButton,
+              styles?.ledgerAddressTableNavigationButton,
               {
-                [styles.ledgerAddressTableNavigationButtonDisabled]:
+                [styles?.ledgerAddressTableNavigationButtonDisabled]:
                   accounts.length < 10
               },
               ledgerModalTableNavigationButtonClassName
             )}
           >
-            <span className={styles.ledgerAddressTableNavigationButtonLabel}>
+            <span className={styles?.ledgerAddressTableNavigationButtonLabel}>
               Next
             </span>
 
@@ -234,9 +244,9 @@ export const AddressTable = ({
           onClick={onConfirm}
           data-testid={DataTestIdsEnum.confirmBtn}
           className={classNames(
-            globalStyles.btn,
-            globalStyles.btnPrimary,
-            styles.ledgerAddressTableButton,
+            globalStyles?.btn,
+            globalStyles?.btnPrimary,
+            styles?.ledgerAddressTableButton,
             ledgerModalButtonClassName
           )}
         >
@@ -246,3 +256,13 @@ export const AddressTable = ({
     </div>
   );
 };
+
+export const AddressTable = withStyles(AddressTableComponent, {
+  ssrStyles: () =>
+    import(
+      'UI/ledger/LedgerLoginContainer/AddressTable/addressTableStyles.scss'
+    ),
+  clientStyles: () =>
+    require('UI/ledger/LedgerLoginContainer/AddressTable/addressTableStyles.scss')
+      .default
+});
