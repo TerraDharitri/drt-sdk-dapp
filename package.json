@@ -4,7 +4,7 @@
   "description": "A library to hold the main logic for a dapp on the Dharitri blockchain",
   "author": "Dharitri",
   "license": "GPL-3.0-or-later",
-  "repository": "dharitri/drt-dapp",
+  "repository": "dharitri/drt-sdk-dapp",
   "main": "./__commonjs",
   "browser": "./",
   "react-native": "./",

@@ -1140,11 +1140,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [Added partial support for Next.js](https://github.com/TerraDharitri/drt-sdk-dapp/pull/559)
 
-## [[2.2.8](https://api.github.com/repos/TerraDharitri/drt-dapp/pulls/557)] - 2023-01-12
+## [[2.2.8](https://api.github.com/repos/TerraDharitri/drt-sdk-dapp/pulls/557)] - 2023-01-12
 
 - [Created first version of @terradharitri/sdk-dapp](https://github.com/TerraDharitri/drt-sdk-dapp/pull/538)
 
-## [[2.2.7](https://api.github.com/repos/TerraDharitri/drt-dapp/pulls/554)] - 2023-01-10
+## [[2.2.7](https://api.github.com/repos/TerraDharitri/drt-sdk-dapp/pulls/554)] - 2023-01-10
 
 - [Changed branding from numbat to dharitri](https://github.com/TerraDharitri/drt-sdk-dapp/pull/538)
 
