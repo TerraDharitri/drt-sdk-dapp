@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [main]
   repository_dispatch:
-    types: run-template-dapps-integration
+    types: [run-template-dapps-integration]
   workflow_dispatch:
 
 jobs:
