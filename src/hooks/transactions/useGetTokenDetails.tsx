@@ -1,7 +1,7 @@
-import axios from 'axios';
 import useSwr from 'swr';
 
 import { NFTS_ENDPOINT, TOKENS_ENDPOINT } from 'apiCalls/endpoints';
+import { getPersistedToken } from 'apiCalls/tokens/getPersistedToken';
 import { useGetNetworkConfig } from 'hooks/useGetNetworkConfig';
 import { NftEnumType } from 'types/tokens.types';
 import { getIdentifierType } from 'utils/validation/getIdentifierType';
@@ -25,7 +25,7 @@ export interface TokenMediaType {
   fileSize?: number;
 }
 
-interface TokenOptionType {
+export interface TokenOptionType {
   tokenLabel: string;
   tokenDecimals: number;
   tokenAvatar: string;
@@ -33,6 +33,10 @@ interface TokenOptionType {
   type?: NftEnumType;
   error?: string;
   dcdtPrice?: number;
+  ticker?: string;
+  identifier?: string;
+  name?: string;
+  isLoading?: boolean;
 }
 
 interface TokenInfoResponse {
@@ -45,9 +49,6 @@ interface TokenInfoResponse {
   media?: TokenMediaType[];
   price: number;
 }
-
-const fetcher = (url: string) =>
-  axios.get(url).then((response) => response.data);
 
 export function useGetTokenDetails({
   tokenId
@@ -62,12 +63,13 @@ export function useGetTokenDetails({
 
   const {
     data: selectedToken,
-    error
-  }: { data?: TokenInfoResponse; error?: string } = useSwr(
+    error,
+    isLoading
+  } = useSwr<TokenInfoResponse>(
     Boolean(tokenIdentifier)
       ? `${network.apiAddress}/${tokenEndpoint}/${tokenIdentifier}`
       : null,
-    fetcher
+    getPersistedToken
   );
 
   if (!tokenIdentifier) {
@@ -83,16 +85,20 @@ export function useGetTokenDetails({
     : Number(network.decimals);
   const tokenLabel = selectedToken ? selectedToken?.name : '';
   const tokenAvatar = selectedToken
-    ? selectedToken?.assets?.svgUrl ?? selectedToken?.media?.[0].thumbnailUrl
+    ? selectedToken?.assets?.svgUrl ?? selectedToken?.media?.[0]?.thumbnailUrl
     : '';
 
   return {
+    isLoading,
     tokenDecimals: tokenDecimals,
     tokenLabel,
     type: selectedToken?.type,
     tokenAvatar,
+    identifier: selectedToken?.identifier,
     assets: selectedToken?.assets,
     dcdtPrice: selectedToken?.price,
+    ticker: selectedToken?.ticker,
+    name: selectedToken?.name,
     error
   };
 }

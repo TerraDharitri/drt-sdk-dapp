@@ -2,7 +2,7 @@ import { ReactNode, Dispatch, SetStateAction } from 'react';
 import { Address, Transaction } from '@terradharitri/sdk-core';
 import { IPlainTransactionObject } from '@terradharitri/sdk-core/out/interface';
 
-import { SignStepInnerClassesType } from 'UI/SignTransactionsModals/SignWithDeviceModal/SignStep';
+import { SignStepInnerClassesType } from '../UI/SignTransactionsModals/SignWithDeviceModal/SignStep';
 import { WithClassnameType } from '../UI/types';
 import {
   TransactionBatchStatusesEnum,
@@ -139,6 +139,7 @@ export interface SendTransactionsPropsType {
   transactionsDisplayInfo: TransactionsDisplayInfoType;
   minGasLimit?: number;
   sessionInformation?: any;
+  hasConsentPopup?: boolean;
 }
 
 export interface SendBatchTransactionsPropsType {
@@ -146,6 +147,10 @@ export interface SendBatchTransactionsPropsType {
   redirectAfterSign?: boolean;
   signWithoutSending?: boolean;
   skipGuardian?: boolean;
+  /**
+   * For Cross-Window provider in Safari browser, performing async calls before signing transactions needs a consent popup in order to open a new tab.
+   */
+  hasConsentPopup?: boolean;
   completedTransactionsDelay?: number;
   callbackRoute?: string;
   transactionsDisplayInfo: TransactionsDisplayInfoType;
@@ -155,18 +160,19 @@ export interface SendBatchTransactionsPropsType {
 
 export interface SignTransactionsPropsType {
   transactions: Transaction[] | Transaction;
-  minGasLimit?: number;
+  minGasLimit?: number; // unused, will be removed in v3.0.0
   callbackRoute?: string;
   transactionsDisplayInfo: TransactionsDisplayInfoType;
   customTransactionInformation: CustomTransactionInformation;
 }
 
 export interface ActiveLedgerTransactionType {
-  transaction: Transaction;
-  transactionTokenInfo: TransactionDataTokenType;
-  isTokenTransaction: boolean;
   dataField: string;
+  isTokenTransaction: boolean;
   receiverScamInfo: string | null;
+  transaction: Transaction;
+  transactionIndex: number;
+  transactionTokenInfo: TransactionDataTokenType;
 }
 
 export interface SmartContractResult {
@@ -190,7 +196,7 @@ export type DeviceSignedTransactions = Record<number, Transaction>;
 
 export interface GuardianScreenType extends WithClassnameType {
   address: string;
-  onSignTransaction: () => void;
+  onSignTransaction: () => Promise<void>;
   onPrev: () => void;
   title?: ReactNode;
   signStepInnerClasses?: SignStepInnerClassesType;
@@ -202,16 +208,17 @@ export interface GuardianScreenType extends WithClassnameType {
 }
 
 export interface SignModalPropsType extends WithClassnameType {
-  handleClose: () => void;
-  error: string | null;
   callbackRoute?: string;
-  sessionId?: string;
-  transactions: Transaction[];
-  modalContentClassName?: string;
-  verifyReceiverScam?: boolean;
-  title?: ReactNode;
+  error: string | null;
   GuardianScreen?: (signProps: GuardianScreenType) => JSX.Element;
+  handleClose: () => void;
+  handleSubmit?: () => void;
+  modalContentClassName?: string;
+  sessionId?: string;
   signStepInnerClasses?: SignStepInnerClassesType;
+  title?: ReactNode;
+  transactions: Transaction[];
+  verifyReceiverScam?: boolean;
 }
 
 export interface CustomTransactionInformation {
@@ -220,6 +227,10 @@ export interface CustomTransactionInformation {
   completedTransactionsDelay?: number;
   signWithoutSending: boolean;
   /**
+   * If true, transactions with lower nonces than the account nonce will not be updated with the correct nonce
+   */
+  skipUpdateNonces?: boolean;
+  /**
    * If true, the change guardian action will not trigger transaction version update
    */
   skipGuardian?: boolean;
@@ -227,6 +238,10 @@ export interface CustomTransactionInformation {
    * Keeps indexes of transactions that should be grouped together. If not provided, all transactions will be grouped together. Used only for batch transactions.
    */
   grouping?: number[][];
+  /**
+   * For Cross-Window provider in Safari browser, performing async calls before signing transactions needs a consent popup in order to open a new tab.
+   */
+  hasConsentPopup?: boolean;
 }
 
 export interface SendTransactionReturnType {
@@ -266,3 +281,5 @@ export interface TransactionLinkType {
   label: string;
   address: string;
 }
+
+export type Nullable<T> = T | null;

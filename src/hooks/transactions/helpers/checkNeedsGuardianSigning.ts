@@ -1,5 +1,6 @@
 import { Transaction } from '@terradharitri/sdk-core';
 import { getEnvironmentForChainId } from 'apiCalls/configuration';
+import { getCrossWindowProvider } from 'components/ProviderInitializer/helpers';
 import {
   WALLET_SIGN_SESSION,
   fallbackNetworkConfigurations
@@ -32,17 +33,13 @@ export const checkNeedsGuardianSigning = ({
     transactions
   });
 
-  /**
-   * Redirect to wallet for signing if:
-   * - account is guarded &
-   * - 2FA will not be provided locally &
-   * - transactions were not signed by guardian
-   */
+  const chainId = transactions[0].getChainID().valueOf();
+  const sender = transactions[0].getSender().bech32().toString();
+  const environment = getEnvironmentForChainId(chainId);
+  const walletProviderAddress =
+    walletAddress ?? fallbackNetworkConfigurations[environment].walletAddress;
+
   const sendTransactionsToGuardian = () => {
-    const chainId = transactions[0].getChainID().valueOf();
-    const environment = getEnvironmentForChainId(chainId);
-    const walletProviderAddress =
-      walletAddress ?? fallbackNetworkConfigurations[environment].walletAddress;
     const walletProvider = newWalletProvider(walletProviderAddress);
     const urlParams = { [WALLET_SIGN_SESSION]: String(sessionId) };
     const { origin } = getWindowLocation();
@@ -56,11 +53,22 @@ export const checkNeedsGuardianSigning = ({
     });
   };
 
+  const guardTransactions = async () => {
+    const provider = await getCrossWindowProvider({
+      address: sender,
+      walletUrl: walletProviderAddress
+    });
+    provider?.setShouldShowConsentPopup(true);
+    const guardedTransactions = await provider?.guardTransactions(transactions);
+    return guardedTransactions;
+  };
+
   const needs2FaSigning =
     !hasGuardianScreen && !allSignedByGuardian && sessionId;
 
   return {
     needs2FaSigning: isGuarded ? needs2FaSigning : false,
-    sendTransactionsToGuardian
+    sendTransactionsToGuardian,
+    guardTransactions
   };
 };

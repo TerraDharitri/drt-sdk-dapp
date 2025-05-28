@@ -15,8 +15,9 @@ const buildTypes = {
     format: 'cjs',
     tsconfig: './tsconfig.cjs.json',
     destination: '/__commonjs',
-    walletconnectMock: {
-      __sdkWalletconnectProvider: '__mocks__/sdkWalletconnectProvider'
+    replacements: {
+      __sdkWalletconnectProvider: '__mocks__/sdkWalletconnectProvider',
+      __sdkDappVersion: process.env.npm_package_version
     }
   },
   esm: {
@@ -24,12 +25,19 @@ const buildTypes = {
     format: 'esm',
     tsconfig: './tsconfig.json',
     destination: '',
-    walletconnectMock: {}
+    replacements: {
+      __sdkDappVersion: process.env.npm_package_version
+    }
   }
 };
 
-module.exports = function esbuildWrapper(buildType = 'esm') {
-  const { format, splitting, tsconfig, destination, walletconnectMock } =
+module.exports = function esbuildWrapper(
+  buildType = 'esm',
+  options = {
+    outDir: 'dist'
+  }
+) {
+  const { format, splitting, tsconfig, destination, replacements } =
     buildTypes[buildType];
 
   return function executeBuildCommand(customOptions = {}) {
@@ -51,7 +59,7 @@ module.exports = function esbuildWrapper(buildType = 'esm') {
             entryPoints: files,
             splitting,
             format,
-            outdir: `dist${destination}`,
+            outdir: `${options.outDir}${destination}`,
             treeShaking: true,
             minify: true,
             bundle: true,
@@ -82,7 +90,7 @@ module.exports = function esbuildWrapper(buildType = 'esm') {
                   generateScopedName: 'dapp-core-component__[name]__[local]'
                 })
               }),
-              replace(walletconnectMock)
+              replace(replacements)
             ],
             ...customOptions
           })

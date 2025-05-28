@@ -1,11 +1,13 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
+import { TRANSACTIONS_STATUS_POLLING_INTERVAL_MS } from 'constants/transactionStatus';
 import {
-  AVERAGE_TX_DURATION_MS,
-  TRANSACTIONS_STATUS_POLLING_INTERVAL_MS
-} from 'constants/transactionStatus';
-import { useGetBatches } from 'hooks/transactions/batch/useGetBatches';
-import { extractSessionId } from 'hooks/transactions/helpers/extractSessionId';
-import { timestampIsOlderThan } from 'hooks/transactions/helpers/timestampIsOlderThan';
+  websocketConnection,
+  WebsocketConnectionStatusEnum
+} from '../../../websocketListener/websocketConnection';
+import { extractSessionId } from '../../helpers/extractSessionId';
+import { timestampIsOlderThan } from '../../helpers/timestampIsOlderThan';
+import { useGetPollingInterval } from '../../useGetPollingInterval';
+import { useGetBatches } from '../useGetBatches';
 import { useVerifyBatchStatus } from './useVerifyBatchStatus';
 
 /**
@@ -18,6 +20,10 @@ export const useCheckBatchesOnWsFailureFallback = (props?: {
 }) => {
   const { batchTransactionsArray } = useGetBatches();
   const { verifyBatchStatus } = useVerifyBatchStatus(props);
+  const pollingInterval = useGetPollingInterval();
+  const pollingIntervalTimer = useRef<NodeJS.Timeout | null>(null);
+  const isWebsocketCompleted =
+    websocketConnection.status === WebsocketConnectionStatusEnum.COMPLETED;
 
   const checkAllBatches = useCallback(async () => {
     for (const { batchId } of batchTransactionsArray) {
@@ -40,10 +46,27 @@ export const useCheckBatchesOnWsFailureFallback = (props?: {
   }, [batchTransactionsArray, verifyBatchStatus]);
 
   useEffect(() => {
-    const interval = setInterval(async () => {
-      checkAllBatches();
-    }, AVERAGE_TX_DURATION_MS);
+    if (isWebsocketCompleted) {
+      // Do not setInterval if we already subscribe to websocket event
+      if (pollingIntervalTimer.current) {
+        clearInterval(pollingIntervalTimer.current);
+      }
 
-    return () => clearInterval(interval);
+      return;
+    }
+
+    if (pollingIntervalTimer.current) {
+      return;
+    }
+
+    pollingIntervalTimer.current = setInterval(() => {
+      checkAllBatches();
+    }, pollingInterval);
+
+    return () => {
+      if (pollingIntervalTimer.current) {
+        clearInterval(pollingIntervalTimer.current);
+      }
+    };
   }, [checkAllBatches]);
 };

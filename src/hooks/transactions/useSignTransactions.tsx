@@ -6,6 +6,12 @@ import {
 } from '@terradharitri/sdk-core';
 
 import { ExtensionProvider } from '@terradharitri/sdk-extension-provider';
+import { MetamaskProvider } from '@terradharitri/sdk-metamask-provider/out/metamaskProvider';
+
+import { PasskeyProvider } from '@terradharitri/sdk-passkey-provider/out';
+import { IframeProvider } from '@terradharitri/sdk-web-wallet-iframe-provider/out';
+import uniq from 'lodash/uniq';
+import { useGetAccountFromApi } from 'apiCalls/accounts/useGetAccountFromApi';
 import {
   ERROR_SIGNING,
   ERROR_SIGNING_TX,
@@ -18,12 +24,14 @@ import {
 import { useGetAccount } from 'hooks/account';
 import { useGetAccountProvider } from 'hooks/account/useGetAccountProvider';
 import { useParseSignedTransactions } from 'hooks/transactions/useParseSignedTransactions';
+import { CrossWindowProvider } from 'lib/sdkWebWalletCrossWindowProvider';
+import { ExperimentalWebviewProvider } from 'providers/experimentalWebViewProvider';
 import { getProviderType } from 'providers/utils';
 
 import { useDispatch, useSelector } from 'reduxStore/DappProviderContext';
 import {
-  networkSelector,
-  signTransactionsCancelMessageSelector
+  signTransactionsCancelMessageSelector,
+  walletAddressSelector
 } from 'reduxStore/selectors';
 import {
   clearAllTransactionsToSign,
@@ -36,7 +44,6 @@ import {
   LoginMethodsEnum,
   TransactionBatchStatusesEnum
 } from 'types/enums.types';
-
 import { builtCallbackUrl } from 'utils/transactions/builtCallbackUrl';
 import { parseTransactionAfterSigning } from 'utils/transactions/parseTransactionAfterSigning';
 import { getDefaultCallbackUrl } from 'utils/window';
@@ -45,7 +52,8 @@ import { getWindowLocation } from 'utils/window/getWindowLocation';
 import {
   useSetTransactionNonces,
   getShouldMoveTransactionsToSignedState,
-  checkNeedsGuardianSigning
+  checkNeedsGuardianSigning,
+  checkIsValidSender
 } from './helpers';
 import { useSignTransactionsCommonData } from './useSignTransactionsCommonData';
 
@@ -53,8 +61,7 @@ export const useSignTransactions = () => {
   const dispatch = useDispatch();
   const savedCallback = useRef('/');
   const { provider } = useGetAccountProvider();
-  const network = useSelector(networkSelector);
-
+  const walletAddress = useSelector(walletAddressSelector);
   const providerType = getProviderType(provider);
   const isSigningRef = useRef(false);
   const setTransactionNonces = useSetTransactionNonces();
@@ -75,21 +82,64 @@ export const useSignTransactions = () => {
 
   useParseSignedTransactions(onAbort);
 
-  function clearSignInfo(sessionId?: string) {
+  const senderAddresses = uniq(
+    transactionsToSign?.transactions
+      .map((tx) => tx.getSender().toString())
+      .filter((sender) => sender)
+  ) as string[];
+
+  const sender = senderAddresses?.[0];
+
+  // Skip account fetching if the sender is missing or same as current account
+  const { data: senderAccount } = useGetAccountFromApi(
+    !sender || sender === address ? null : sender
+  );
+
+  const clearSignInfo = (sessionId?: string) => {
     const isExtensionProvider = provider instanceof ExtensionProvider;
+    const isPasskeyProvider = provider instanceof PasskeyProvider;
+    const isCrossWindowProvider = provider instanceof CrossWindowProvider;
+    const isIframeProvider = provider instanceof IframeProvider;
+    const isMetamaskProvider = provider instanceof MetamaskProvider;
+    const isExperiementalWebviewProvider =
+      provider instanceof ExperimentalWebviewProvider;
 
     dispatch(clearAllTransactionsToSign());
     dispatch(clearTransactionsInfoForSessionId(sessionId));
 
     isSigningRef.current = false;
 
-    if (!isExtensionProvider) {
+    if (
+      !isExtensionProvider &&
+      !isCrossWindowProvider &&
+      !isIframeProvider &&
+      !isPasskeyProvider &&
+      !isMetamaskProvider
+    ) {
       return;
     }
 
     clearTransactionStatusMessage();
-    ExtensionProvider.getInstance()?.cancelAction?.();
-  }
+
+    if (isExtensionProvider) {
+      ExtensionProvider.getInstance()?.cancelAction?.();
+    }
+    if (isPasskeyProvider) {
+      PasskeyProvider.getInstance()?.cancelAction?.();
+    }
+    if (isMetamaskProvider) {
+      MetamaskProvider.getInstance()?.cancelAction?.();
+    }
+    if (isCrossWindowProvider) {
+      CrossWindowProvider.getInstance()?.cancelAction?.();
+    }
+    if (isIframeProvider) {
+      IframeProvider.getInstance()?.cancelAction?.();
+    }
+    if (isExperiementalWebviewProvider) {
+      ExperimentalWebviewProvider.getInstance()?.cancelAction?.();
+    }
+  };
 
   const onCancel = (errorMessage: string, sessionId?: string) => {
     const isSigningWithWalletConnectV2 =
@@ -119,7 +169,9 @@ export const useSignTransactions = () => {
     sessionId: string,
     callbackRoute = ''
   ) => {
-    const urlParams = { [WALLET_SIGN_SESSION]: sessionId };
+    const urlParams: Record<string, string> = {
+      [WALLET_SIGN_SESSION]: sessionId
+    };
     let callbackUrl = callbackRoute;
 
     if (window?.location) {
@@ -150,6 +202,7 @@ export const useSignTransactions = () => {
       callbackRoute,
       customTransactionInformation
     } = transactionsToSign;
+
     const { redirectAfterSign } = customTransactionInformation;
     const defaultCallbackUrl = getDefaultCallbackUrl();
     const redirectRoute = callbackRoute || defaultCallbackUrl;
@@ -168,25 +221,33 @@ export const useSignTransactions = () => {
         PROVIDER_NOT_INITIALIZED;
       console.error(errorMessage);
 
-      onCancel(errorMessage);
+      onCancel(PROVIDER_NOT_INITIALIZED, sessionId);
       return;
     }
 
     const allowGuardian = !customTransactionInformation.skipGuardian;
+    const hasConsentPopup = customTransactionInformation.hasConsentPopup;
+    const isCrossWindowProvider = provider instanceof CrossWindowProvider;
 
     try {
       isSigningRef.current = true;
-      const signedTransactions: Transaction[] = await provider.signTransactions(
-        isGuarded && allowGuardian
-          ? transactions.map((transaction) => {
-              transaction.setVersion(TransactionVersion.withTxOptions());
-              transaction.setOptions(
-                TransactionOptions.withOptions({ guarded: true })
-              );
-              return transaction;
-            })
-          : transactions
-      );
+
+      if (isCrossWindowProvider && hasConsentPopup) {
+        (provider as CrossWindowProvider).setShouldShowConsentPopup(true);
+      }
+      const signedTransactions: Transaction[] =
+        (await provider.signTransactions(
+          isGuarded && allowGuardian
+            ? transactions?.map((transaction) => {
+                transaction.setVersion(TransactionVersion.withTxOptions());
+                transaction.setOptions(
+                  TransactionOptions.withOptions({ guarded: true })
+                );
+                return transaction;
+              })
+            : transactions
+        )) ?? [];
+
       isSigningRef.current = false;
 
       const shouldMoveTransactionsToSignedState =
@@ -196,21 +257,23 @@ export const useSignTransactions = () => {
         return;
       }
 
-      const signedTransactionsArray = Object.values(signedTransactions).map(
+      let signedTransactionsArray = Object.values(signedTransactions).map(
         (tx) => parseTransactionAfterSigning(tx)
       );
 
-      const { needs2FaSigning, sendTransactionsToGuardian } =
-        checkNeedsGuardianSigning({
-          transactions: signedTransactions,
-          sessionId,
-          callbackRoute,
-          isGuarded: isGuarded && allowGuardian,
-          walletAddress: network.walletAddress
-        });
+      const { needs2FaSigning, guardTransactions } = checkNeedsGuardianSigning({
+        transactions: signedTransactions,
+        sessionId,
+        callbackRoute,
+        isGuarded: isGuarded && allowGuardian,
+        walletAddress
+      });
 
       if (needs2FaSigning) {
-        return sendTransactionsToGuardian();
+        const guardedTransactions = await guardTransactions();
+        signedTransactionsArray = guardedTransactions
+          ? guardedTransactions.map((tx) => parseTransactionAfterSigning(tx))
+          : [];
       }
 
       const payload: MoveTransactionsToSignedStatePayloadType = {
@@ -252,23 +315,30 @@ export const useSignTransactions = () => {
 
     clearTransactionStatusMessage();
 
-    const { sessionId, transactions, callbackRoute } = transactionsToSign;
+    const {
+      sessionId,
+      transactions,
+      callbackRoute,
+      customTransactionInformation
+    } = transactionsToSign;
 
     if (!provider) {
       console.error(MISSING_PROVIDER_MESSAGE);
       return;
     }
 
-    const isLoggedInWithDifferentAccount = transactions.some((tx) => {
-      const sender = tx.getSender().toString();
-      return sender && address !== sender;
-    });
+    if (senderAddresses.length > 1) {
+      throw new Error('Multiple senders are not allowed');
+    }
 
-    // Prevent signing transactions with different account
-    if (isLoggedInWithDifferentAccount) {
-      console.error(SENDER_DIFFERENT_THAN_LOGGED_IN_ADDRESS);
+    if (sender && sender !== address) {
+      const isValidSender = checkIsValidSender(senderAccount, address);
 
-      return onCancel(SENDER_DIFFERENT_THAN_LOGGED_IN_ADDRESS);
+      if (!isValidSender) {
+        console.error(SENDER_DIFFERENT_THAN_LOGGED_IN_ADDRESS);
+
+        return onCancel(SENDER_DIFFERENT_THAN_LOGGED_IN_ADDRESS);
+      }
     }
 
     /*
@@ -281,9 +351,10 @@ export const useSignTransactions = () => {
     try {
       const isSigningWithWebWallet = providerType === LoginMethodsEnum.wallet;
 
-      const transactionsWithIncrementalNonces = await setTransactionNonces(
-        transactions
-      );
+      const transactionsWithIncrementalNonces =
+        customTransactionInformation.skipUpdateNonces
+          ? transactions
+          : await setTransactionNonces(transactions);
 
       if (isSigningWithWebWallet) {
         return signWithWallet(
@@ -318,7 +389,7 @@ export const useSignTransactions = () => {
     } else {
       isSigningRef.current = false;
     }
-  }, [transactionsToSign, hasTransactions]);
+  }, [transactionsToSign, hasTransactions, senderAccount]);
 
   return {
     error,

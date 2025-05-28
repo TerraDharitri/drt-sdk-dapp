@@ -17,9 +17,12 @@ export const fallbackNetworkConfigurations: Record<
     walletConnectBridgeAddresses: ['https://bridge.walletconnect.org'],
     walletConnectV2RelayAddresses: ['wss://relay.walletconnect.com'],
     walletAddress: 'https://devnet-wallet.dharitri.org',
+    xAliasAddress: 'https://devnet.xalias.com',
     apiAddress: 'https://devnet-api.dharitri.org',
     explorerAddress: 'http://devnet-explorer.dharitri.org',
-    apiTimeout: '4000'
+    metamaskSnapWalletAddress: 'https://devnet-snap-wallet.dharitri.org',
+    apiTimeout: '4000',
+    roundDuration: 6000
   },
   testnet: {
     id: 'testnet',
@@ -34,9 +37,12 @@ export const fallbackNetworkConfigurations: Record<
     walletConnectBridgeAddresses: ['https://bridge.walletconnect.org'],
     walletConnectV2RelayAddresses: ['wss://relay.walletconnect.com'],
     walletAddress: 'https://testnet-wallet.dharitri.org',
+    xAliasAddress: 'https://testnet.xalias.com',
     apiAddress: 'https://testnet-api.dharitri.org',
     explorerAddress: 'http://testnet-explorer.dharitri.org',
-    apiTimeout: '4000'
+    metamaskSnapWalletAddress: 'https://testnet-snap-wallet.dharitri.org',
+    apiTimeout: '4000',
+    roundDuration: 6000
   },
   mainnet: {
     id: 'mainnet',
@@ -51,9 +57,12 @@ export const fallbackNetworkConfigurations: Record<
     walletConnectBridgeAddresses: ['https://bridge.walletconnect.org'],
     walletConnectV2RelayAddresses: ['wss://relay.walletconnect.com'],
     walletAddress: 'https://wallet.dharitri.org',
+    xAliasAddress: 'https://xalias.com',
     apiAddress: 'https://api.dharitri.org',
     explorerAddress: 'https://explorer.dharitri.org',
-    apiTimeout: '4000'
+    metamaskSnapWalletAddress: 'https://snap-wallet.dharitri.org',
+    apiTimeout: '4000',
+    roundDuration: 6000
   }
 };
 

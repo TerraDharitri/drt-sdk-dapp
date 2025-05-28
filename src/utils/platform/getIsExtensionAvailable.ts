@@ -1,3 +1,9 @@
+type SafeWindowType<T extends Window = Window> = {
+  [K in keyof T]?: T[K];
+};
+
 export const getIsExtensionAvailable = () => {
-  return Boolean(window?.numbatWallet);
+  const safeWindow =
+    typeof window !== 'undefined' ? window : ({} as SafeWindowType);
+  return Boolean(safeWindow?.numbatWallet);
 };

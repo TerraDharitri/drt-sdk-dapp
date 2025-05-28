@@ -3,7 +3,7 @@ import {
   DeviceSignedTransactions,
   GuardianScreenType,
   MultiSignTransactionType
-} from 'types';
+} from '../../../types';
 import { WithClassnameType } from '../../types';
 import { SignPropsType } from '../types/signTransactionsModals.types';
 
@@ -23,13 +23,14 @@ export interface SignStepInnerClassesType {
 export interface SignStepPropsType
   extends WithClassnameType,
     GuardianScreenType {
-  handleClose: () => void;
-  GuardianScreen?: SignPropsType['GuardianScreen'];
-  waitingForDevice: boolean;
-  error: string | null;
+  allTransactions: MultiSignTransactionType[];
   callbackRoute?: string;
   currentStep: number;
   currentTransaction: ActiveLedgerTransactionType | null;
-  allTransactions: MultiSignTransactionType[];
+  GuardianScreen?: SignPropsType['GuardianScreen'];
+  error: string | null;
+  handleClose: () => void;
+  handleSubmit?: () => void;
   isLastTransaction: boolean;
+  waitingForDevice: boolean;
 }

@@ -1,20 +1,18 @@
 import React from 'react';
-
 import classNames from 'classnames';
 import { DataTestIdsEnum, N_A } from 'constants/index';
+import { withStyles, WithStylesImportType } from 'hocs/withStyles';
 import { WithClassnameType, WithTransactionType } from 'UI/types';
 import { getRewaLabel } from 'utils/network/getRewaLabel';
 import { formatAmount } from 'utils/operations/formatAmount';
 import { getUsdValue } from 'utils/operations/getUsdValue';
-
 import { DetailItem } from '../../DetailItem';
 
-import styles from './styles.scss';
-
-export const TransactionInfoValue = ({
+const TransactionInfoValueComponent = ({
   className,
-  transaction
-}: WithTransactionType & WithClassnameType) => {
+  transaction,
+  styles
+}: WithTransactionType & WithClassnameType & WithStylesImportType) => {
   const rewaLabel = getRewaLabel();
   const formattedTxValue = formatAmount({
     input: transaction.value,
@@ -28,10 +26,10 @@ export const TransactionInfoValue = ({
   });
 
   return (
-    <DetailItem title='Value' className={classNames(styles.value, className)}>
+    <DetailItem title='Value' className={classNames(styles?.value, className)}>
       <span data-testid={DataTestIdsEnum.transactionInfoValue}>
         {formattedTxValue} {rewaLabel}{' '}
-        <span className={styles.price}>
+        <span className={styles?.price}>
           {transaction.price != null
             ? `(${getUsdValue({
                 amount: txValue,
@@ -45,3 +43,13 @@ export const TransactionInfoValue = ({
     </DetailItem>
   );
 };
+
+export const TransactionInfoValue = withStyles(TransactionInfoValueComponent, {
+  ssrStyles: () =>
+    import(
+      'UI/TransactionInfo/components/transactionInfoFields/TransactionInfoValue/styles.scss'
+    ),
+  clientStyles: () =>
+    require('UI/TransactionInfo/components/transactionInfoFields/TransactionInfoValue/styles.scss')
+      .default
+});

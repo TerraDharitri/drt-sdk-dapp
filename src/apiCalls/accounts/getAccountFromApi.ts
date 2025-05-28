@@ -1,15 +1,14 @@
-import axios from 'axios';
 import { ACCOUNTS_ENDPOINT } from 'apiCalls/endpoints';
 import { getCleanApiAddress } from 'apiCalls/utils';
-import { AccountType } from 'types';
+import { axiosInstance } from 'apiCalls/utils/axiosInstance';
 
 export const accountFetcher = (address: string | null) => {
   const apiAddress = getCleanApiAddress();
   const url = `${apiAddress}/${ACCOUNTS_ENDPOINT}/${address}?withGuardianInfo=true`;
-  return axios.get<AccountType>(url);
+  return axiosInstance.get(url);
 };
 
-export async function getAccountFromApi(address?: string) {
+export const getAccountFromApi = async (address?: string) => {
   if (!address) {
     return null;
   }
@@ -18,7 +17,8 @@ export async function getAccountFromApi(address?: string) {
     const { data } = await accountFetcher(address);
     return data;
   } catch (err) {
-    console.error('error fetching configuration for ', address);
+    console.error('error fetching configuration for ', address, err);
   }
+
   return null;
-}
+};

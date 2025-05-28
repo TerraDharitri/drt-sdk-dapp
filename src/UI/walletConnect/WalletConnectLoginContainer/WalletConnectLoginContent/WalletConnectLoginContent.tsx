@@ -2,22 +2,19 @@ import React, { useEffect, useState } from 'react';
 import { faCircleNotch } from '@fortawesome/free-solid-svg-icons';
 import classNames from 'classnames';
 import QRCode from 'qrcode';
-
 import Lighting from 'assets/icons/lightning.svg';
-import globalStyles from 'assets/sass/main.scss';
 import { DataTestIdsEnum } from 'constants/index';
+import { withStyles, WithStylesImportType } from 'hocs/withStyles';
 import { useWalletConnectV2Login } from 'hooks/login/useWalletConnectV2Login';
 import { getAuthorizationInfo } from 'services/nativeAuth/helpers';
 import { PageState } from 'UI/PageState';
 import { ScamPhishingAlert } from 'UI/ScamPhishingAlert';
 import { isMobileEnvironment } from 'utils/environment/isMobileEnvironment';
 import { getWindowLocation } from 'utils/window/getWindowLocation';
-
 import { Pairinglist } from '../PairingList';
 import { WalletConnectLoginModalPropsType } from '../types';
-import styles from '../walletConnectLoginContainerStyles.scss';
 
-export const WalletConnectLoginContent = ({
+const WalletConnectLoginContentComponent = ({
   callbackRoute,
   className = 'dapp-wallet-connect-login-modal',
   customSpinnerComponent,
@@ -30,11 +27,13 @@ export const WalletConnectLoginContent = ({
   showScamPhishingAlert = true,
   title = 'Login with the xPortal App',
   token,
-  canLoginRef
-}: WalletConnectLoginModalPropsType) => {
+  globalStyles,
+  styles,
+  customRequestMethods = []
+}: WalletConnectLoginModalPropsType & WithStylesImportType) => {
   const [
     initLoginWithWalletConnectV2,
-    { error: walletConnectErrorV2 },
+    { error: walletConnectErrorV2, isLoading },
     {
       connectExisting,
       removeExistingPairing,
@@ -48,7 +47,7 @@ export const WalletConnectLoginContent = ({
     nativeAuth,
     onLoginRedirect,
     logoutRoute,
-    canLoginRef
+    customRequestMethods
   });
 
   const [qrCodeSvg, setQrCodeSvg] = useState<string>('');
@@ -115,11 +114,14 @@ export const WalletConnectLoginContent = ({
       )}
 
       <div
-        className={classNames(styles.xPortalContent, containerContentClassName)}
+        className={classNames(
+          styles?.xPortalContent,
+          containerContentClassName
+        )}
       >
         <div
           className={classNames(
-            styles.xPortalContainerHeading,
+            styles?.xPortalContainerHeading,
             containerTitleClassName
           )}
         >
@@ -128,7 +130,7 @@ export const WalletConnectLoginContent = ({
 
         <div
           className={classNames(
-            styles.xPortalContainerSubheading,
+            styles?.xPortalContainerSubheading,
             containerSubtitleClassName
           )}
         >
@@ -139,7 +141,7 @@ export const WalletConnectLoginContent = ({
           {walletConnectErrorV2 && (
             <p
               className={classNames(
-                styles.xPortalContainerError,
+                styles?.xPortalContainerError,
                 containerErrorClassName
               )}
             >
@@ -148,20 +150,10 @@ export const WalletConnectLoginContent = ({
           )}
         </div>
 
-        {qrCodeSvg ? (
+        {isLoading || !qrCodeSvg ? (
           <div
             className={classNames(
-              styles.xPortalQrCode,
-              containerQrCodeClassName
-            )}
-            dangerouslySetInnerHTML={{
-              __html: qrCodeSvg
-            }}
-          />
-        ) : (
-          <div
-            className={classNames(
-              styles.xPortalLoader,
+              styles?.xPortalLoader,
               containerLoaderClassName
             )}
           >
@@ -171,10 +163,20 @@ export const WalletConnectLoginContent = ({
               <PageState
                 iconSize='10x'
                 icon={faCircleNotch}
-                iconClass={classNames('fa-spin', globalStyles.textPrimary)}
+                iconClass={classNames('fa-spin', globalStyles?.textPrimary)}
               />
             )}
           </div>
+        ) : (
+          <div
+            className={classNames(
+              styles?.xPortalQrCode,
+              containerQrCodeClassName
+            )}
+            dangerouslySetInnerHTML={{
+              __html: qrCodeSvg
+            }}
+          />
         )}
 
         {isMobileDevice && (
@@ -185,13 +187,13 @@ export const WalletConnectLoginContent = ({
             rel='noopener noreferrer nofollow'
             target='_blank'
             className={classNames(
-              globalStyles.btn,
-              globalStyles.btnPrimary,
-              styles.xPortalContainerButton,
+              globalStyles?.btn,
+              globalStyles?.btnPrimary,
+              styles?.xPortalContainerButton,
               containerButtonClassName
             )}
           >
-            <Lighting className={styles.xPortalContainerButtonIcon} />
+            <Lighting className={styles?.xPortalContainerButtonIcon} />
             {loginButtonText}
           </a>
         )}
@@ -209,3 +211,16 @@ export const WalletConnectLoginContent = ({
     </>
   );
 };
+
+export const WalletConnectLoginContent = withStyles(
+  WalletConnectLoginContentComponent,
+  {
+    ssrStyles: () =>
+      import(
+        'UI/walletConnect/WalletConnectLoginContainer/walletConnectLoginContainerStyles.scss'
+      ),
+    clientStyles: () =>
+      require('UI/walletConnect/WalletConnectLoginContainer/walletConnectLoginContainerStyles.scss')
+        .default
+  }
+);

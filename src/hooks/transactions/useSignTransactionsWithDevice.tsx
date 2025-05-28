@@ -1,13 +1,12 @@
-import { useState } from 'react';
 import { Transaction } from '@terradharitri/sdk-core';
-import { getScamAddressData } from 'apiCalls/getScamAddressData';
+import { getScamAddressData } from 'apiCalls/utils/getScamAddressData';
 
 import { useGetAccountInfo } from 'hooks/account/useGetAccountInfo';
 import { useGetAccountProvider } from 'hooks/account/useGetAccountProvider';
 import { useSignMultipleTransactions } from 'hooks/transactions/useSignMultipleTransactions';
 
 import { useDispatch, useSelector } from 'reduxStore/DappProviderContext';
-import { rewaLabelSelector, networkSelector } from 'reduxStore/selectors';
+import { rewaLabelSelector, walletAddressSelector } from 'reduxStore/selectors';
 import {
   moveTransactionsToSignedState,
   setSignTransactionsError
@@ -17,6 +16,7 @@ import {
   DeviceSignedTransactions,
   LoginMethodsEnum,
   MultiSignTransactionType,
+  Nullable,
   TransactionBatchStatusesEnum
 } from 'types';
 import { getIsProviderEqualTo } from 'utils/account/getIsProviderEqualTo';
@@ -36,7 +36,7 @@ export interface UseSignTransactionsWithDevicePropsType {
 
 export interface UseSignTransactionsWithDeviceReturnType {
   allTransactions: MultiSignTransactionType[];
-  onSignTransaction: () => void;
+  onSignTransaction: () => Promise<void>;
   onNext: () => void;
   onPrev: () => void;
   onAbort: () => void;
@@ -57,7 +57,7 @@ export function useSignTransactionsWithDevice(
   const { onCancel, verifyReceiverScam = true, hasGuardianScreen } = props;
   const { transactionsToSign, hasTransactions } =
     useSignTransactionsCommonData();
-  const network = useSelector(networkSelector);
+  const walletAddress = useSelector(walletAddressSelector);
   const getLedgerProvider = useGetLedgerProvider();
 
   const rewaLabel = useSelector(rewaLabelSelector);
@@ -67,7 +67,6 @@ export function useSignTransactionsWithDevice(
   const dispatch = useDispatch();
   const clearTransactionsToSignWithWarning =
     useClearTransactionsToSignWithWarning();
-  const [isSignDisabled, setIsSignDisabled] = useState<boolean>();
 
   const {
     transactions,
@@ -95,7 +94,9 @@ export function useSignTransactionsWithDevice(
 
   const allowGuardian = !customTransactionInformation?.skipGuardian;
 
-  function handleTransactionsSignSuccess(newSignedTransactions: Transaction[]) {
+  async function handleTransactionsSignSuccess(
+    newSignedTransactions: Transaction[]
+  ) {
     const shouldMoveTransactionsToSignedState =
       getShouldMoveTransactionsToSignedState(newSignedTransactions);
 
@@ -103,39 +104,43 @@ export function useSignTransactionsWithDevice(
       return;
     }
 
-    const { needs2FaSigning, sendTransactionsToGuardian } =
-      checkNeedsGuardianSigning({
-        transactions: newSignedTransactions,
-        sessionId,
-        callbackRoute,
-        hasGuardianScreen,
-        isGuarded: isGuarded && allowGuardian,
-        walletAddress: network.walletAddress
-      });
+    const { needs2FaSigning, guardTransactions } = checkNeedsGuardianSigning({
+      transactions: newSignedTransactions,
+      sessionId,
+      callbackRoute,
+      isGuarded: isGuarded && allowGuardian,
+      walletAddress
+    });
+
+    let signedTransactionsArray = newSignedTransactions.map((tx) =>
+      parseTransactionAfterSigning(tx)
+    );
 
     if (needs2FaSigning) {
-      setIsSignDisabled(true); // prevent user from pressing sign button again while page is redirecting
-      return sendTransactionsToGuardian();
+      const guardedTransactions = await guardTransactions();
+      signedTransactionsArray = guardedTransactions
+        ? guardedTransactions.map((tx) => parseTransactionAfterSigning(tx))
+        : [];
     }
 
-    if (sessionId) {
-      dispatch(
-        moveTransactionsToSignedState({
-          sessionId: sessionId,
-          status: TransactionBatchStatusesEnum.signed,
-          transactions: newSignedTransactions.map((tx) =>
-            parseTransactionAfterSigning(tx)
-          )
-        })
-      );
+    if (!sessionId) {
+      return;
+    }
 
-      if (
-        callbackRoute != null &&
-        customTransactionInformation?.redirectAfterSign &&
-        !locationIncludesCallbackRoute
-      ) {
-        safeRedirect({ url: callbackRoute });
-      }
+    dispatch(
+      moveTransactionsToSignedState({
+        sessionId: sessionId,
+        status: TransactionBatchStatusesEnum.signed,
+        transactions: signedTransactionsArray
+      })
+    );
+
+    if (
+      callbackRoute != null &&
+      customTransactionInformation?.redirectAfterSign &&
+      !locationIncludesCallbackRoute
+    ) {
+      safeRedirect({ url: callbackRoute });
     }
   }
 
@@ -144,12 +149,17 @@ export function useSignTransactionsWithDevice(
     clearTransactionsToSignWithWarning(sessionId);
   }
 
-  async function handleSignTransaction(transaction: Transaction) {
+  async function handleSignTransaction(
+    transaction: Nullable<Transaction>
+  ): Promise<Nullable<Transaction | undefined>> {
     const connectedProvider =
       providerType !== LoginMethodsEnum.ledger
         ? provider
         : await getLedgerProvider();
 
+    if (!transaction) {
+      return null;
+    }
     return await connectedProvider.signTransaction(transaction);
   }
 
@@ -171,7 +181,6 @@ export function useSignTransactionsWithDevice(
   return {
     ...signMultipleTxReturnValues,
     callbackRoute,
-    waitingForDevice:
-      isSignDisabled ?? signMultipleTxReturnValues.waitingForDevice
+    waitingForDevice: signMultipleTxReturnValues.waitingForDevice
   };
 }

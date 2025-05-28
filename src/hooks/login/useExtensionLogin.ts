@@ -15,6 +15,7 @@ import { getIsLoggedIn } from 'utils/getIsLoggedIn';
 import { optionalRedirect } from 'utils/internal';
 import { addOriginToLocationPath } from 'utils/window';
 import { getDefaultCallbackUrl } from 'utils/window';
+import { clearInitiatedLogins } from './helpers';
 import { useLoginService } from './useLoginService';
 
 export type UseExtensionLoginReturnType = [
@@ -41,6 +42,8 @@ export const useExtensionLogin = ({
     if (isLoggedIn) {
       throw new Error(SECOND_LOGIN_ATTEMPT_ERROR);
     }
+
+    clearInitiatedLogins();
 
     setIsLoading(true);
     const provider: ExtensionProvider = ExtensionProvider.getInstance();
@@ -88,6 +91,7 @@ export const useExtensionLogin = ({
       if (!address) {
         setIsLoading(false);
         console.warn('Login cancelled.');
+        setError('Login cancelled');
         return;
       }
 
@@ -108,7 +112,7 @@ export const useExtensionLogin = ({
         options: { signature, address }
       });
     } catch (error) {
-      console.error('error loging in', error);
+      console.error('error logging in', error);
       // TODO: can be any or typed error
       setError('error logging in' + (error as any).message);
     } finally {

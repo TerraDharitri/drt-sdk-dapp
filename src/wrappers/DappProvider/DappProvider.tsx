@@ -3,22 +3,38 @@ import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { ProviderInitializer } from 'components/ProviderInitializer/ProviderInitializer';
 import { setExternalProvider } from 'providers/accountProvider';
-import { webviewProvider } from 'providers/webviewProvider';
+import { ExperimentalWebviewProvider } from 'providers/experimentalWebViewProvider/ExperimentalWebviewProvider';
 import { DappCoreContext } from 'reduxStore/DappProviderContext';
+import { setWebviewLogin } from 'reduxStore/slices';
 import { persistor, store } from 'reduxStore/store';
-import { CustomNetworkType, EnvironmentsEnum, IDappProvider } from 'types';
-import { DappConfigType } from 'types/dappConfig.types';
-import { AppInitializer } from 'wrappers/AppInitializer';
+import { getAccessTokenFromSearchParams } from 'utils/account/getAccessTokenFromSearchParams';
+import { CustomNetworkType, IDappProvider, DappConfigType } from '../../types';
+import {
+  AppInitializer,
+  UseAppInitializerPropsType
+} from './../../wrappers/AppInitializer';
 import { CustomComponents, CustomComponentsType } from './CustomComponents';
 
 export { DappConfigType };
+
+const setWebviewProvider = () => {
+  const providerInstance = ExperimentalWebviewProvider.getInstance();
+
+  const accessToken = getAccessTokenFromSearchParams();
+  setWebviewLogin({
+    data: accessToken
+  });
+
+  providerInstance.init?.();
+  setExternalProvider(providerInstance);
+};
 
 export interface DappProviderPropsType {
   children: React.ReactNode | ReactElement;
   customNetworkConfig?: CustomNetworkType;
   externalProvider?: IDappProvider;
   //we need the strings for autocomplete suggestions
-  environment: 'testnet' | 'mainnet' | 'devnet' | EnvironmentsEnum;
+  environment: UseAppInitializerPropsType['environment'];
   customComponents?: CustomComponentsType;
   dappConfig?: DappConfigType;
 }
@@ -39,7 +55,7 @@ export const DappProvider = ({
   if (externalProvider != null) {
     setExternalProvider(externalProvider);
   } else if (dappConfig?.shouldUseWebViewProvider) {
-    setExternalProvider(webviewProvider);
+    setWebviewProvider();
   }
 
   return (
@@ -47,7 +63,7 @@ export const DappProvider = ({
       <PersistGate persistor={persistor} loading={null}>
         {() => (
           <AppInitializer
-            environment={environment as EnvironmentsEnum}
+            environment={environment}
             customNetworkConfig={customNetworkConfig}
             dappConfig={dappConfig}
           >

@@ -76,7 +76,7 @@ export const accountInfoSlice = createSlice({
     ) => {
       const address = action.payload;
       state.address = address;
-      state.publicKey = new Address(address).hex();
+      state.publicKey = address ? new Address(address).hex() : '';
     },
     setAccount: (
       state: AccountInfoSliceType,
@@ -84,9 +84,11 @@ export const accountInfoSlice = createSlice({
     ) => {
       // account fetching always comes after address is populated
       const isSameAddress = state.address === action.payload.address;
+
       state.accounts = {
         [state.address]: isSameAddress ? action.payload : emptyAccount
       };
+
       state.shard = action.payload.shard;
       state.isAccountLoading = false;
       state.accountLoadingError = null;

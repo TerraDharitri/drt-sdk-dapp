@@ -1,19 +1,17 @@
 import React from 'react';
 import classNames from 'classnames';
-import globalStyles from 'assets/sass/main.scss';
-import {
-  DataTestIdsEnum,
-  DECIMALS,
-  DIGITS,
-  MAINNET_REWA_LABEL,
-  ZERO
-} from 'constants/index';
+import { DataTestIdsEnum, DECIMALS, DIGITS, ZERO } from 'constants/index';
+import { withStyles, WithStylesImportType } from 'hocs/withStyles';
+import { getRewaLabel } from 'utils/network/getRewaLabel';
 import { formatAmount } from 'utils/operations/formatAmount';
 import { stringIsInteger } from 'utils/validation/stringIsInteger';
 import { FormatAmountPropsType } from './formatAmount.types';
-import styles from './formatAmountStyles.scss';
 
-const formatAmountInvalid = (props: FormatAmountPropsType) => {
+const formatAmountInvalid = (
+  props: FormatAmountPropsType & WithStylesImportType
+) => {
+  const styles = props.styles ?? {};
+
   return (
     <span
       data-testid={
@@ -31,10 +29,15 @@ const formatAmountInvalid = (props: FormatAmountPropsType) => {
   );
 };
 
-const formatAmountValid = (props: FormatAmountPropsType, drtLabel: string) => {
+const formatAmountValid = (
+  props: FormatAmountPropsType & WithStylesImportType,
+  drtLabel: string
+) => {
   const { value, showLastNonZeroDecimal = false, showLabel = true } = props;
   const digits = props.digits != null ? props.digits : DIGITS;
   const decimals = props.decimals != null ? props.decimals : DECIMALS;
+  const styles = props.styles ?? {};
+  const globalStyles = props.globalStyles ?? {};
 
   const formattedValue = formatAmount({
     input: value,
@@ -97,7 +100,9 @@ const formatAmountValid = (props: FormatAmountPropsType, drtLabel: string) => {
   );
 };
 
-const FormatAmountComponent = (props: FormatAmountPropsType) => {
+const FormatAmountComponent = (
+  props: FormatAmountPropsType & WithStylesImportType
+) => {
   const { value } = props;
 
   return !stringIsInteger(value)
@@ -108,10 +113,17 @@ const FormatAmountComponent = (props: FormatAmountPropsType) => {
 /**
  * @param props.rewaLabel  if not provided, will fallback on **REWA**
  */
-export const FormatAmount = (props: FormatAmountPropsType) => {
-  const rewaLabel = props.rewaLabel || MAINNET_REWA_LABEL;
+const FormatAmountWrapper = (
+  props: FormatAmountPropsType & WithStylesImportType
+) => {
+  const rewaLabel = props.rewaLabel || getRewaLabel();
 
   const formatAmountProps = { ...props, rewaLabel };
 
   return <FormatAmountComponent {...formatAmountProps} />;
 };
+
+export const FormatAmount = withStyles(FormatAmountWrapper, {
+  ssrStyles: () => import('UI/FormatAmount/formatAmountStyles.scss'),
+  clientStyles: () => require('UI/FormatAmount/formatAmountStyles.scss').default
+});

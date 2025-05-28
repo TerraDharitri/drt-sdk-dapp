@@ -7,8 +7,7 @@ import {
   renderWithProvider,
   server,
   testNetwork,
-  testAddress,
-  mockWindowHistory
+  testAddress
 } from '__mocks__';
 
 import { logoutAction } from 'reduxStore/commonActions';
@@ -18,6 +17,13 @@ import { sleep } from 'utils/asyncActions';
 import { LedgerLoginButton } from '../LedgerLoginButton';
 import { checkIsLoggedInStore, ledgerLogin } from './helpers';
 import { mockLedgerProvider } from './mocks';
+
+jest.mock('reduxStore/slices/loginInfoSlice', () => {
+  return {
+    __esModule: true, //    <----- this __esModule: true is important
+    ...jest.requireActual('reduxStore/slices/loginInfoSlice')
+  };
+});
 
 const CALLBACK_ROUTE = '/dashboard';
 
@@ -48,7 +54,6 @@ describe('LedgerLoginButton tests', () => {
   beforeEach(async () => {
     store.dispatch(logoutAction());
     mockWindowLocation();
-    mockWindowHistory();
   });
 
   it('should perform simple login and redirect', async () => {
@@ -67,11 +72,7 @@ describe('LedgerLoginButton tests', () => {
     await checkIsLoggedInStore();
 
     await waitFor(() => {
-      expect(window.history.pushState).toHaveBeenCalledWith(
-        '',
-        '',
-        CALLBACK_ROUTE
-      );
+      expect(window?.location.assign).toHaveBeenCalledWith(CALLBACK_ROUTE);
     });
   });
 
@@ -84,7 +85,7 @@ describe('LedgerLoginButton tests', () => {
     await checkIsLoggedInStore();
 
     await waitFor(() => {
-      expect(window.location.assign).toHaveBeenCalledWith(
+      expect(window?.location.assign).toHaveBeenCalledWith(
         'https://multivers.com'
       );
     });
@@ -107,7 +108,7 @@ describe('LedgerLoginButton tests', () => {
     await checkIsLoggedInStore();
 
     await waitFor(() => {
-      expect(window.history.pushState).toHaveBeenCalledTimes(0);
+      expect(window?.location.assign).toHaveBeenCalledTimes(0);
       expect(onLoginRedirect).toHaveBeenCalledTimes(1);
       expect(onLoginRedirect).toHaveBeenCalledWith(CALLBACK_ROUTE, {
         address: testAddress,
@@ -143,11 +144,7 @@ describe('LedgerLoginButton tests', () => {
         tokenLoginWithSignature
       );
 
-      expect(window.history.pushState).toHaveBeenCalledWith(
-        '',
-        '',
-        CALLBACK_ROUTE
-      );
+      expect(window?.location.assign).toHaveBeenCalledWith(CALLBACK_ROUTE);
     });
   });
 
@@ -172,7 +169,7 @@ describe('LedgerLoginButton tests', () => {
     await ledgerLogin(methods);
 
     await waitFor(() => {
-      expect(window.history.pushState).toHaveBeenCalledTimes(0);
+      expect(window?.location.assign).toHaveBeenCalledTimes(0);
     });
   });
 });

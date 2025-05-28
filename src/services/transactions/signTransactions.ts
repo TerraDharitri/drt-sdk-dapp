@@ -1,7 +1,3 @@
-import BigNumber from 'bignumber.js';
-import { GAS_LIMIT } from 'constants/index';
-
-import { accountBalanceSelector } from 'reduxStore/selectors/accountInfoSelectors';
 import { chainIDSelector } from 'reduxStore/selectors/networkConfigSelectors';
 import {
   setNotificationModal,
@@ -15,41 +11,21 @@ import {
   SendTransactionReturnType,
   SignTransactionsPropsType
 } from 'types';
-import { stringIsFloat } from 'utils/validation/stringIsFloat';
-import { calcTotalFee } from './utils';
+import { isGuardianTx } from 'utils/transactions/isGuardianTx';
 
 export async function signTransactions({
   transactions,
   callbackRoute,
-  minGasLimit = GAS_LIMIT,
   customTransactionInformation,
   transactionsDisplayInfo
 }: SignTransactionsPropsType): Promise<SendTransactionReturnType> {
   const appState = store.getState();
   const sessionId = Date.now().toString();
-  const accountBalance = accountBalanceSelector(appState);
   const storeChainId = chainIDSelector(appState);
 
   const transactionsPayload = Array.isArray(transactions)
     ? transactions
     : [transactions];
-  const bNtotalFee = calcTotalFee(transactionsPayload, minGasLimit);
-  const bNbalance = new BigNumber(
-    stringIsFloat(accountBalance) ? accountBalance : '0'
-  );
-  const hasSufficientFunds = bNbalance.minus(bNtotalFee).isGreaterThan(0);
-
-  if (!hasSufficientFunds) {
-    const notificationPayload = {
-      type: NotificationTypesEnum.warning,
-      iconClassName: 'text-warning',
-      title: 'Insufficient REWA funds',
-      description: 'Current REWA balance cannot cover the transaction fees.'
-    };
-
-    store.dispatch(setNotificationModal(notificationPayload));
-    return { error: 'insufficient funds', sessionId: null };
-  }
 
   const hasValidChainId = transactionsPayload?.every(
     (tx) => tx.getChainID().valueOf() === storeChainId.valueOf()
@@ -74,8 +50,15 @@ export async function signTransactions({
         customTransactionInformation?.signWithoutSending ?? true
     },
     transactions: transactionsPayload.map((tx) => {
+      const transaction = tx.toPlainObject();
+
+      // TODO: Remove when the protocol supports usernames for guardian transactions
+      if (isGuardianTx({ data: transaction.data, onlySetGuardian: true })) {
+        return transaction;
+      }
+
       return {
-        ...tx.toPlainObject(),
+        ...transaction,
         senderUsername: tx.getSenderUsername().valueOf(),
         receiverUsername: tx.getReceiverUsername().valueOf()
       };

@@ -21,7 +21,7 @@ export interface LedgerLoginType {
 
 export interface LoginInfoType {
   data: any;
-  expires: number;
+  expires?: number;
 }
 
 export interface LoginInfoStateType {
@@ -31,9 +31,14 @@ export interface LoginInfoStateType {
   tokenLogin: TokenLoginType | null;
   walletLogin: LoginInfoType | null;
   extensionLogin: LoginInfoType | null;
+  passkeyLogin: LoginInfoType | null;
   operaLogin: LoginInfoType | null;
+  crossWindowLogin: LoginInfoType | null;
+  iframeWindowLogin: LoginInfoType | null;
+  webviewLogin: LoginInfoType | null;
   isLoginSessionInvalid: boolean;
   logoutRoute?: string;
+  isWalletConnectV2Initialized?: boolean;
 }
 
 const initialState: LoginInfoStateType = {
@@ -43,8 +48,12 @@ const initialState: LoginInfoStateType = {
   tokenLogin: null,
   walletLogin: null,
   extensionLogin: null,
+  passkeyLogin: null,
   operaLogin: null,
-  isLoginSessionInvalid: false
+  crossWindowLogin: null,
+  iframeWindowLogin: null,
+  isLoginSessionInvalid: false,
+  webviewLogin: null
 };
 
 export const loginInfoSlice = createSlice({
@@ -89,6 +98,12 @@ export const loginInfoSlice = createSlice({
     ) => {
       state.ledgerLogin = action.payload;
     },
+    setWebviewLogin: (
+      state: LoginInfoStateType,
+      action: PayloadAction<LoginInfoType | null>
+    ) => {
+      state.webviewLogin = action.payload;
+    },
     invalidateLoginSession: (state: LoginInfoStateType) => {
       state.isLoginSessionInvalid = true;
     },
@@ -97,6 +112,12 @@ export const loginInfoSlice = createSlice({
       action: PayloadAction<string | undefined>
     ) => {
       state.logoutRoute = action.payload;
+    },
+    setIsWalletConnectV2Initialized: (
+      state: LoginInfoStateType,
+      action: PayloadAction<boolean>
+    ) => {
+      state.isWalletConnectV2Initialized = action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -125,7 +146,9 @@ export const {
   setTokenLoginSignature,
   setWalletLogin,
   invalidateLoginSession,
-  setLogoutRoute
+  setLogoutRoute,
+  setIsWalletConnectV2Initialized,
+  setWebviewLogin
 } = loginInfoSlice.actions;
 
 export default loginInfoSlice.reducer;
