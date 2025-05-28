@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
   repository_dispatch:
-    types: publish-npm
+    types: [publish-npm]
   workflow_dispatch:
 
 permissions:
