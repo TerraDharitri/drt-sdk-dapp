@@ -35,14 +35,14 @@ cd dist
 yalc publish
 cd ../..
 
-# Consume drt-sdk-dapp in drt-sdktemplate-dapp
-echo "Cloning drt-sdktemplate-dapp..."
-git clone https://github.com/TerraDharitri/drt-sdktemplate-dapp.git
+# Consume drt-sdk-dapp in drt-sdk-template-dapp
+echo "Cloning drt-sdk-template-dapp..."
+git clone https://github.com/TerraDharitri/drt-sdk-template-dapp.git
 
-echo "cd drt-sdktemplate-dapp..."
-cd drt-sdktemplate-dapp
+echo "cd drt-sdk-template-dapp..."
+cd drt-sdk-template-dapp
 
-echo "Installing dependencies for drt-sdktemplate-dapp..."
+echo "Installing dependencies for drt-sdk-template-dapp..."
 yarn install
 
 echo "Linking drt-sdk-dapp..."
@@ -52,9 +52,9 @@ echo "Building drt-sdk-template-dapp..."
 yarn build:devnet
 cd ..
 
-# Consume drt-sdk-dapp in drt-sdktemplate-dapp-nextjs
+# Consume drt-sdk-dapp in drt-sdk-template-dapp-nextjs
 echo "Cloning drt-sdk-template-dapp-nextjs..."
-git clone https://github.com/TerraDharitri/drt-sdktemplate-dapp-nextjs.git
+git clone https://github.com/TerraDharitri/drt-sdk-template-dapp-nextjs.git
 
 echo "cd drt-sdk-template-dapp-nextjs..."
 cd drt-sdk-template-dapp-nextjs
