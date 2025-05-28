@@ -48,24 +48,24 @@ yarn install
 echo "Linking drt-sdk-dapp..."
 yalc add @terradharitri/sdk-dapp
 
-echo "Building drt-sdktemplate-dapp..."
+echo "Building drt-sdk-template-dapp..."
 yarn build:devnet
 cd ..
 
 # Consume drt-sdk-dapp in drt-sdktemplate-dapp-nextjs
-echo "Cloning drt-sdktemplate-dapp-nextjs..."
+echo "Cloning drt-sdk-template-dapp-nextjs..."
 git clone https://github.com/TerraDharitri/drt-sdktemplate-dapp-nextjs.git
 
-echo "cd drt-sdktemplate-dapp-nextjs..."
-cd drt-sdktemplate-dapp-nextjs
+echo "cd drt-sdk-template-dapp-nextjs..."
+cd drt-sdk-template-dapp-nextjs
 
-echo "Installing dependencies for drt-sdktemplate-dapp-nextjs..."
+echo "Installing dependencies for drt-sdk-template-dapp-nextjs..."
 yarn install
 
 echo "Linking drt-sdk-dapp..."
 yalc add @terradharitri/sdk-dapp
 
-echo "Building drt-sdktemplate-dapp-nextjs..."
+echo "Building drt-sdk-template-dapp-nextjs..."
 yarn build-devnet
 
 echo "Script executed successfully!"
