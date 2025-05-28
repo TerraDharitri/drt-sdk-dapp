@@ -6,18 +6,25 @@ set -e
 # Install prerequisites
 echo "Installing yarn..."
 npm install --global yarn
+
 echo "Installing yalc..."
-npm install -global yalc
+npm install --global yalc
 
-
-# Prepare drt-dapp for publishing
+# Prepare drt-sdk-dapp for publishing
+echo "Cloning drt-sdk-dapp..."
 git clone https://github.com/TerraDharitri/drt-sdk-dapp.git
 
 echo "cd drt-sdk-dapp..."
 cd drt-sdk-dapp
-git checkout development
 
-echo "Installing dependencies for drt-dapp..."
+# Only try to checkout if the branch exists
+if git show-ref --quiet refs/heads/development; then
+  git checkout development
+else
+  echo "Branch 'development' not found. Skipping checkout."
+fi
+
+echo "Installing dependencies for drt-sdk-dapp..."
 yarn install
 
 echo "Building drt-sdk-dapp..."
@@ -28,36 +35,37 @@ cd dist
 yalc publish
 cd ../..
 
-
-# Consume drt-dapp in drttemplate-dapp
+# Consume drt-sdk-dapp in drt-sdktemplate-dapp
+echo "Cloning drt-sdktemplate-dapp..."
 git clone https://github.com/TerraDharitri/drt-sdktemplate-dapp.git
 
-echo "cd drt-template-dapp..."
-cd drt-template-dapp
+echo "cd drt-sdktemplate-dapp..."
+cd drt-sdktemplate-dapp
 
-echo "Installing dependencies drttemplate-dapp..."
+echo "Installing dependencies for drt-sdktemplate-dapp..."
 yarn install
 
 echo "Linking drt-sdk-dapp..."
 yalc add @terradharitri/sdk-dapp
 
-echo "Building drttemplate-dapp..."
+echo "Building drt-sdktemplate-dapp..."
 yarn build:devnet
+cd ..
 
-
-# Consume drt-dapp in drttemplate-dapp-nextjs
+# Consume drt-sdk-dapp in drt-sdktemplate-dapp-nextjs
+echo "Cloning drt-sdktemplate-dapp-nextjs..."
 git clone https://github.com/TerraDharitri/drt-sdktemplate-dapp-nextjs.git
 
-echo "cd drttemplate-dapp-nextjs..."
-cd drt-template-dapp-nextjs
+echo "cd drt-sdktemplate-dapp-nextjs..."
+cd drt-sdktemplate-dapp-nextjs
 
-echo "Installing dependencies drttemplate-dapp-nextjs..."
+echo "Installing dependencies for drt-sdktemplate-dapp-nextjs..."
 yarn install
 
 echo "Linking drt-sdk-dapp..."
-yalc add @terradharitri/sdk-sdk-dapp
+yalc add @terradharitri/sdk-dapp
 
-echo "Building drt-template-dapp-nextjs..."
+echo "Building drt-sdktemplate-dapp-nextjs..."
 yarn build-devnet
 
 echo "Script executed successfully!"
