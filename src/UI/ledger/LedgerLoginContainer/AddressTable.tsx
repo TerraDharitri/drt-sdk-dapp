@@ -7,8 +7,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames';
 
 import globalStyles from 'assets/sass/main.scss';
-import { getAccountBalance } from 'utils';
-import type { WithClassnameType } from '../../types';
+import { DataTestIdsEnum } from 'constants/index';
+import { getAccountBalance } from 'utils/account/getAccountBalance';
+import { WithClassnameType } from '../../types';
 
 import { AddressRow } from './AddressRow';
 
@@ -16,19 +17,13 @@ import styles from './addressTableStyles.scss';
 import { LedgerColumnsEnum } from './enums';
 
 import { LedgerLoading } from './LedgerLoading';
+import { accountSelector } from 'reduxStore/selectors';
+import { store } from 'reduxStore/store';
 
 const ADDRESSES_PER_PAGE = 10;
 
 export interface AddressTablePropsType extends WithClassnameType {
-  loading: boolean;
   accounts: string[];
-  startIndex: number;
-  selectedAddress?: string;
-  onSelectAddress: (address: { address: string; index: number } | null) => void;
-  onGoToPrevPage: () => void;
-  onGoToNextPage: () => void;
-  onConfirmSelectedAddress: () => void;
-  customContentComponent?: ReactNode;
   addressTableClassNames?: {
     ledgerModalTitleClassName?: string;
     ledgerModalSubtitleClassName?: string;
@@ -39,20 +34,30 @@ export interface AddressTablePropsType extends WithClassnameType {
     ledgerModalTableSelectedItemClassName?: string;
     ledgerModalTableNavigationButtonDisabledClassName?: string;
   };
+  customContentComponent?: ReactNode;
+  dataTestId?: string;
+  loading: boolean;
+  onConfirmSelectedAddress: () => void;
+  onGoToNextPage: () => void;
+  onGoToPrevPage: () => void;
+  onSelectAddress: (address: { address: string; index: number } | null) => void;
+  selectedAddress?: string;
+  startIndex: number;
 }
 
 export const AddressTable = ({
-  loading,
   accounts,
-  startIndex,
-  selectedAddress,
-  onGoToPrevPage,
-  onGoToNextPage,
-  onConfirmSelectedAddress,
-  onSelectAddress,
+  addressTableClassNames,
   className = 'dapp-ledger-address-table',
   customContentComponent,
-  addressTableClassNames
+  dataTestId = DataTestIdsEnum.addressTableContainer,
+  loading,
+  onConfirmSelectedAddress,
+  onGoToNextPage,
+  onGoToPrevPage,
+  onSelectAddress,
+  selectedAddress,
+  startIndex
 }: AddressTablePropsType) => {
   const {
     ledgerModalTitleClassName,
@@ -82,14 +87,32 @@ export const AddressTable = ({
     }
   }, [accounts, selectedAddress, loading, startIndex]);
 
-  const fetchBalance = async (address: string) => {
+  const fetchBalance = async (address?: string) => {
+    // If no address provided, get from store
+    let accountAddress = address;
+    if (!accountAddress) {
+      const account = accountSelector(store.getState());
+      if (!account || !account.address) {
+        console.error('User not logged in');
+        throw new Error('User not logged in');
+      }
+      accountAddress = account.address;
+    }
     try {
-      const balance = await getAccountBalance(address);
-      return { address, balance };
+      const balance = await getAccountBalance(accountAddress);
+    
+      if (balance == null) {
+        // Show fallback or skip rendering
+        return;
+      }
+    
+      return { address: accountAddress, balance };
     } catch (err) {
       console.error('error fetching balance', err);
-      throw accountsWithBalance;
+      // Optional: show error UI
+      return;
     }
+    
   };
 
   useEffect(() => {
@@ -98,8 +121,12 @@ export const AddressTable = ({
       accounts.map((account) => ({ address: account, balance: '...' }))
     );
     Promise.all(balancePromises).then((balances) => {
-      setAccountsWithBalance(balances);
+      const filledBalances = balances.map((balance, idx) =>
+        balance ?? { address: accounts[idx], balance: '0' }
+      );
+      setAccountsWithBalance(filledBalances);
     });
+    
   }, [accounts]);
 
   if (loading) {
@@ -121,13 +148,17 @@ export const AddressTable = ({
   ];
 
   return (
-    <div className={classNames(styles.ledgerAddressTableWrapper, className)}>
+    <div
+      className={classNames(styles.ledgerAddressTableWrapper, className)}
+      data-testid={dataTestId}
+    >
       <div className={styles.ledgerAddressTableTop}>
         <div
           className={classNames(
             styles.ledgerAddressTableHeading,
             ledgerModalTitleClassName
           )}
+          data-testid={`${dataTestId}Title`}
         >
           Access your wallet
         </div>
@@ -137,6 +168,7 @@ export const AddressTable = ({
             styles.ledgerAddressTableDescription,
             ledgerModalSubtitleClassName
           )}
+          data-testid={`${dataTestId}SubTitle`}
         >
           Choose the wallet you want to access
         </p>
@@ -225,7 +257,7 @@ export const AddressTable = ({
         <button
           disabled={!selectedAddress}
           onClick={onConfirm}
-          data-testid='confirmBtn'
+          data-testid={DataTestIdsEnum.confirmBtn}
           className={classNames(
             globalStyles.btn,
             globalStyles.btnPrimary,

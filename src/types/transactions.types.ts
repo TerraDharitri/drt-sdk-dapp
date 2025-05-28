@@ -1,10 +1,10 @@
-import type { ReactNode, Dispatch, SetStateAction } from 'react';
-import type { Address, Transaction } from '@terradharitri/sdk-core';
-import type { IPlainTransactionObject } from '@terradharitri/sdk-core/out/interface';
+import { ReactNode, Dispatch, SetStateAction } from 'react';
+import { Address, Transaction } from '@terradharitri/sdk-core';
+import { IPlainTransactionObject } from '@terradharitri/sdk-core/out/interface';
 
-import type { SignStepInnerClassesType } from 'UI/SignTransactionsModals/SignWithDeviceModal/SignStep';
-import type { WithClassnameType } from '../UI/types';
-import type {
+import { SignStepInnerClassesType } from 'UI/SignTransactionsModals/SignWithDeviceModal/SignStep';
+import { WithClassnameType } from '../UI/types';
+import {
   TransactionBatchStatusesEnum,
   TransactionServerStatusesEnum,
   TransactionTypesEnum

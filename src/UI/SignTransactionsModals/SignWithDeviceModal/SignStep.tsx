@@ -1,12 +1,13 @@
-import React, { MouseEvent, useState } from 'react';
-
+import React, { MouseEvent, useEffect, useState } from 'react';
 import { faArrowLeft, faTimes } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classNames from 'classnames';
+
+import globalStyles from '../../../assets/sass/main.scss';
+
 import { SignStepBody, SignStepBodyPropsType } from './components';
 import { ProgressHeader } from './components/ProgressHeader';
 import { ProgressHeaderPropsType } from './components/ProgressHeader/ProgressHeader.types';
-import { useSignStepsClasses } from './hooks';
 import {
   SignStepPropsType as SignStepType,
   SignStepInnerClassesType
@@ -35,9 +36,37 @@ export const SignStep = (props: SignStepType) => {
 
   const [showGuardianScreen, setShowGuardianScreen] = useState(false);
 
+  // a unique mapping between nonce + data and step to prevent signing same transaction twice
+  const [nonceDataStepMap, setNonceDataStepMap] = useState<
+    Record<number, number | undefined>
+  >({});
+
   if (!currentTransaction) {
     return null;
   }
+
+  const currentNonce = currentTransaction.transaction.getNonce().valueOf();
+  const currentNonceData = `${currentNonce.toString()}_${
+    currentTransaction.transactionTokenInfo.multiTxData
+  }`;
+
+  useEffect(() => {
+    const isCurrentNonceRegistered =
+      Object.keys(nonceDataStepMap).includes(currentNonceData);
+    const isCurrentStepRegistered =
+      Object.values(nonceDataStepMap).includes(currentStep);
+
+    if (isCurrentNonceRegistered || isCurrentStepRegistered) {
+      return;
+    }
+
+    setNonceDataStepMap((existing) => {
+      return {
+        ...existing,
+        [currentNonceData]: currentStep
+      };
+    });
+  }, [currentNonceData, currentStep]);
 
   const transactionData = currentTransaction.transaction.getData().toString();
 
@@ -50,6 +79,7 @@ export const SignStep = (props: SignStepType) => {
 
   const onCloseClick = (event: MouseEvent<HTMLElement>) => {
     event.preventDefault();
+
     if (isFirst) {
       handleClose();
     } else {
@@ -115,8 +145,7 @@ export const SignStep = (props: SignStepType) => {
     }
   ];
 
-  const scamReport = currentTransaction.receiverScamInfo;
-  const classes = useSignStepsClasses(scamReport);
+  const isSigningReady = nonceDataStepMap[currentNonceData] === currentStep;
 
   return (
     <div
@@ -147,7 +176,9 @@ export const SignStep = (props: SignStepType) => {
         <ProgressHeader steps={steps} type='detailed' size='small' />
       )}
 
-      <div className={styles.title}>{signFlowTitle || 'Confirm on Ledger'}</div>
+      <div className={styles.title} data-testid='signStepTitle'>
+        {signFlowTitle || 'Confirm on Ledger'}
+      </div>
 
       {isGuardianScreenVisible ? (
         <GuardianScreen
@@ -158,30 +189,32 @@ export const SignStep = (props: SignStepType) => {
       ) : (
         <>
           <SignStepBody {...signStepBodyProps} />
+
           <div
-            className={classNames(
-              classes.buttonsWrapper,
-              buttonsWrapperClassName
-            )}
+            className={classNames(styles.signButtons, buttonsWrapperClassName)}
           >
             <button
               id='closeButton'
               data-testid='closeButton'
               onClick={onCloseClick}
-              className={classNames(classes.cancelButton, buttonClassName)}
+              className={classNames(styles.signButtonCancel, buttonClassName)}
             >
               {currentStep === 0 ? 'Cancel' : 'Back'}
             </button>
 
             <button
               type='button'
-              className={classNames(classes.signButton, buttonClassName)}
+              className={classNames(
+                globalStyles.btnPrimary,
+                styles.signButtonSubmit,
+                buttonClassName
+              )}
               id='signBtn'
               data-testid='signBtn'
               onClick={onSubmit}
-              disabled={waitingForDevice}
+              disabled={waitingForDevice || !isSigningReady}
             >
-              {signBtnLabel}
+              {isSigningReady ? signBtnLabel : 'Loading...'}
             </button>
           </div>
         </>

@@ -4,7 +4,6 @@ import {
   TransactionOptions,
   TransactionVersion
 } from '@terradharitri/sdk-core';
-import { Signature } from '@terradharitri/sdk-core/out/signature';
 import { GAS_LIMIT, GAS_PRICE, VERSION } from 'constants/index';
 import { RawTransactionType } from 'types';
 import { getDataPayloadForTransaction } from 'utils/transactions/getDataPayloadForTransaction';
@@ -15,7 +14,13 @@ export function newTransaction(rawTransaction: RawTransactionType) {
     data: getDataPayloadForTransaction(rawTransaction.data),
     nonce: rawTransaction.nonce.valueOf(),
     receiver: new Address(rawTransaction.receiver),
+    ...(rawTransaction.receiverUsername
+      ? { receiverUsername: rawTransaction.receiverUsername }
+      : {}),
     sender: new Address(rawTransaction.sender),
+    ...(rawTransaction.senderUsername
+      ? { senderUsername: rawTransaction.senderUsername }
+      : {}),
     gasLimit: rawTransaction.gasLimit.valueOf() ?? GAS_LIMIT,
     gasPrice: rawTransaction.gasPrice.valueOf() ?? GAS_PRICE,
     chainID: rawTransaction.chainID.valueOf(),
@@ -29,13 +34,13 @@ export function newTransaction(rawTransaction: RawTransactionType) {
   });
 
   if (rawTransaction.guardianSignature) {
-    transaction.applyGuardianSignature({
-      hex: () => rawTransaction.guardianSignature || ''
-    });
+    transaction.applyGuardianSignature(
+      Buffer.from(rawTransaction.guardianSignature, 'hex')
+    );
   }
 
   if (rawTransaction.signature) {
-    transaction.applySignature(new Signature(rawTransaction.signature));
+    transaction.applySignature(Buffer.from(rawTransaction.signature, 'hex'));
   }
 
   return transaction;

@@ -27,6 +27,11 @@ export interface NativeAuthConfigType {
   apiAddress?: string;
   expirySeconds?: number;
   blockHashShard?: number;
+  gatewayUrl?: string;
+  extraRequestHeaders?: { [key: string]: string };
+  extraInfo?: {
+    [key: string]: string;
+  };
   /**
    * Displays a logout toast warning before token expiration. Defaults to 5 minutes.
    *
