@@ -31,6 +31,7 @@ import {
   LoginHookGenericStateType,
   OnProviderLoginType
 } from '../../types/login.types';
+import { clearInitiatedLogins } from './helpers';
 import { useLoginService } from './useLoginService';
 
 export enum WalletConnectV2Error {
@@ -86,12 +87,12 @@ export const useWalletConnectV2Login = ({
   >([]);
   const [sessionProvider, setSessionProvider] =
     useState<WalletConnectV2Provider | null>(null);
-
   const { provider } = useGetAccountProvider();
   const walletConnectV2RelayAddress = useSelector(walletConnectV2RelaySelector);
   const walletConnectV2ProjectId = useSelector(
     walletConnectV2ProjectIdSelector
   );
+
   const walletConnectV2Options = useSelector(walletConnectV2OptionsSelector);
   const walletConnectDeepLink = useSelector(walletConnectDeepLinkSelector);
   const dappLogoutRoute = useSelector(logoutRouteSelector);
@@ -99,7 +100,6 @@ export const useWalletConnectV2Login = ({
   const providerRef = useRef<any>(provider);
   const isInitialisingRef = useRef<boolean>(false);
   const mounted = useRef(false);
-
   const logoutRoute = providerLogoutRoute ?? dappLogoutRoute ?? '/';
   const dappMethods: string[] = [
     WalletConnectOptionalMethodsEnum.CANCEL_ACTION,
@@ -145,7 +145,7 @@ export const useWalletConnectV2Login = ({
         return;
       }
 
-      const address = await providerRef.current?.getAddress();
+      const address = await providerRef.current?.getAddress?.();
 
       if (!address) {
         console.warn('Login cancelled.');
@@ -218,10 +218,19 @@ export const useWalletConnectV2Login = ({
     }
 
     try {
-      const { approval } = await providerRef.current?.connect({
-        topic: pairing.topic,
-        methods: dappMethods
-      });
+      const providerType = providerRef.current
+        ? getProviderType(providerRef.current)
+        : false;
+
+      if (providerType !== LoginMethodsEnum.walletconnectv2) {
+        // Prevent redirecting to wallet login hook
+        await initiateLogin();
+
+        return;
+      }
+
+      setIsLoading(true);
+      await cancelLogin();
 
       if (hasNativeAuth && !token) {
         token = await loginService.getNativeAuthLoginToken();
@@ -236,12 +245,19 @@ export const useWalletConnectV2Login = ({
         loginService.setLoginToken(token);
       }
 
+      await initiateLogin(false);
+
+      const { approval } = await providerRef.current?.connect({
+        topic: pairing.topic,
+        methods: dappMethods
+      });
+
       try {
         await providerRef.current?.login({ approval, token });
       } catch (err) {
+        console.error(WalletConnectV2Error.userRejectedExisting, err);
         setError(WalletConnectV2Error.userRejectedExisting);
         setIsLoading(true);
-
         await initiateLogin();
       }
     } catch (err) {
@@ -269,20 +285,23 @@ export const useWalletConnectV2Login = ({
   };
 
   async function initiateLogin(loginProvider = true) {
+    clearInitiatedLogins();
+
     const chainId = await waitForChainID({ maxRetries: 15 });
 
     if (!chainId) {
+      console.error(WalletConnectV2Error.invalidChainID);
       setError(WalletConnectV2Error.invalidChainID);
       return;
     }
 
     if (!walletConnectV2ProjectId || !walletConnectV2RelayAddress) {
+      console.error(WalletConnectV2Error.invalidConfig);
       setError(WalletConnectV2Error.invalidConfig);
       return;
     }
 
     const isLoggedIn = getIsLoggedIn();
-
     const cannotLogin = mounted.current === false && !isLoggedIn;
     const isInitialized = providerRef.current?.isInitialized?.();
 
@@ -378,13 +397,23 @@ export const useWalletConnectV2Login = ({
         loginService.setLoginToken(token);
       }
 
+      const providerType = providerRef.current
+        ? getProviderType(providerRef.current)
+        : false;
+
+      if (providerType !== LoginMethodsEnum.walletconnectv2) {
+        // Prevent redirecting to wallet login hook
+        setIsLoading(true);
+        await initiateLogin();
+        return;
+      }
+
       try {
         await providerRef.current?.login({ approval, token });
       } catch (err) {
+        console.error(WalletConnectV2Error.userRejected, err);
         setError(WalletConnectV2Error.userRejected);
         setIsLoading(true);
-
-        await initiateLogin();
       }
     } catch (err) {
       console.error(WalletConnectV2Error.connectError, err);
@@ -404,7 +433,7 @@ export const useWalletConnectV2Login = ({
   }, []);
 
   useEffect(() => {
-    setIsLoading(!Boolean(wcUri));
+    setIsLoading(!wcUri);
   }, [wcUri]);
 
   useEffect(() => {

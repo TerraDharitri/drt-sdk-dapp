@@ -7,9 +7,11 @@ import { ConfirmationScreen, DeviceConfirmationScreen } from './components';
 import { SignWithCrossWindowWalletModal } from './SignWithCrossWindowWalletModal';
 import { SignWithExtensionModal } from './SignWithExtensionModal';
 import { SignWithExtraModal } from './SignWithExtraModal';
+import { SignWithIframeModal } from './SignWithIframeModal';
 import { SignWithLedgerModal } from './SignWithLedgerModal';
 import { SignWithMetamaskModal } from './SignWithMetamaskModal';
 import { SignWithOperaModal } from './SignWithOperaModal';
+import { SignWithPasskeyModal } from './SignWithPasskeyModal';
 import { SignWithWalletConnectModal } from './SignWithWalletConnectModal';
 import {
   CustomConfirmScreensType,
@@ -37,7 +39,9 @@ export const SignTransactionsModals = ({
     WalletConnect:
       CustomConfirmScreens?.WalletConnect ?? SignWithWalletConnectModal,
     Extension: CustomConfirmScreens?.Extension ?? SignWithExtensionModal,
+    Passkey: CustomConfirmScreens?.Passkey ?? SignWithPasskeyModal,
     Metamask: CustomConfirmScreens?.Metamask ?? SignWithMetamaskModal,
+    Iframe: CustomConfirmScreens?.Iframe ?? SignWithIframeModal,
     Opera: CustomConfirmScreens?.Opera ?? SignWithOperaModal,
     CrossWindow:
       CustomConfirmScreens?.CrossWindow ?? SignWithCrossWindowWalletModal,
@@ -72,12 +76,16 @@ export const SignTransactionsModals = ({
       return renderScreen({ Screen: ConfirmScreens.WalletConnect });
     case LoginMethodsEnum.extension:
       return renderScreen({ Screen: ConfirmScreens.Extension });
+    case LoginMethodsEnum.passkey:
+      return renderScreen({ Screen: ConfirmScreens.Passkey });
     case LoginMethodsEnum.metamask:
-      return renderScreen({ Screen: ConfirmScreens.Metamask });
+      return renderScreen({ Screen: ConfirmScreens.Metamask, isDevice: true });
     case LoginMethodsEnum.opera:
       return renderScreen({ Screen: ConfirmScreens.Opera });
     case LoginMethodsEnum.crossWindow:
       return renderScreen({ Screen: ConfirmScreens.CrossWindow });
+    case LoginMethodsEnum.iframe:
+      return renderScreen({ Screen: ConfirmScreens.Iframe });
     case LoginMethodsEnum.wallet:
       return renderScreen({ Screen: ConfirmScreens.Wallet });
     case LoginMethodsEnum.extra:

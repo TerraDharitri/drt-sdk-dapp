@@ -13,7 +13,7 @@ export const baseTransactionMock = {
   receiver: 'drt1qqqqqqqqqqqqqpgq4gdcg0k83u7lpv4s4532w3au9y9h0vm70eqq88sr45',
   receiverShard: 0,
   round: 2044988,
-  sender: 'drt1wh9c0sjr2xn8hzf02lwwcr4jk2s84tat9ud2kaq6zr7xzpvl9l5q6pec6c',
+  sender: 'drt1axhx4kenjlae6sknq7zjg2g4fvzavv979r2fg425p62wkl84avtqd4f00j',
   senderShard: 0,
   signature: 'transaction-signature-hash',
   status: 'fail',

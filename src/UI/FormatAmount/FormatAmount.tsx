@@ -1,13 +1,8 @@
 import React from 'react';
 import classNames from 'classnames';
-import {
-  DataTestIdsEnum,
-  DECIMALS,
-  DIGITS,
-  MAINNET_REWA_LABEL,
-  ZERO
-} from 'constants/index';
+import { DataTestIdsEnum, DECIMALS, DIGITS, ZERO } from 'constants/index';
 import { withStyles, WithStylesImportType } from 'hocs/withStyles';
+import { getRewaLabel } from 'utils/network/getRewaLabel';
 import { formatAmount } from 'utils/operations/formatAmount';
 import { stringIsInteger } from 'utils/validation/stringIsInteger';
 import { FormatAmountPropsType } from './formatAmount.types';
@@ -121,7 +116,7 @@ const FormatAmountComponent = (
 const FormatAmountWrapper = (
   props: FormatAmountPropsType & WithStylesImportType
 ) => {
-  const rewaLabel = props.rewaLabel || MAINNET_REWA_LABEL;
+  const rewaLabel = props.rewaLabel || getRewaLabel();
 
   const formatAmountProps = { ...props, rewaLabel };
 
