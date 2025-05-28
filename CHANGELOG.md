@@ -7,7 +7,106 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- [Fix deps array which can cause minification errors](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1336)
+
+## [[v3.0.22](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1335)] - 2024-11-29
+
+- [Fix: Minified React error #310](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1334)
+- [Fix React Error: Conditional rendering of hook](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1333)
+
+## [[v3.0.21](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1332)] - 2024-11-29
+
+- [Removed hardcoded `REWA-000000` token](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1331)
+
+## [[v3.0.20](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1330)] - 2024-11-28
+
+- [Fixed REWA-000000 token is not found](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1329)
+- [Fixed address is not shown on ledger login](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1328)
+- [Added support for custom web socket url](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1327)
+
+## [[v3.0.19](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1326)] - 2024-11-28
+
+- [Fix wallet hub webview](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1325)
+
+## [[v3.0.18](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1324)] - 2024-11-27
+
+- [Added transactionDataDecode dataTestId](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1323)
+
+## [[v3.0.17](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1322)] - 2024-11-27
+
+- [Fixed Ledger login](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1321)
+- [Removed refreshAccount on websocket event](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1320)
+- [Updated get network config from API logic](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1319)
+
+## [[v3.0.16](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1318)] - 2024-11-26
+
+- [Updated provider initializer to use useGetAccountFromApi](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1317)
+
+## [[v3.0.15](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1316)] - 2024-11-25
+
+- [Added transaction data decoder](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1311)
+
+## [[v3.0.14](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1315)] - 2024-11-25
+
+- [Updated default metamaskSnapWalletAddress](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1314)
+
+## [[v3.0.13](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1313)] - 2024-11-25
+
+- [Fixed BigNumber configuration, scoped to a function level in "stringIsFloat"](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1312)
+
+## [[v3.0.12](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1310)] - 2024-11-20
+
+- [Fixed "stringIsFloat" issue for huge decimal numbers](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1309)
+
+## [[v3.0.11](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1308)] - 2024-11-19
+
+- [Updated transaction data decode functions](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1307)
+
+## [[v3.0.10](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1305)] - 2024-11-11
+
+- [Added ability to show transaction toast on demand](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1304)
+
+## [[v3.0.9](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1299)] - 2024-11-06
+
+- [Fix clear initiated login](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1301)
+
+## [[v3.0.8](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1299)] - 2024-11-04
+
+- [Update skip method to clear only initiated login state](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1298)
+- [Updated Iframe provider imports](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1297)
+- [Fixed Iframe provider reload](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1295)
+
+## [[v3.0.6](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1294)] - 2024-11-01
+
+- [Fixed `location.assign` in extension context](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1293)
+
+## [[v3.0.5](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1292)] - 2024-11-01
+
+- [Added ability to close modal on Escape key press](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1291)
+
+## [[v3.0.4](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1290)] - 2024-10-31
+
+- [Update passkey provider to use sign modals](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1289)
+- [Fixed sass warnings](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1288)
+
+## [[v3.0.3](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1287)] - 2024-10-28
+
+- [Fixed ledger shows redundant error on login](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1286)
+
+## [[v3.0.2](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1285)] - 2024-10-22
+
+- [Upgrade @terradharitri/sdk-passkey-provider](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1284)
+
+## [[v3.0.1](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1283)] - 2024-10-22
+
+- [Upgrade sdk-core to v.13.12.0](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1282)
+
+## [⚠️ Breaking ⚠️[v3.0.0](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1281)] - 2024-10-21
+
+- [Upgrade providers login methods & signMessage. Upgrade sdk-core to v.13](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1279)
+
 ## [[v2.40.11](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1280)] - 2024-10-09
+
 - [Fixed axios interceptor concurrent calls](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1279)
 
 ## [[v2.40.10](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1277)] - 2024-10-04
