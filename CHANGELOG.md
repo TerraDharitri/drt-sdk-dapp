@@ -7,6 +7,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- [WalletConnect: show loading state until initialized](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1353)
+
+## [[v3.1.5](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1351)] - 2024-12-17
+
+- [Fixed cross window page reload on internal logout](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1350)
+
+## [[v3.1.4](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1349)] - 2024-12-16
+
+- [Fixed logout doesn't work when `shouldBroadcastLogoutAcrossTabs` is `false`](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1348)
+
+## [[v3.1.3](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1347)] - 2024-12-13
+
+- [Added session ID in the handshake payload to allow multiple DApp connections in parallel tabs](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1346)
+- [Fixed cancel action in cross window does not close child window](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1345)
+
+## [[v3.1.2](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1344)] - 2024-12-09
+
+- [Add pagination item count support to "AddressTable"](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1343)
+
+## [[v3.1.1](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1342)] - 2024-12-09
+
+- [Fix dApp compatibility check (webview provider)](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1341)
+
+## [[v3.1.0](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1339)] - 2024-12-05
+
+- [Added address table pagination to the Ledger authentication flow](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1338)
+
+## [[v3.0.23](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1337)] - 2024-11-29
+
 - [Fix deps array which can cause minification errors](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1336)
 
 ## [[v3.0.22](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1335)] - 2024-11-29

@@ -121,6 +121,7 @@ export interface TransactionsDisplayInfoType {
   invalidMessage?: string;
 }
 
+
 export interface SendSimpleTransactionPropsType {
   transactions: SimpleTransactionType[];
   minGasLimit?: number;

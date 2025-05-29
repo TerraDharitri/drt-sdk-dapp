@@ -74,7 +74,7 @@ describe('stringIsFloat tests', () => {
   it('allows large numbers', () => {
     expect(stringIsFloat('0.0000000011231723871623178236182376123')).toBe(false);
   });
-  
+
   it('denies numbers with single comma', () => {
     expect(stringIsFloat('0,0000000011231723871623178236182376123')).toBe(
       false
