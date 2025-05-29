@@ -1,13 +1,10 @@
-import { useCallback, useEffect } from 'react';
-import {
-  AVERAGE_TX_DURATION_MS,
-  TRANSACTIONS_STATUS_POLLING_INTERVAL_MS
-} from 'constants/transactionStatus';
-import { useGetBatches } from 'hooks/transactions/batch/useGetBatches';
-import { extractSessionId } from 'hooks/transactions/helpers/extractSessionId';
-import { timestampIsOlderThan } from 'hooks/transactions/helpers/timestampIsOlderThan';
+import { useCallback } from 'react';
+import { TRANSACTIONS_STATUS_POLLING_INTERVAL_MS } from 'constants/transactionStatus';
+import { useWebsocketPollingFallback } from 'hooks/transactions/useTransactionsTracker/useWebsocketPollingFallback';
+import { extractSessionId } from '../../helpers/extractSessionId';
+import { timestampIsOlderThan } from '../../helpers/timestampIsOlderThan';
+import { useGetBatches } from '../useGetBatches';
 import { useVerifyBatchStatus } from './useVerifyBatchStatus';
-
 /**
  * Fallback mechanism to check batches in case of ws connection failure
  * Resolves the toast by checking the status of each transaction in batch after a certain time (90seconds)
@@ -39,11 +36,7 @@ export const useCheckBatchesOnWsFailureFallback = (props?: {
     }
   }, [batchTransactionsArray, verifyBatchStatus]);
 
-  useEffect(() => {
-    const interval = setInterval(async () => {
-      checkAllBatches();
-    }, AVERAGE_TX_DURATION_MS);
-
-    return () => clearInterval(interval);
-  }, [checkAllBatches]);
+  useWebsocketPollingFallback({
+    onPoll: checkAllBatches
+  });
 };

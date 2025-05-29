@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
+import { IconProp } from '@fortawesome/fontawesome-svg-core';
 import { faExclamationTriangle } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import BigNumber from 'bignumber.js';
+import classNames from 'classnames';
 
 import { useGetAccountFromApi, ACCOUNTS_ENDPOINT } from 'apiCalls';
 import DharitriIconSimple from 'assets/icons/drt-icon-simple.svg';
@@ -18,18 +20,24 @@ import { WithStylesImportType } from '../../../../../../hocs/useStyles';
 
 export interface ConfirmReceiverPropsType extends WithStylesImportType {
   amount: string;
-  label?: React.ReactNode;
+  label?: ReactNode;
+  customCopyIcon?: IconProp;
+  customExplorerIcon?: IconProp;
   receiver: string;
   receiverUsername?: string;
   scamReport: string | null;
+  shouldTrimReceiver?: boolean;
 }
 
 const ConfirmReceiverComponent = ({
   amount,
   label,
   receiver,
+  customExplorerIcon,
   receiverUsername,
+  customCopyIcon,
   scamReport,
+  shouldTrimReceiver = true,
   styles
 }: ConfirmReceiverPropsType) => {
   const isSmartContract = isContract(receiver);
@@ -48,7 +56,8 @@ const ConfirmReceiverComponent = ({
     receiver && Boolean(foundReceiverUsername) && !usernameAccountError
   );
 
-  const defaultReceiverLabel = isAmountZero ? 'To interact with' : 'To';
+  const defaultReceiverLabel =
+    isAmountZero && isSmartContract ? 'To interact with' : 'To';
 
   return (
     <div className={styles?.receiver}>
@@ -80,10 +89,16 @@ const ConfirmReceiverComponent = ({
         </div>
       ) : (
         <div
-          className={styles?.receiverWrapper}
           data-testid={DataTestIdsEnum.confirmReceiver}
+          className={classNames(styles?.receiverWrapper, {
+            [styles?.unwrappable]: shouldTrimReceiver
+          })}
         >
-          <Trim text={receiver} className={styles?.receiverTrim} />
+          {shouldTrimReceiver ? (
+            <Trim text={receiver} className={styles?.receiverTrim} />
+          ) : (
+            <div className={styles?.receiverText}>{receiver}</div>
+          )}
 
           {hasUsername && !isSmartContract && (
             <span className={styles?.receiverData}>
@@ -105,9 +120,15 @@ const ConfirmReceiverComponent = ({
             </span>
           )}
 
-          <CopyButton text={receiver} className={styles?.receiverCopy} />
+          <CopyButton
+            text={receiver}
+            className={styles?.receiverCopy}
+            copyIcon={customCopyIcon}
+          />
+
           <ExplorerLink
             page={`/${ACCOUNTS_ENDPOINT}/${receiver}`}
+            customExplorerIcon={customExplorerIcon}
             className={styles?.receiverExternal}
           />
         </div>

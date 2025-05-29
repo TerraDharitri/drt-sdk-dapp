@@ -1,12 +1,15 @@
-import { SignableMessage, Transaction } from '@terradharitri/sdk-core';
+import { Message, Transaction } from '@terradharitri/sdk-core';
+import { IDAppProviderAccount } from '@terradharitri/sdk-dapp-utils/out';
 import { ExtensionProvider } from '@terradharitri/sdk-extension-provider';
 import { HWProvider } from '@terradharitri/sdk-hw-provider';
 import { IHWWalletApp } from '@terradharitri/sdk-hw-provider/out/interface';
 import { MetamaskProvider } from '@terradharitri/sdk-metamask-provider/out/metamaskProvider';
 import { OperaProvider } from '@terradharitri/sdk-opera-provider';
+import { PasskeyProvider } from '@terradharitri/sdk-passkey-provider/out';
 import { WalletProvider } from '@terradharitri/sdk-web-wallet-provider';
 import { LEDGER_CONTRACT_DATA_ENABLED_VALUE } from 'constants/index';
 import { CrossWindowProvider } from 'lib/sdkWebWalletCrossWindowProvider';
+import { IframeProvider } from 'lib/sdkWebWalletIframeProvider';
 import { IDappProvider } from 'types';
 import { LoginMethodsEnum } from 'types/enums.types';
 import {
@@ -28,12 +31,16 @@ export const getProviderType = <TProvider extends object>(
       return LoginMethodsEnum.ledger;
     case ExtensionProvider:
       return LoginMethodsEnum.extension;
+    case PasskeyProvider:
+      return LoginMethodsEnum.passkey;
     case MetamaskProvider:
       return LoginMethodsEnum.metamask;
     case OperaProvider:
       return LoginMethodsEnum.opera;
     case CrossWindowProvider:
       return LoginMethodsEnum.crossWindow;
+    case IframeProvider:
+      return LoginMethodsEnum.iframe;
     case EmptyProvider:
       return LoginMethodsEnum.none;
     default:
@@ -65,6 +72,14 @@ export class EmptyProvider implements IDappProvider {
     return Promise.resolve(false);
   }
 
+  getAccount(): IDAppProviderAccount | null {
+    throw new Error(notInitializedError('getAccount'));
+  }
+
+  setAccount(account: IDAppProviderAccount): void {
+    throw new Error(notInitializedError(`setAccount: ${account}`));
+  }
+
   login<TOptions = { callbackUrl?: string } | undefined, TResponse = string>(
     options?: TOptions
   ): Promise<TResponse> {
@@ -85,8 +100,8 @@ export class EmptyProvider implements IDappProvider {
     return false;
   }
 
-  isConnected(): Promise<boolean> {
-    return Promise.resolve(false);
+  isConnected(): boolean {
+    return false;
   }
 
   sendTransaction?<
@@ -122,7 +137,7 @@ export class EmptyProvider implements IDappProvider {
     );
   }
 
-  signMessage<T extends SignableMessage, TOptions = { callbackUrl?: string }>(
+  signMessage<T extends Message, TOptions = { callbackUrl?: string }>(
     message: T,
     options: TOptions
   ): Promise<T> {

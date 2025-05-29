@@ -1,7 +1,10 @@
 import { useEffect } from 'react';
 import { getTransactionsByHashes as defaultGetTxByHash } from 'apiCalls/transactions';
-import { useCheckTransactionStatus, useRegisterWebsocketListener } from 'hooks';
 import { TransactionsTrackerType } from 'types/transactionsTracker.types';
+import { useRegisterWebsocketListener } from '../../websocketListener';
+import { useCheckTransactionStatus } from '../useCheckTransactionStatus';
+import { useCheckHangingTransactionsFallback } from './useCheckHangingTransactionsFallback';
+import { useCheckTransactionOnWsFailureFallback } from './useCheckTransactionOnWsFailureFallback';
 
 export function useTransactionsTracker(props?: TransactionsTrackerType) {
   const checkTransactionStatus = useCheckTransactionStatus();
@@ -11,18 +14,20 @@ export function useTransactionsTracker(props?: TransactionsTrackerType) {
 
   const onMessage = () => {
     checkTransactionStatus({
-      shouldRefreshBalance: true,
       getTransactionsByHash,
       ...props
     });
   };
 
+  // register ws listener
   useRegisterWebsocketListener(onMessage);
 
+  // Fallbacks
+  useCheckTransactionOnWsFailureFallback(props);
+
+  useCheckHangingTransactionsFallback(props);
+
   useEffect(() => {
-    const interval = setInterval(onMessage, 30000);
-    return () => {
-      clearInterval(interval);
-    };
-  }, [onMessage]);
+    onMessage();
+  }, []);
 }

@@ -1,3 +1,4 @@
+import { safeWindow } from 'lib/sdkDappUtils';
 import { CrossWindowProvider } from 'lib/sdkWebWalletCrossWindowProvider';
 import { getAccountProvider, getProviderType } from 'providers';
 import { logoutAction } from 'reduxStore/commonActions';
@@ -54,7 +55,7 @@ export async function logout(
     hasConsentPopup: false
   }
 ) {
-  let address = '';
+  const address = await getAddress();
   const provider = getAccountProvider();
   const providerType = getProviderType(provider);
   const isWalletProvider = providerType === LoginMethodsEnum.wallet;
@@ -64,24 +65,23 @@ export async function logout(
     return provider.relogin();
   }
 
-  if (options.shouldBroadcastLogoutAcrossTabs) {
-    try {
-      address = await getAddress();
-      broadcastLogoutAcrossTabs(address);
-    } catch (err) {
-      console.error('error fetching logout address', err);
-    }
+  if (address && options.shouldBroadcastLogoutAcrossTabs) {
+    broadcastLogoutAcrossTabs(address);
   }
 
   const url = addOriginToLocationPath(callbackUrl);
   const location = getWindowLocation();
-  const callbackPathname = new URL(decodeURIComponent(url)).pathname;
+  const { pathname: callbackPathname, origin: callbackOrigin } = new URL(
+    decodeURIComponent(url)
+  );
 
   // Prevent page redirect if the logout callbackURL is equal to the current URL
   // or if is wallet provider
+  // or if we are in a child tab (redirects via window.assign cause automatic tab close)
   if (
     matchPath(location.pathname, callbackPathname) ||
-    (isWalletProvider && isProviderInitialised)
+    (isWalletProvider && isProviderInitialised) ||
+    (safeWindow?.opener && callbackOrigin === safeWindow?.origin)
   ) {
     preventRedirects();
   }
@@ -98,10 +98,6 @@ export async function logout(
     store.dispatch(logoutAction());
 
     if (isWalletProvider) {
-      if (!isProviderInitialised) {
-        return;
-      }
-
       // Allow redux store cleanup before redirect to web wallet
       return setTimeout(() => {
         provider.logout({ callbackUrl: url });
@@ -119,6 +115,7 @@ export async function logout(
 
     await provider.logout({ callbackUrl: url });
   } catch (err) {
+    console.error('Logging out error:', err);
   } finally {
     if (!isWalletProvider) {
       redirectToCallbackUrl({

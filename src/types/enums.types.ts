@@ -1,7 +1,7 @@
 import {
-  CrossWindowProviderRequestEnums,
-  CrossWindowProviderResponseEnums
-} from 'lib/sdkDappUtils';
+  WindowProviderRequestEnums,
+  WindowProviderResponseEnums
+} from 'lib/sdkWebWalletCrossWindowProvider';
 
 export enum TransactionServerStatusesEnum {
   pending = 'pending',
@@ -36,7 +36,9 @@ export enum LoginMethodsEnum {
   walletconnectv2 = 'walletconnectv2',
   wallet = 'wallet',
   crossWindow = 'crossWindow',
+  iframe = 'iframe',
   extension = 'extension',
+  passkey = 'passkey',
   metamask = 'metamask',
   opera = 'opera',
   extra = 'extra',
@@ -77,6 +79,7 @@ export enum TransactionTypesEnum {
 
 export enum TransactionsDefaultTitles {
   success = 'Transaction successful',
+  received = 'Transaction received',
   failed = 'Transaction failed',
   pending = 'Processing transaction',
   timedOut = 'Transaction timed out',
@@ -97,7 +100,7 @@ export enum WebViewProviderRequestBaseEnums {
 }
 
 export const WebViewProviderRequestEnums = {
-  ...CrossWindowProviderRequestEnums,
+  ...WindowProviderRequestEnums,
   ...WebViewProviderRequestBaseEnums
 };
 
@@ -106,6 +109,6 @@ export enum WebViewProviderResponseBaseEnums {
 }
 
 export const WebViewProviderResponseEnums = {
-  ...CrossWindowProviderResponseEnums,
+  ...WindowProviderResponseEnums,
   ...WebViewProviderResponseBaseEnums
 };

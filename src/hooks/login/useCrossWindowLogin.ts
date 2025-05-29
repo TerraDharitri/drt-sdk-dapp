@@ -7,7 +7,7 @@ import { setAccountProvider } from 'providers/accountProvider';
 import { loginAction } from 'reduxStore/commonActions';
 import { useDispatch, useSelector } from 'reduxStore/DappProviderContext';
 import { networkSelector } from 'reduxStore/selectors/networkConfigSelectors';
-import { setAccount } from 'reduxStore/slices';
+import { setAccount, setAddress } from 'reduxStore/slices';
 import {
   InitiateLoginFunctionType,
   LoginHookGenericStateType,
@@ -18,6 +18,7 @@ import { getLatestNonce } from 'utils/account/getLatestNonce';
 import { getIsLoggedIn } from 'utils/getIsLoggedIn';
 import { optionalRedirect } from 'utils/internal';
 import { getWindowLocation } from 'utils/window/getWindowLocation';
+import { clearInitiatedLogins } from './helpers';
 import { useLoginService } from './useLoginService';
 
 export type UseCrossWindowLoginReturnType = [
@@ -30,9 +31,11 @@ export const useCrossWindowLogin = ({
   token: tokenToSign,
   nativeAuth,
   onLoginRedirect,
-  hasConsentPopup
+  hasConsentPopup,
+  walletAddress
 }: OnProviderLoginType & {
   hasConsentPopup?: boolean;
+  walletAddress?: string;
 }): UseCrossWindowLoginReturnType => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -49,11 +52,18 @@ export const useCrossWindowLogin = ({
       throw new Error(SECOND_LOGIN_ATTEMPT_ERROR);
     }
 
+    clearInitiatedLogins({
+      skipLoginMethod: LoginMethodsEnum.crossWindow
+    });
+
     setIsLoading(true);
     const isSuccessfullyInitialized: boolean =
       await CrossWindowProvider.getInstance().init();
+
     const provider: CrossWindowProvider =
-      CrossWindowProvider.getInstance().setWalletUrl(network.walletAddress);
+      CrossWindowProvider.getInstance().setWalletUrl(
+        walletAddress ?? network.walletAddress
+      );
 
     try {
       if (!isSuccessfullyInitialized) {
@@ -96,13 +106,15 @@ export const useCrossWindowLogin = ({
       const { signature, address, multisig, impersonate } =
         await provider.login(providerLoginData);
 
-      setAccountProvider(provider);
-
       if (!address) {
         setIsLoading(false);
+        // Reset the `CrossWindowProvider` if the login failed
+        CrossWindowProvider.getInstance().onDestroy();
         console.warn('Login cancelled.');
         return;
       }
+
+      setAccountProvider(provider);
 
       const account = await processModifiedAccount({
         loginToken: token,
@@ -122,6 +134,8 @@ export const useCrossWindowLogin = ({
           loginMethod: LoginMethodsEnum.crossWindow
         })
       );
+
+      dispatch(setAddress(account.address));
 
       dispatch(
         setAccount({

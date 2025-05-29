@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { IframeLoginTypes } from 'lib/sdkWebWalletIframeProvider';
 import { setLoginExpiresAt, getNewLoginExpiresTimestamp } from 'storage/local';
 import { LoginMethodsEnum } from 'types/enums.types';
 import { TokenLoginType } from '../../types';
@@ -21,18 +22,22 @@ export interface LedgerLoginType {
 
 export interface LoginInfoType {
   data: any;
-  expires: number;
+  expires?: number;
 }
 
 export interface LoginInfoStateType {
   loginMethod: LoginMethodsEnum;
+  iframeLoginType?: IframeLoginTypes;
   walletConnectLogin: WalletConnectLoginType | null;
   ledgerLogin: LedgerLoginType | null;
   tokenLogin: TokenLoginType | null;
   walletLogin: LoginInfoType | null;
   extensionLogin: LoginInfoType | null;
+  passkeyLogin: LoginInfoType | null;
   operaLogin: LoginInfoType | null;
   crossWindowLogin: LoginInfoType | null;
+  iframeWindowLogin: LoginInfoType | null;
+  webviewLogin: LoginInfoType | null;
   isLoginSessionInvalid: boolean;
   logoutRoute?: string;
   isWalletConnectV2Initialized?: boolean;
@@ -45,9 +50,12 @@ const initialState: LoginInfoStateType = {
   tokenLogin: null,
   walletLogin: null,
   extensionLogin: null,
+  passkeyLogin: null,
   operaLogin: null,
   crossWindowLogin: null,
-  isLoginSessionInvalid: false
+  iframeWindowLogin: null,
+  isLoginSessionInvalid: false,
+  webviewLogin: null
 };
 
 export const loginInfoSlice = createSlice({
@@ -92,6 +100,12 @@ export const loginInfoSlice = createSlice({
     ) => {
       state.ledgerLogin = action.payload;
     },
+    setWebviewLogin: (
+      state: LoginInfoStateType,
+      action: PayloadAction<LoginInfoType | null>
+    ) => {
+      state.webviewLogin = action.payload;
+    },
     invalidateLoginSession: (state: LoginInfoStateType) => {
       state.isLoginSessionInvalid = true;
     },
@@ -120,6 +134,7 @@ export const loginInfoSlice = createSlice({
       ) => {
         state.isLoginSessionInvalid = false;
         state.loginMethod = action.payload.loginMethod;
+        state.iframeLoginType = action.payload.iframeLoginType;
         setLoginExpiresAt(getNewLoginExpiresTimestamp());
       }
     );
@@ -135,7 +150,8 @@ export const {
   setWalletLogin,
   invalidateLoginSession,
   setLogoutRoute,
-  setIsWalletConnectV2Initialized
+  setIsWalletConnectV2Initialized,
+  setWebviewLogin
 } = loginInfoSlice.actions;
 
 export default loginInfoSlice.reducer;

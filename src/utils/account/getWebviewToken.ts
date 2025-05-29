@@ -1,9 +1,10 @@
-import { getWindowLocation } from 'utils/window/getWindowLocation';
+import { loginInfoSelector } from 'reduxStore/selectors';
+import { store } from 'reduxStore/store';
+import { getAccessTokenFromSearchParams } from './getAccessTokenFromSearchParams';
 
 export const getWebviewToken = () => {
-  const { search } = getWindowLocation();
-  const urlSearchParams = new URLSearchParams(search) as any;
-  const searchParams = Object.fromEntries(urlSearchParams);
+  const accessToken = getAccessTokenFromSearchParams();
+  const loginInfo = loginInfoSelector(store.getState());
 
-  return searchParams?.accessToken;
+  return accessToken ?? loginInfo.webviewLogin?.data;
 };

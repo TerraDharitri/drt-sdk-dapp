@@ -1,7 +1,14 @@
 import { useEffect, useRef } from 'react';
-import { getEnvironmentForChainId, getNetworkConfigFromApi } from 'apiCalls';
+
+import { getNetworkConfigFromApi, useGetAccountFromApi } from 'apiCalls';
+import {
+  DEVNET_CHAIN_ID,
+  MAINNET_CHAIN_ID,
+  TESTNET_CHAIN_ID
+} from 'constants/index';
 import { useLoginService } from 'hooks/login/useLoginService';
 import { useWalletConnectV2Login } from 'hooks/login/useWalletConnectV2Login';
+import { useWebViewLogin } from 'hooks/login/useWebViewLogin';
 import {
   setAccountProvider,
   setExternalProviderAsAccountProvider
@@ -9,16 +16,17 @@ import {
 import { loginAction } from 'reduxStore/commonActions';
 import { useDispatch, useSelector } from 'reduxStore/DappProviderContext';
 import {
+  accountSelector,
   addressSelector,
   ledgerAccountSelector
 } from 'reduxStore/selectors/accountInfoSelectors';
 import {
-  loginMethodSelector,
   walletConnectLoginSelector,
   walletLoginSelector,
   ledgerLoginSelector,
   isLoggedInSelector,
-  tokenLoginSelector
+  tokenLoginSelector,
+  loginInfoSelector
 } from 'reduxStore/selectors/loginInfoSelectors';
 import {
   chainIDSelector,
@@ -31,38 +39,43 @@ import {
   setAccountLoadingError,
   setLedgerAccount,
   setWalletLogin,
-  setChainID,
   setTokenLogin,
   setIsWalletConnectV2Initialized,
-  setAddress
+  setAddress,
+  updateNetworkConfig
 } from 'reduxStore/slices';
+import { decodeNativeAuthToken } from 'services/nativeAuth/helpers';
 import { LoginMethodsEnum } from 'types/enums.types';
 import {
   getAddress,
-  getAccount,
   getLatestNonce,
   newWalletProvider,
-  emptyProvider
+  emptyProvider,
+  refreshAccount
 } from 'utils/account';
 import { parseNavigationParams } from 'utils/parseNavigationParams';
+import { isContract } from 'utils/smartContracts';
 
-import { useWebViewLogin } from '../../hooks/login/useWebViewLogin';
 import {
   getOperaProvider,
   getCrossWindowProvider,
   getExtensionProvider,
+  getPasskeyProvider,
   processModifiedAccount,
-  getMetamaskProvider
+  getMetamaskProvider,
+  getIframeProvider,
+  handleGuardianWarning
 } from './helpers';
 import { useSetLedgerProvider } from './hooks';
 
 let initalizingLedger = false;
 
 export function ProviderInitializer() {
+  const { loginMethod, iframeLoginType } = useSelector(loginInfoSelector);
+
   const network = useSelector(networkSelector);
   const walletAddress = useSelector(walletAddressSelector);
   const walletConnectLogin = useSelector(walletConnectLoginSelector);
-  const loginMethod = useSelector(loginMethodSelector);
   const walletLogin = useSelector(walletLoginSelector);
   const address = useSelector(addressSelector);
   const ledgerAccount = useSelector(ledgerAccountSelector);
@@ -70,14 +83,21 @@ export function ProviderInitializer() {
   const isLoggedIn = useSelector(isLoggedInSelector);
   const chainID = useSelector(chainIDSelector);
   const tokenLogin = useSelector(tokenLoginSelector);
+  const userAccount = useSelector(accountSelector);
   const nativeAuthConfig = tokenLogin?.nativeAuthConfig;
+
   const loginService = useLoginService(
     nativeAuthConfig ? nativeAuthConfig : false
   );
+  const {
+    data: account,
+    isLoading: isAccountLoading,
+    error: accountError
+  } = useGetAccountFromApi(address);
+
   const initializedAccountRef = useRef(false);
   const dispatch = useDispatch();
   const { setLedgerProvider, ledgerData } = useSetLedgerProvider();
-
   useWebViewLogin();
 
   const { callbackRoute, logoutRoute: wcLogoutRoute } = walletConnectLogin
@@ -90,27 +110,63 @@ export function ProviderInitializer() {
   });
 
   useEffect(() => {
-    refreshChainID();
+    refreshNetworkConfig();
   }, [network]);
 
   useEffect(() => {
     initializeProvider();
-  }, [loginMethod, chainID]);
+  }, [address, loginMethod, chainID]);
 
   useEffect(() => {
-    fetchAccount();
-  }, [address, network]);
+    checkAddress();
+  }, [tokenLogin?.nativeAuthToken, address]);
+
+  useEffect(() => {
+    setupAccount();
+  }, [account, isAccountLoading]);
 
   useEffect(() => {
     // prevent balance double fetching by handling ledgerAccount data separately
     setLedgerAccountInfo();
   }, [ledgerAccount, isLoggedIn, ledgerData]);
 
-  async function refreshChainID() {
+  useEffect(() => {
+    if (isLoggedIn && userAccount.address) {
+      handleGuardianWarning(userAccount);
+    }
+  }, [isLoggedIn, userAccount]);
+
+  // We need to get the roundDuration for networks that do not support websocket (e.g. sovereign)
+  // The round duration is used for polling interval
+  async function refreshNetworkConfig() {
+    const needsRoundDurationForPollingInterval =
+      network.chainId &&
+      ![DEVNET_CHAIN_ID, TESTNET_CHAIN_ID, MAINNET_CHAIN_ID].includes(
+        network.chainId
+      ) &&
+      !network.roundDuration;
+
+    const shouldGetConfig =
+      !network.chainId || needsRoundDurationForPollingInterval;
+
+    if (!shouldGetConfig) {
+      return;
+    }
+
     try {
       const networkConfig = await getNetworkConfigFromApi();
-      if (networkConfig) {
-        dispatch(setChainID(networkConfig.drt_chain_id));
+      const hasDifferentNetworkConfig =
+        networkConfig &&
+        (network.chainId !== networkConfig.drt_chain_id ||
+          network.roundDuration !== networkConfig.drt_round_duration);
+
+      if (hasDifferentNetworkConfig) {
+        dispatch(
+          updateNetworkConfig({
+            chainId: networkConfig.drt_chain_id,
+            roundDuration: networkConfig.drt_round_duration
+          })
+        );
       }
     } catch (err) {
       console.error('failed refreshing chainId ', err);
@@ -130,8 +186,41 @@ export function ProviderInitializer() {
     }
   }
 
-  async function fetchAccount() {
-    dispatch(setIsAccountLoading(true));
+  async function checkAddress() {
+    const {
+      remainingParams: { impersonate, multisig }
+    } = parseNavigationParams(['impersonate']);
+
+    const addressIsContract = isContract(address);
+
+    if (
+      !tokenLogin?.nativeAuthToken ||
+      impersonate ||
+      multisig ||
+      addressIsContract
+    ) {
+      return;
+    }
+
+    const decoded = decodeNativeAuthToken(tokenLogin?.nativeAuthToken);
+
+    if (decoded?.address && decoded.address !== address) {
+      dispatch(setAddress(decoded.address));
+      await refreshAccount();
+    }
+  }
+
+  async function setupAccount() {
+    if (isAccountLoading) {
+      dispatch(setIsAccountLoading(true));
+      return;
+    }
+
+    if (accountError) {
+      dispatch(setAccountLoadingError('Failed getting account'));
+      console.error('Failed getting account ', accountError);
+      return;
+    }
 
     if (initializedAccountRef.current) {
       // account was recently initialized, skip refetching
@@ -140,26 +229,17 @@ export function ProviderInitializer() {
       return;
     }
 
-    if (address) {
-      try {
-        const account = await getAccount(address);
-
-        if (account) {
-          dispatch(
-            setAccount({
-              ...account,
-              address,
-              nonce: account.nonce.valueOf()
-            })
-          );
-        } else if (!isLoggedIn) {
-          // Clear the address and publicKey if account is not found
-          dispatch(setAddress(''));
-        }
-      } catch (e) {
-        dispatch(setAccountLoadingError('Failed getting account'));
-        console.error('Failed getting account ', e);
-      }
+    if (account) {
+      dispatch(
+        setAccount({
+          ...account,
+          address,
+          nonce: account.nonce.valueOf()
+        })
+      );
+    } else if (!isLoggedIn) {
+      // Clear the address and publicKey if account is not found
+      dispatch(setAddress(''));
     }
 
     dispatch(setIsAccountLoading(false));
@@ -240,6 +320,14 @@ export function ProviderInitializer() {
     }
   }
 
+  async function setPasskeyProvider() {
+    const address = await getAddress();
+    const provider = await getPasskeyProvider(address);
+    if (provider) {
+      setAccountProvider(provider);
+    }
+  }
+
   async function setMetamaskProvider() {
     const address = await getAddress();
     const provider = await getMetamaskProvider(address);
@@ -267,6 +355,22 @@ export function ProviderInitializer() {
     }
   }
 
+  async function setIframeProvider() {
+    const address = await getAddress();
+
+    if (!network.metamaskSnapWalletAddress) {
+      throw new Error('Metamask snap wallet URL is not set.');
+    }
+    const provider = await getIframeProvider({
+      address,
+      walletUrl: network.metamaskSnapWalletAddress,
+      loginType: iframeLoginType
+    });
+    if (provider) {
+      setAccountProvider(provider);
+    }
+  }
+
   async function setWalletConnectV2Provider() {
     try {
       // Trigger loader until wallet connect has been initialized
@@ -280,9 +384,7 @@ export function ProviderInitializer() {
   }
 
   async function initializeProvider() {
-    const isValidEnvironment = getEnvironmentForChainId(chainID);
-
-    if (loginMethod == null || initalizingLedger || !isValidEnvironment) {
+    if (loginMethod == null || initalizingLedger) {
       return;
     }
 
@@ -303,6 +405,12 @@ export function ProviderInitializer() {
         setExtensionProvider();
         break;
       }
+
+      case LoginMethodsEnum.passkey: {
+        setPasskeyProvider();
+        break;
+      }
+
       case LoginMethodsEnum.metamask: {
         setMetamaskProvider();
         break;
@@ -317,6 +425,10 @@ export function ProviderInitializer() {
         setCrossWindowProvider();
         break;
       }
+
+      case LoginMethodsEnum.iframe:
+        setIframeProvider();
+        break;
 
       case LoginMethodsEnum.extra: {
         setExternalProviderAsAccountProvider();

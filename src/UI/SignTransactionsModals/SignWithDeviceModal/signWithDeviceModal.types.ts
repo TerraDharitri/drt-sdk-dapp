@@ -1,9 +1,10 @@
+import { UseSignTransactionsWithDeviceReturnType } from 'hooks/transactions/useSignTransactionsWithDevice';
 import {
   ActiveLedgerTransactionType,
   DeviceSignedTransactions,
   GuardianScreenType,
   MultiSignTransactionType
-} from 'types';
+} from '../../../types';
 import { WithClassnameType } from '../../types';
 import { SignPropsType } from '../types/signTransactionsModals.types';
 
@@ -27,6 +28,7 @@ export interface SignStepPropsType
   callbackRoute?: string;
   currentStep: number;
   currentTransaction: ActiveLedgerTransactionType | null;
+  updatePPU: UseSignTransactionsWithDeviceReturnType['updatePPU'];
   GuardianScreen?: SignPropsType['GuardianScreen'];
   error: string | null;
   handleClose: () => void;

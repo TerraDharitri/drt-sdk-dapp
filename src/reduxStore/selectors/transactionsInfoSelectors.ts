@@ -24,7 +24,7 @@ export const transactionDisplayInfoSelector = createDeepEqualSelector(
     transactionSessionId: string | null
   ) =>
     transactionSessionId != null
-      ? transactionsDisplayInfo?.[Number(transactionSessionId)] ||
-        defaultTransactionInfo
+    ? (transactionsDisplayInfo as Record<number, TransactionsDisplayInfoType>)?.[Number(transactionSessionId)] ||
+    defaultTransactionInfo
       : defaultTransactionInfo
 );

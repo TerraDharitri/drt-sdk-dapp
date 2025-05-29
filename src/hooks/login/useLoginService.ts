@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { Address, SignableMessage } from '@terradharitri/sdk-core';
+import { Address, Message } from '@terradharitri/sdk-core';
 import { useGetAccount } from 'hooks/account';
 import { useDispatch, useSelector } from 'reduxStore/DappProviderContext';
 import { networkSelector, tokenLoginSelector } from 'reduxStore/selectors';
@@ -96,6 +96,7 @@ export const useLoginService = (config?: OnProviderLoginType['nativeAuth']) => {
         ...(apiAddress ? { nativeAuthConfig: configuration } : {})
       })
     );
+
     return nativeAuthToken;
   };
 
@@ -105,9 +106,9 @@ export const useLoginService = (config?: OnProviderLoginType['nativeAuth']) => {
     nativeAuthClientConfig
   }: {
     signMessageCallback: (
-      messageToSign: SignableMessage,
+      messageToSign: Message,
       options: Record<any, any>
-    ) => Promise<SignableMessage>;
+    ) => Promise<Message>;
     nativeAuthClientConfig?: NativeAuthConfigType;
   }) => {
     const nativeAuthClient = nativeAuth(
@@ -119,17 +120,25 @@ export const useLoginService = (config?: OnProviderLoginType['nativeAuth']) => {
     });
 
     tokenRef.current = loginToken;
+
     if (!loginToken) {
       return;
     }
-    const messageToSign = new SignableMessage({
+
+    const messageToSign = new Message({
       address: new Address(address),
-      message: Buffer.from(`${address}${loginToken}`)
+      data: Buffer.from(`${address}${loginToken}`)
     });
+
     const signedMessage = await signMessageCallback(messageToSign, {});
+
+    if (!signedMessage?.signature) {
+      throw 'Message not signed';
+    }
+
     const nativeAuthToken = setTokenLoginInfo({
       address,
-      signature: signedMessage.getSignature().toString('hex')
+      signature: Buffer.from(signedMessage.signature).toString('hex')
     });
 
     return nativeAuthToken;

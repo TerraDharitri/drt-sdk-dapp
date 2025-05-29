@@ -1,4 +1,4 @@
-@import 'assets/sass/variables/variables';
+@use '../../../../../../assets/sass/variables/variables';
 
 .receiver {
   display: flex;
@@ -15,7 +15,7 @@
     }
 
     .receiverLabelScam {
-      color: $danger;
+      color: variables.$danger;
       line-height: 1;
       display: flex;
       align-items: center;
@@ -35,7 +35,7 @@
       }
 
       .receiverLabelScamIcon {
-        color: $danger;
+        color: variables.$danger;
       }
     }
   }
@@ -44,8 +44,16 @@
     display: flex;
     align-items: center;
     line-height: 1;
-    white-space: nowrap;
     gap: 8px;
+
+    &.unwrappable {
+      white-space: nowrap;
+    }
+
+    .receiverText {
+      word-break: break-all;
+      line-height: 1.25;
+    }
 
     .receiverData {
       color: #737373;

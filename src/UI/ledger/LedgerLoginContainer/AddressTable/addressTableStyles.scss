@@ -1,4 +1,4 @@
-@import 'assets/sass/variables/variables';
+@use '../../../../assets/sass/variables/variables';
 
 .ledger-address-table-wrapper {
   text-align: center;
@@ -34,7 +34,7 @@
     .ledger-address-table-header {
       display: flex;
       align-items: center;
-      background-color: $gray-400;
+      background-color: variables.$gray-400;
       line-height: 1;
       padding: 16px;
       text-align: left;
@@ -73,37 +73,17 @@
       }
 
       &::-webkit-scrollbar-thumb {
-        background-color: $gray-400;
+        background-color: variables.$gray-400;
 
         &:hover {
-          background-color: $gray-400;
+          background-color: variables.$gray-400;
         }
       }
     }
   }
 
-  .ledger-address-table-navigation {
-    display: flex;
-    max-width: 340px;
-    margin: 48px auto 0;
-    justify-content: space-between;
-    align-items: center;
-
-    .ledger-address-table-navigation-button {
-      border: none;
-      background-color: transparent;
-      font-weight: 600;
-      transition: all 200ms ease;
-
-      &.ledger-address-table-navigation-button-disabled {
-        opacity: 0.5;
-        pointer-events: none;
-      }
-
-      .ledger-address-table-navigation-button-label {
-        padding: 0 8px;
-      }
-    }
+  .ledger-address-table-pagination {
+    margin: 32px auto 0;
   }
 
   .ledger-address-table-button {

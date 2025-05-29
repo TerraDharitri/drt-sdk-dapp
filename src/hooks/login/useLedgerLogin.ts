@@ -19,6 +19,7 @@ import {
   OnProviderLoginType
 } from '../../types';
 import { getIsLoggedIn } from '../../utils';
+import { clearInitiatedLogins } from './helpers';
 import { useAddressScreens } from './useAddressScreens';
 import { useLoginService } from './useLoginService';
 const failInitializeErrorText = 'Check if the Dharitri App is open on Ledger';
@@ -39,7 +40,7 @@ export interface LedgerLoginHookCustomStateType {
   selectedAddress: SelectedAddress | null;
   version: string;
   contractDataEnabled: boolean;
-
+  onGoToSpecificPage: (page: number) => void;
   onGoToPrevPage: () => void;
   onGoToNextPage: () => void;
   onSelectAddress: (address: SelectedAddress | null) => void;
@@ -60,7 +61,7 @@ export const useLedgerLogin = ({
   onLoginRedirect
 }: UseLedgerLoginPropsType): LedgerLoginHookReturnType => {
   const ledgerAccount = useSelector(ledgerAccountSelector);
-  const hwProvider = getAccountProvider() as HWProvider;
+  const hwProvider = getAccountProvider() as unknown as HWProvider;
   const dispatch = useDispatch();
   const isLoggedIn = getIsLoggedIn();
   const hasNativeAuth = nativeAuth != null;
@@ -78,6 +79,7 @@ export const useLedgerLogin = ({
     selectedAddress,
     onGoToPrevPage,
     onGoToNextPage,
+    onGoToSpecificPage,
     onSelectAddress,
     error,
     setError,
@@ -115,19 +117,23 @@ export const useLedgerLogin = ({
   };
 
   const onLoginFailed = (err: any, customMessage = '') => {
-    const { errorMessage, defaultErrorMessage } = getLedgerErrorCodes(err);
-    const message =
-      errorMessage ?? defaultErrorMessage ?? failInitializeErrorText;
+    // Show errors only if the user initiated the login process (isLoading is true)
+    if (isLoading) {
+      const { errorMessage, defaultErrorMessage } = getLedgerErrorCodes(err);
 
-    setError(`${message}.${customMessage}`);
-    setIsLoading(false);
-    dispatch(setLedgerAccount(null));
+      const message =
+        errorMessage ?? defaultErrorMessage ?? failInitializeErrorText;
+
+      setError(`${message}.${customMessage}`);
+      setIsLoading(false);
+      dispatch(setLedgerAccount(null));
+    }
   };
 
   const isHWProviderInitialized = async () => {
     try {
       if (hwProvider instanceof HWProvider && hwProvider.isInitialized()) {
-        return await hwProvider.isConnected();
+        return hwProvider.isConnected();
       }
     } catch (e) {
       onLoginFailed(e);
@@ -197,7 +203,7 @@ export const useLedgerLogin = ({
       }
     } else {
       try {
-        const address = await hwProvider.login({ addressIndex: index });
+        const { address } = await hwProvider.login({ addressIndex: index });
 
         dispatchLoginActions({
           address,
@@ -237,8 +243,6 @@ export const useLedgerLogin = ({
       await loginUser();
     } catch (err) {
       onLoginFailed(err);
-    } finally {
-      setIsLoading(false);
     }
 
     setShowAddressList(false);
@@ -276,11 +280,11 @@ export const useLedgerLogin = ({
       throw new Error(SECOND_LOGIN_ATTEMPT_ERROR);
     }
 
+    clearInitiatedLogins();
     setError('');
 
     try {
       setIsLoading(true);
-      await initHWProvider();
       const isInitialized = await isHWProviderInitialized();
 
       if (!isInitialized) {
@@ -292,7 +296,7 @@ export const useLedgerLogin = ({
           return onLoginFailed(failInitializeErrorText);
         }
 
-        const address = await hwProvider.login({
+        const { address } = await hwProvider.login({
           addressIndex: selectedAddress.index.valueOf()
         });
 
@@ -315,19 +319,39 @@ export const useLedgerLogin = ({
 
         setShowAddressList(true);
       }
-    } catch (error) {
-      onLoginFailed(error);
-    } finally {
+
       setIsLoading(false);
+    } catch (err) {
+      onLoginFailed(err);
+    }
+  };
+
+  // Need to initialise the HWProvider before starting the login process
+  // and fetch the accounts immediately afterward only once or if the address page changes
+  const initProviderAndAccounts = async () => {
+    try {
+      let isInitialized = await isHWProviderInitialized();
+
+      if (!isInitialized) {
+        await initHWProvider();
+      }
+
+      isInitialized = await isHWProviderInitialized();
+
+      if (!isInitialized) {
+        return onLoginFailed(failInitializeErrorText);
+      }
+
+      if (accounts.length === 0 || startIndex >= 0) {
+        await fetchAccounts();
+      }
+    } catch (err) {
+      onLoginFailed(err);
     }
   };
 
   useEffect(() => {
-    initHWProvider();
-  }, [hwProvider]);
-
-  useEffect(() => {
-    fetchAccounts();
+    initProviderAndAccounts();
   }, [startIndex, showAddressList, hwProvider]);
 
   useEffect(() => {
@@ -357,6 +381,7 @@ export const useLedgerLogin = ({
       contractDataEnabled,
       onGoToPrevPage,
       onGoToNextPage,
+      onGoToSpecificPage,
       onSelectAddress,
       onConfirmSelectedAddress
     }

@@ -4,7 +4,12 @@
 
 [![NPM](https://img.shields.io/npm/v/@terradharitri/sdk-dapp.svg)](https://www.npmjs.com/package/@terradharitri/sdk-dapp) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
-See [Dapp template](https://template-dapp.dharitri.org/) for live demo or checkout usage in the [Github repo](https://github.com/TerraDharitri/drt-tempelate-dap)
+See [Dapp template](https://template-dapp.dharitri.org/) for live demo or checkout usage in the [Github repo](https://github.com/TerraDharitri/drt-sdktemplate-dapp)
+
+# Tests 
+[![Pre-Merge Unit Tests](https://github.com/TerraDharitri/drt-sdk-dapp/actions/workflows/pre-merge-unit-tests.yml/badge.svg)](https://github.com/TerraDharitri/drt-sdk-dapp/actions/workflows/pre-merge-unit-tests.yml)
+
+[![Template DApps Integration Tests](https://github.com/TerraDharitri/drt-sdk-dapp/actions/workflows/run-template-dapps-integration.yml/badge.svg)](https://github.com/TerraDharitri/drt-sdk-dapp/actions/workflows/run-template-dapps-integration.yml)
 
 # Installation
 

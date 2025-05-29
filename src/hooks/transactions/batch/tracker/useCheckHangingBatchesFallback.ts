@@ -1,15 +1,16 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback } from 'react';
 import {
-  AVERAGE_TX_DURATION_MS,
-  TRANSACTIONS_STATUS_DROP_INTERVAL_MS
+  TRANSACTIONS_STATUS_DROP_INTERVAL_MS,
+  TRANSACTIONS_STATUS_POLLING_INTERVAL_MS
 } from 'constants/transactionStatus';
-import { extractSessionId } from 'hooks/transactions/helpers/extractSessionId';
-import { timestampIsOlderThan } from 'hooks/transactions/helpers/timestampIsOlderThan';
+import { useWebsocketPollingFallback } from 'hooks/transactions/useTransactionsTracker/useWebsocketPollingFallback';
 import { removeBatchTransactions } from 'services/transactions';
 import { getTransactionsStatus } from 'utils/transactions/batch/getTransactionsStatus';
 import { sequentialToFlatArray } from 'utils/transactions/batch/sequentialToFlatArray';
+import { extractSessionId } from '../../helpers/extractSessionId';
+import { timestampIsOlderThan } from '../../helpers/timestampIsOlderThan';
+import { useUpdateTrackedTransactions } from '../../useTransactionsTracker/useUpdateTrackedTransactions';
 import { useGetBatches } from '../useGetBatches';
-import { useUpdateBatch } from './useUpdateBatch';
 
 /**
  * Fallback mechanism to check hanging batches
@@ -20,7 +21,7 @@ export const useCheckHangingBatchesFallback = (props?: {
   onFail?: (sessionId: string | null, errorMessage?: string) => void;
 }) => {
   const { batchTransactionsArray } = useGetBatches();
-  const updateBatch = useUpdateBatch();
+  const updateBatch = useUpdateTrackedTransactions();
   const onSuccess = props?.onSuccess;
   const onFail = props?.onFail;
 
@@ -66,11 +67,8 @@ export const useCheckHangingBatchesFallback = (props?: {
     }
   }, [batchTransactionsArray, updateBatch, onSuccess, onFail]);
 
-  useEffect(() => {
-    const interval = setInterval(async () => {
-      checkHangingBatches();
-    }, AVERAGE_TX_DURATION_MS);
-
-    return () => clearInterval(interval);
-  }, [checkHangingBatches]);
+  useWebsocketPollingFallback({
+    onPoll: checkHangingBatches,
+    pollingInterval: TRANSACTIONS_STATUS_POLLING_INTERVAL_MS
+  });
 };

@@ -48,6 +48,7 @@ export interface UseSignTransactionsWithDeviceReturnType {
     React.SetStateAction<DeviceSignedTransactions | undefined>
   >;
   currentTransaction: ActiveLedgerTransactionType | null;
+  updatePPU: (ppu: ActiveLedgerTransactionType['ppu']) => void;
   callbackRoute?: string;
 }
 
@@ -104,17 +105,23 @@ export function useSignTransactionsWithDevice(
       return;
     }
 
-    const { needs2FaSigning, sendTransactionsToGuardian } =
-      checkNeedsGuardianSigning({
-        transactions: newSignedTransactions,
-        sessionId,
-        callbackRoute,
-        isGuarded: isGuarded && allowGuardian,
-        walletAddress
-      });
+    const { needs2FaSigning, guardTransactions } = checkNeedsGuardianSigning({
+      transactions: newSignedTransactions,
+      sessionId,
+      callbackRoute,
+      isGuarded: isGuarded && allowGuardian,
+      walletAddress
+    });
+
+    let signedTransactionsArray = newSignedTransactions.map((tx) =>
+      parseTransactionAfterSigning(tx)
+    );
 
     if (needs2FaSigning) {
-      return sendTransactionsToGuardian();
+      const guardedTransactions = await guardTransactions();
+      signedTransactionsArray = guardedTransactions
+        ? guardedTransactions.map((tx) => parseTransactionAfterSigning(tx))
+        : [];
     }
 
     if (!sessionId) {
@@ -125,9 +132,7 @@ export function useSignTransactionsWithDevice(
       moveTransactionsToSignedState({
         sessionId: sessionId,
         status: TransactionBatchStatusesEnum.signed,
-        transactions: newSignedTransactions.map((tx) =>
-          parseTransactionAfterSigning(tx)
-        )
+        transactions: signedTransactionsArray
       })
     );
 
@@ -157,7 +162,11 @@ export function useSignTransactionsWithDevice(
       return null;
     }
 
-    return await connectedProvider.signTransaction(transaction);
+    const signedTransaction = await connectedProvider.signTransaction(
+      transaction
+    );
+
+    return signedTransaction;
   }
 
   const signMultipleTxReturnValues = useSignMultipleTransactions({

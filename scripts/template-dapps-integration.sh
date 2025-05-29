@@ -6,7 +6,6 @@ set -e
 # Install prerequisites
 echo "Installing yarn..."
 npm install --global yarn
-
 echo "Installing yalc..."
 npm install --global yalc
 
@@ -17,12 +16,8 @@ git clone https://github.com/TerraDharitri/drt-sdk-dapp.git
 echo "cd drt-sdk-dapp..."
 cd drt-sdk-dapp
 
-# Only try to checkout if the branch exists
-if git show-ref --quiet refs/heads/development; then
-  git checkout development
-else
-  echo "Branch 'development' not found. Skipping checkout."
-fi
+echo "Checking out main branch..."
+git checkout main
 
 echo "Installing dependencies for drt-sdk-dapp..."
 yarn install
@@ -35,21 +30,22 @@ cd dist
 yalc publish
 cd ../..
 
-# Consume drt-sdk-dapp in drt-tempelate-dapp
-echo "Cloning drt-tempelate-dapp..."
-git clone https://github.com/TerraDharitri/drt-tempelate-dapp.git
+# Consume drt-sdk-dapp in drt-template-dapp
+echo "Cloning drt-template-dapp..."
+git clone https://github.com/TerraDharitri/drt-template-dapp.git
 
-echo "cd drt-tempelate-dapp..."
-cd drt-tempelate-dapp
+echo "cd drt-template-dapp..."
+cd drt-template-dapp
 
-echo "Installing dependencies for drt-tempelate-dapp..."
+echo "Installing dependencies for drt-sdk-template-dapp..."
 yarn install
 
 echo "Linking drt-sdk-dapp..."
 yalc add @terradharitri/sdk-dapp
 
-echo "Building drt-tempelate-dapp..."
+echo "Building drt-template-dapp..."
 yarn build:devnet
+
 cd ..
 
 # Consume drt-sdk-dapp in drt-tempelate-dapp-nextjs
@@ -57,7 +53,7 @@ echo "Cloning drt-tempelate-dapp-nextjs..."
 git clone https://github.com/TerraDharitri/drt-tempelate-dapp-nextjs.git
 
 echo "cd drt-tempelate-dapp-nextjs..."
-cd drt-tempelate-dapp-nextjs
+cd drt-template-dapp-nextjs
 
 echo "Installing dependencies for drt-tempelate-dapp-nextjs..."
 yarn install

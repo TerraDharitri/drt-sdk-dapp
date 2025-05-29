@@ -18,17 +18,17 @@ export interface TransactionToastPropsType
 }
 
 const TransactionToastComponent = ({
-  toastId,
-  title = '',
   className = 'dapp-transaction-toast',
-  onDelete,
-  startTimestamp,
+  customization,
   endTimeProgress,
   lifetimeAfterSuccess,
+  onDelete,
+  startTimestamp,
   status,
-  transactions,
-  customization,
-  styles
+  styles,
+  title = '',
+  toastId,
+  transactions
 }: TransactionToastPropsType & WithStylesImportType) => {
   const {
     isCrossShard,
@@ -51,26 +51,33 @@ const TransactionToastComponent = ({
   const TransactionToastContentComponent =
     customization?.TransactionToastContent ?? TransactionToastContent;
 
+  function getToastTitleString(_title: string | { errorMessage?: string; successMessage?: string; processingMessage?: string; submittedMessage?: string; transactionDuration?: number; timedOutMessage?: string; invalidMessage?: string; }): string {
+    throw new Error('Function not implemented.');
+  }
+
   return (
     <TransactionToastWrapper className={className} id={`toast-${toastId}`}>
       <ProgressComponent
         key={toastId}
-        id={toastId}
-        progress={progress}
+id={Number(toastId)}        progress={progress}
         expiresIn={lifetimeAfterSuccess}
         done={!isPending || isTimedOut}
         isCrossShard={isCrossShard}
       >
-        <TransactionToastContentComponent
-          style={styles ?? {}}
-          toastDataState={toastDataState}
-          transactions={transactions ?? []}
-          toastTitle={title}
-          isTimedOut={isTimedOut}
-          showCloseButton={!isPending}
-          onDeleteToast={handleDeleteToast}
-          customElements={customization?.TransactionToastContentCustomElements}
-        />
+      <TransactionToastContentComponent
+  customElements={customization?.TransactionToastContentCustomElements}
+  isTimedOut={isTimedOut}
+  onDeleteToast={handleDeleteToast}
+  showCloseButton={!isPending}
+  style={styles ?? {}}
+  toastDataState={{
+    ...toastDataState,
+    title: getToastTitleString(toastDataState.title),
+  }}
+  toastTitle={title}
+  transactions={transactions ?? []}
+/>
+
       </ProgressComponent>
     </TransactionToastWrapper>
   );

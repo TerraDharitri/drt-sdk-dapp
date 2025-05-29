@@ -13,7 +13,7 @@ const TOAST_PROGRESS_KEY = 'toastProgress';
 
 // TODO: Rename to "ProgressPropsType" when sdk-dapp@3.0.0
 export interface ProgressProps extends WithClassnameType {
-  id: string;
+  id: number;
   done: boolean;
   children: ReactNode;
   expiresIn?: number;
@@ -66,7 +66,7 @@ const ProgressComponent = ({
     const toastProgress: Record<number, number> =
       storage.session.getItem(TOAST_PROGRESS_KEY);
 
-    const hasSessionStoredTx = Boolean(toastProgress?.[id]);
+      const hasSessionStoredTx = Boolean(toastProgress?.[id]);
 
     if (!hasSessionStoredTx) {
       return;
