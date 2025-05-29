@@ -7,6 +7,101 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- [Fixed floating data field decode dropdown](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1390)
+- [Updated address validation](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1389)
+- [Added conditional price radios visibility per radio button](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1388)
+
+## [[v3.3.1](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1387)] - 2025-03-13
+
+- [Added conditional price radios visibility](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1386)
+
+## [[v3.3.0](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1380)] - 2025-03-11
+
+- [Added gasPrice editing](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1377)
+
+## [[v3.2.7](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1384)] - 2025-03-11
+
+- [Fixed cancel action is not called on all providers](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1383)
+
+## [[v3.2.6](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1382)] - 2025-03-11
+
+- [Fixed sign screen layout and move decoder styles inside the package](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1381)
+
+## [[v3.2.5](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1379)] - 2025-03-11
+
+- [Fixed websocket connection and fallback mechanism](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1378)
+
+## [[v3.2.4](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1376)] - 2025-02-17
+
+- [Added a warning toast when an unconfirmed guardian change took place](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1375)
+- [Fixed metamask addon link to use new Chrome Web Store domain](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1374)
+
+## [[v3.2.3](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1373)] - 2025-02-06
+
+- [Fixed wallet tab reopens immediately after close/cancel during cross window login](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1372)
+
+## [[v3.2.2](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1371)] - 2025-02-04
+
+- [Fixed walletconnect init fails after cross window login attempt](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1370)
+
+## [[v3.2.1](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1368)] - 2025-01-31
+
+- [Added optional receiver trimming option](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1367)
+- [Added test badge on readme](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1369)
+
+## [[v3.2.0](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1366)] - 2025-01-28
+
+- [Added support for relayed transactions](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1365)
+
+## [[v3.1.9](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1360)] - 2025-01-17
+
+- [Fix useTransactionsTracker export](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1363)
+- [Added dharitriWallet](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1361)
+- [Added ability to close transaction toasts on timeout](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1352)
+
+## [[v3.1.8](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1360)] - 2025-01-15
+
+- [Added search tooltip to the Ledger address table pagination](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1359)
+
+## [[v3.1.7](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1358)] - 2025-01-14
+
+- [Fixed double rendering](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1357)
+
+## [[v3.1.7-alpha.0](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1356)] - 2025-01-13
+
+- [Fix ledger stax signing error](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1355)
+
+## [[v3.1.6](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1354)] - 2025-01-09
+
+- [WalletConnect: show loading state until initialized](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1353)
+
+## [[v3.1.5](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1351)] - 2024-12-17
+
+- [Fixed cross window page reload on internal logout](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1350)
+
+## [[v3.1.4](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1349)] - 2024-12-16
+
+- [Fixed logout doesn't work when `shouldBroadcastLogoutAcrossTabs` is `false`](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1348)
+
+## [[v3.1.3](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1347)] - 2024-12-13
+
+- [Added session ID in the handshake payload to allow multiple DApp connections in parallel tabs](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1346)
+- [Fixed cancel action in cross window does not close child window](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1345)
+
+## [[v3.1.2](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1344)] - 2024-12-09
+
+- [Add pagination item count support to "AddressTable"](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1343)
+
+## [[v3.1.1](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1342)] - 2024-12-09
+
+- [Fix dApp compatibility check (webview provider)](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1341)
+
+## [[v3.1.0](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1339)] - 2024-12-05
+
+- [Added address table pagination to the Ledger authentication flow](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1338)
+
+## [[v3.0.23](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1337)] - 2024-11-29
+
 - [Fix deps array which can cause minification errors](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1336)
 
 ## [[v3.0.22](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1335)] - 2024-11-29
@@ -255,7 +350,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [ExperimentalWebviewProvider: full webkit support](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1193)
 - [Updated default chainID to empty string instead of -1](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1192)
-- [Fixed infinite loop in `parseMultiDcdtTransferData`](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1191)
+- [Fixed infinite loop in `parseMultiDcdtTransfdrtata`](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1191)
 
 ## [[v2.33.2](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1190)] - 2024-06-10
 
@@ -484,7 +579,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [[v2.29.0-beta.2](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1073)] - 2024-03-12
 
-- [Move axios in peerDependencies](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1023)
+- [Move axios in pedrtependencies](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1023)
 - [Upgrade sdk packages](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1072)
 
 ## [[v2.29.0-beta.1](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1071)] - 2024-03-12
@@ -1034,7 +1129,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [[v2.10.9](https://github.com/TerraDharitri/drt-sdk-dapp/pull/698)] - 2023-03-15
 
-- [Fixed interpreting DCDT in `parseMultiDcdtTransferData`](https://github.com/TerraDharitri/drt-sdk-dapp/pull/697)
+- [Fixed interpreting DCDT in `parseMultiDcdtTransfdrtata`](https://github.com/TerraDharitri/drt-sdk-dapp/pull/697)
 
 ## [[v2.10.8](https://github.com/TerraDharitri/drt-sdk-dapp/pull/696)] - 2023-03-14
 

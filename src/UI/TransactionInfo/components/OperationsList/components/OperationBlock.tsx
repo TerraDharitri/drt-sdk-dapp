@@ -58,11 +58,11 @@ const OperationBlockComponent = ({
         <div
           className={classNames(
             styles?.direction,
-            styles?.[directions[direction]]
+            styles?.[directions[direction as keyof typeof directions]]
           )}
         >
-          {directions[direction]}
-        </div>
+    {directions[direction as keyof typeof directions]}
+    </div>
       )}
 
       {action && (

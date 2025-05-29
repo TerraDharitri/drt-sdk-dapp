@@ -3,7 +3,6 @@ import { withStyles, WithStylesImportType } from 'hocs/withStyles';
 import { useGetAccount } from 'hooks/account/useGetAccount';
 import {
   SignedTransactionType,
-  TransactionServerStatusesEnum
 } from 'types/index';
 import { isServerTransactionPending } from 'utils/transactions/transactionStateByStatus';
 import {
@@ -34,14 +33,14 @@ const TransactionDetailsComponent = ({
   const processedTransactionsStatus = useMemo(() => {
     const processedTransactions = transactions.filter(
       (tx) =>
-        !isServerTransactionPending(TransactionServerStatusesEnum[tx?.status])
+        !isServerTransactionPending(tx?.status)
     ).length;
 
     const totalTransactions = transactions.length;
 
     if (totalTransactions === 1 && processedTransactions === 1) {
       return isServerTransactionPending(
-        TransactionServerStatusesEnum[transactions[0].status]
+        transactions[0].status
       )
         ? 'Processing transaction'
         : 'Transaction processed';
@@ -65,7 +64,7 @@ const TransactionDetailsComponent = ({
         const transactionDetailsBodyProps: TransactionDetailsBodyPropsType = {
           className,
           hash,
-          status: TransactionServerStatusesEnum[status],
+          status: status,
           isTimedOut
         };
 

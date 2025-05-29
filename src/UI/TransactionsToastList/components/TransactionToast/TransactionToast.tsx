@@ -51,26 +51,33 @@ const TransactionToastComponent = ({
   const TransactionToastContentComponent =
     customization?.TransactionToastContent ?? TransactionToastContent;
 
+  function getToastTitleString(_title: string | { errorMessage?: string; successMessage?: string; processingMessage?: string; submittedMessage?: string; transactionDuration?: number; timedOutMessage?: string; invalidMessage?: string; }): string {
+    throw new Error('Function not implemented.');
+  }
+
   return (
     <TransactionToastWrapper className={className} id={`toast-${toastId}`}>
       <ProgressComponent
         key={toastId}
-        id={toastId}
-        progress={progress}
+id={Number(toastId)}        progress={progress}
         expiresIn={lifetimeAfterSuccess}
         done={!isPending || isTimedOut}
         isCrossShard={isCrossShard}
       >
-        <TransactionToastContentComponent
-          customElements={customization?.TransactionToastContentCustomElements}
-          isTimedOut={isTimedOut}
-          onDeleteToast={handleDeleteToast}
-          showCloseButton={!isPending}
-          style={styles ?? {}}
-          toastDataState={toastDataState}
-          toastTitle={title}
-          transactions={transactions ?? []}
-        />
+      <TransactionToastContentComponent
+  customElements={customization?.TransactionToastContentCustomElements}
+  isTimedOut={isTimedOut}
+  onDeleteToast={handleDeleteToast}
+  showCloseButton={!isPending}
+  style={styles ?? {}}
+  toastDataState={{
+    ...toastDataState,
+    title: getToastTitleString(toastDataState.title),
+  }}
+  toastTitle={title}
+  transactions={transactions ?? []}
+/>
+
       </ProgressComponent>
     </TransactionToastWrapper>
   );

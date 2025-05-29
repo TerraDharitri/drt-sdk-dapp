@@ -96,3 +96,8 @@ export const chainIdToEnvironment: Record<string, EnvironmentsEnum> = {
 
 export const DHARITRI_ORIGIN = 'dharitri://';
 export const TIMEOUT = 3000;
+
+/**
+ * PPU value that is used when the user doesn't want a higher gas price for the transaction
+ */
+export const EMPTY_PPU = 0;

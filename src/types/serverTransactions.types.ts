@@ -239,7 +239,7 @@ export interface ServerTransactionType {
   round: number;
   sender: string;
   senderShard: number;
-  signature: string;
+  signature: any;
   status: string;
   inTransit?: boolean;
   timestamp: number;
