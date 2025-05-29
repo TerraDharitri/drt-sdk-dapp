@@ -1,41 +1,34 @@
 import BigNumber from 'bignumber.js';
 import { ZERO } from 'constants/index';
 
-export const stringIsFloat = (amount: string) => {
-  if (isNaN(amount as any)) {
-    return false;
-  }
-  if (amount == null) {
-    return false;
-  }
-  if (String(amount).includes('Infinity')) {
+export const stringIsFloat = (amount: unknown): boolean => {
+  if (typeof amount !== 'string' || amount.trim() === '') {
     return false;
   }
 
-  // eslint-disable-next-line
+  if (!isFinite(Number(amount)) || amount.includes('Infinity') || amount.includes('NaN')) {
+    return false;
+  }
+
   let [wholes, decimals] = amount.split('.');
-  const LocalBigNumber = BigNumber.clone();
-
   if (decimals) {
-    const areAllNumbers = decimals
-      .split('')
-      .every((digit) => !isNaN(parseInt(digit)));
-
-    LocalBigNumber.set({
-      DECIMAL_PLACES: areAllNumbers
-        ? decimals.length
-        : BigNumber.config().DECIMAL_PLACES
-    });
-
-    while (decimals.charAt(decimals.length - 1) === ZERO) {
+    while (decimals.length > 0 && decimals.charAt(decimals.length - 1) === ZERO) {
       decimals = decimals.slice(0, -1);
     }
   }
-  const number = decimals ? [wholes, decimals].join('.') : wholes;
-  const bNparsed = LocalBigNumber(number);
 
-  const output =
-    bNparsed.toString(10) === number && bNparsed.comparedTo(0) >= 0;
+  const number = decimals ? `${wholes}.${decimals}` : wholes;
 
-  return output;
+  const bNparsed = new BigNumber(number);
+
+  if (bNparsed.isNaN()) {
+    return false;
+  }
+
+  const comparison = bNparsed.comparedTo(0);
+  if (comparison === null) {
+    return false;
+  }
+
+  return bNparsed.toString(10) === number && comparison >= 0;
 };
