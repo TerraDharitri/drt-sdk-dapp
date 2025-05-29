@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Added support for `dharitriWallet` detection in `getIsExtensionAvailable.ts`.
+
+### Fixed
+- Fixed type errors related to `useSelector` usage with extra parameters.
+- Resolved CHANGELOG.md enforcement error by adding this entry.
+
 - [WalletConnect: show loading state until initialized](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1353)
 
 ## [[v3.1.5](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1351)] - 2024-12-17
