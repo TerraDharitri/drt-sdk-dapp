@@ -3,7 +3,7 @@ import { generateBatchTransactionsGrouping } from './generateBatchTransactionsGr
 describe('generateBatchTransactionsGrouping', () => {
   it('should generate batch transactions grouping correctly', () => {
     const address =
-      'drt1wh9c0sjr2xn8hzf02lwwcr4jk2s84tat9ud2kaq6zr7xzpvl9l5q6pec6c';
+      'drt1axhx4kenjlae6sknq7zjg2g4fvzavv979r2fg425p62wkl84avtqd4f00j';
     const transactions = [
       [
         {

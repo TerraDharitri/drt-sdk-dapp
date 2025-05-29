@@ -1,6 +1,6 @@
 import {
-  CrossWindowProviderRequestEnums,
-  CrossWindowProviderResponseEnums
+  WindowProviderRequestEnums,
+  WindowProviderResponseEnums
 } from 'lib/sdkDappUtils';
 
 export enum TransactionServerStatusesEnum {
@@ -36,7 +36,9 @@ export enum LoginMethodsEnum {
   walletconnectv2 = 'walletconnectv2',
   wallet = 'wallet',
   crossWindow = 'crossWindow',
+  iframe = 'iframe',
   extension = 'extension',
+  passkey = 'passkey',
   metamask = 'metamask',
   opera = 'opera',
   extra = 'extra',
@@ -97,7 +99,7 @@ export enum WebViewProviderRequestBaseEnums {
 }
 
 export const WebViewProviderRequestEnums = {
-  ...CrossWindowProviderRequestEnums,
+  ...WindowProviderRequestEnums,
   ...WebViewProviderRequestBaseEnums
 };
 
@@ -106,6 +108,6 @@ export enum WebViewProviderResponseBaseEnums {
 }
 
 export const WebViewProviderResponseEnums = {
-  ...CrossWindowProviderResponseEnums,
+  ...WindowProviderResponseEnums,
   ...WebViewProviderResponseBaseEnums
 };

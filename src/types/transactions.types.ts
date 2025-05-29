@@ -2,7 +2,7 @@ import { ReactNode, Dispatch, SetStateAction } from 'react';
 import { Address, Transaction } from '@terradharitri/sdk-core';
 import { IPlainTransactionObject } from '@terradharitri/sdk-core/out/interface';
 
-import { SignStepInnerClassesType } from 'UI/SignTransactionsModals/SignWithDeviceModal/SignStep';
+import { SignStepInnerClassesType } from '../UI/SignTransactionsModals/SignWithDeviceModal/SignStep';
 import { WithClassnameType } from '../UI/types';
 import {
   TransactionBatchStatusesEnum,
@@ -160,7 +160,7 @@ export interface SendBatchTransactionsPropsType {
 
 export interface SignTransactionsPropsType {
   transactions: Transaction[] | Transaction;
-  minGasLimit?: number;
+  minGasLimit?: number; // unused, will be removed in v3.0.0
   callbackRoute?: string;
   transactionsDisplayInfo: TransactionsDisplayInfoType;
   customTransactionInformation: CustomTransactionInformation;
@@ -226,6 +226,10 @@ export interface CustomTransactionInformation {
   sessionInformation: any;
   completedTransactionsDelay?: number;
   signWithoutSending: boolean;
+  /**
+   * If true, transactions with lower nonces than the account nonce will not be updated with the correct nonce
+   */
+  skipUpdateNonces?: boolean;
   /**
    * If true, the change guardian action will not trigger transaction version update
    */

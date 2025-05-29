@@ -20,7 +20,9 @@ export const fallbackNetworkConfigurations: Record<
     xAliasAddress: 'https://devnet.xalias.com',
     apiAddress: 'https://devnet-api.dharitri.org',
     explorerAddress: 'http://devnet-explorer.dharitri.org',
-    apiTimeout: '4000'
+    metamaskSnapWalletAddress: 'https://devnet-snap-wallet.dharitri.org',
+    apiTimeout: '4000',
+    roundDuration: 6000
   },
   testnet: {
     id: 'testnet',
@@ -38,7 +40,9 @@ export const fallbackNetworkConfigurations: Record<
     xAliasAddress: 'https://testnet.xalias.com',
     apiAddress: 'https://testnet-api.dharitri.org',
     explorerAddress: 'http://testnet-explorer.dharitri.org',
-    apiTimeout: '4000'
+    metamaskSnapWalletAddress: 'https://testnet-snap-wallet.dharitri.org',
+    apiTimeout: '4000',
+    roundDuration: 6000
   },
   mainnet: {
     id: 'mainnet',
@@ -56,7 +60,9 @@ export const fallbackNetworkConfigurations: Record<
     xAliasAddress: 'https://xalias.com',
     apiAddress: 'https://api.dharitri.org',
     explorerAddress: 'https://explorer.dharitri.org',
-    apiTimeout: '4000'
+    metamaskSnapWalletAddress: 'https://snap-wallet.dharitri.org',
+    apiTimeout: '4000',
+    roundDuration: 6000
   }
 };
 

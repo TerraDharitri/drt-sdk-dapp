@@ -1,7 +1,8 @@
 import { useEffect, useRef } from 'react';
-import { getEnvironmentForChainId, getNetworkConfigFromApi } from 'apiCalls';
+import { getNetworkConfigFromApi } from 'apiCalls';
 import { useLoginService } from 'hooks/login/useLoginService';
 import { useWalletConnectV2Login } from 'hooks/login/useWalletConnectV2Login';
+import { useWebViewLogin } from 'hooks/login/useWebViewLogin';
 import {
   setAccountProvider,
   setExternalProviderAsAccountProvider
@@ -31,28 +32,32 @@ import {
   setAccountLoadingError,
   setLedgerAccount,
   setWalletLogin,
-  setChainID,
   setTokenLogin,
   setIsWalletConnectV2Initialized,
-  setAddress
+  setAddress,
+  updateNetworkConfig
 } from 'reduxStore/slices';
+import { decodeNativeAuthToken } from 'services/nativeAuth/helpers';
 import { LoginMethodsEnum } from 'types/enums.types';
 import {
   getAddress,
   getAccount,
   getLatestNonce,
   newWalletProvider,
-  emptyProvider
+  emptyProvider,
+  refreshAccount
 } from 'utils/account';
 import { parseNavigationParams } from 'utils/parseNavigationParams';
 
-import { useWebViewLogin } from '../../hooks/login/useWebViewLogin';
+import { isContract } from 'utils/smartContracts';
 import {
   getOperaProvider,
   getCrossWindowProvider,
   getExtensionProvider,
+  getPasskeyProvider,
   processModifiedAccount,
-  getMetamaskProvider
+  getMetamaskProvider,
+  getIframeProvider
 } from './helpers';
 import { useSetLedgerProvider } from './hooks';
 
@@ -74,10 +79,10 @@ export function ProviderInitializer() {
   const loginService = useLoginService(
     nativeAuthConfig ? nativeAuthConfig : false
   );
+
   const initializedAccountRef = useRef(false);
   const dispatch = useDispatch();
   const { setLedgerProvider, ledgerData } = useSetLedgerProvider();
-
   useWebViewLogin();
 
   const { callbackRoute, logoutRoute: wcLogoutRoute } = walletConnectLogin
@@ -90,12 +95,16 @@ export function ProviderInitializer() {
   });
 
   useEffect(() => {
-    refreshChainID();
+    refreshNetworkConfig();
   }, [network]);
 
   useEffect(() => {
     initializeProvider();
-  }, [loginMethod, chainID]);
+  }, [address, loginMethod, chainID]);
+
+  useEffect(() => {
+    checkAddress();
+  }, [tokenLogin?.nativeAuthToken, address]);
 
   useEffect(() => {
     fetchAccount();
@@ -106,11 +115,21 @@ export function ProviderInitializer() {
     setLedgerAccountInfo();
   }, [ledgerAccount, isLoggedIn, ledgerData]);
 
-  async function refreshChainID() {
+  async function refreshNetworkConfig() {
     try {
       const networkConfig = await getNetworkConfigFromApi();
-      if (networkConfig) {
-        dispatch(setChainID(networkConfig.drt_chain_id));
+      const hasDifferentNetworkConfig =
+        networkConfig &&
+        (network.chainId !== networkConfig.drt_chain_id ||
+          network.roundDuration !== networkConfig.drt_round_duration);
+
+      if (hasDifferentNetworkConfig) {
+        dispatch(
+          updateNetworkConfig({
+            chainId: networkConfig.drt_chain_id,
+            roundDuration: networkConfig.drt_round_duration
+          })
+        );
       }
     } catch (err) {
       console.error('failed refreshing chainId ', err);
@@ -127,6 +146,30 @@ export function ProviderInitializer() {
           version: ledgerData.version
         })
       );
+    }
+  }
+
+  async function checkAddress() {
+    const {
+      remainingParams: { impersonate, multisig }
+    } = parseNavigationParams(['impersonate']);
+
+    const addressIsContract = isContract(address);
+
+    if (
+      !tokenLogin?.nativeAuthToken ||
+      impersonate ||
+      multisig ||
+      addressIsContract
+    ) {
+      return;
+    }
+
+    const decoded = decodeNativeAuthToken(tokenLogin?.nativeAuthToken);
+
+    if (decoded?.address && decoded.address !== address) {
+      dispatch(setAddress(decoded.address));
+      await refreshAccount();
     }
   }
 
@@ -240,6 +283,14 @@ export function ProviderInitializer() {
     }
   }
 
+  async function setPasskeyProvider() {
+    const address = await getAddress();
+    const provider = await getPasskeyProvider(address);
+    if (provider) {
+      setAccountProvider(provider);
+    }
+  }
+
   async function setMetamaskProvider() {
     const address = await getAddress();
     const provider = await getMetamaskProvider(address);
@@ -267,6 +318,21 @@ export function ProviderInitializer() {
     }
   }
 
+  async function setIframeProvider() {
+    const address = await getAddress();
+
+    if (!network.metamaskSnapWalletAddress) {
+      throw new Error('Metamask snap wallet URL is not set.');
+    }
+    const provider = await getIframeProvider({
+      address,
+      walletUrl: network.metamaskSnapWalletAddress
+    });
+    if (provider) {
+      setAccountProvider(provider);
+    }
+  }
+
   async function setWalletConnectV2Provider() {
     try {
       // Trigger loader until wallet connect has been initialized
@@ -280,9 +346,7 @@ export function ProviderInitializer() {
   }
 
   async function initializeProvider() {
-    const isValidEnvironment = getEnvironmentForChainId(chainID);
-
-    if (loginMethod == null || initalizingLedger || !isValidEnvironment) {
+    if (loginMethod == null || initalizingLedger) {
       return;
     }
 
@@ -303,6 +367,12 @@ export function ProviderInitializer() {
         setExtensionProvider();
         break;
       }
+
+      case LoginMethodsEnum.passkey: {
+        setPasskeyProvider();
+        break;
+      }
+
       case LoginMethodsEnum.metamask: {
         setMetamaskProvider();
         break;
@@ -317,6 +387,10 @@ export function ProviderInitializer() {
         setCrossWindowProvider();
         break;
       }
+
+      case LoginMethodsEnum.iframe:
+        setIframeProvider();
+        break;
 
       case LoginMethodsEnum.extra: {
         setExternalProviderAsAccountProvider();

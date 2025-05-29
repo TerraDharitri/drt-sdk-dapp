@@ -4,6 +4,8 @@ import { HWProvider } from '@terradharitri/sdk-hw-provider';
 import { IHWWalletApp } from '@terradharitri/sdk-hw-provider/out/interface';
 import { MetamaskProvider } from '@terradharitri/sdk-metamask-provider/out/metamaskProvider';
 import { OperaProvider } from '@terradharitri/sdk-opera-provider';
+import { PasskeyProvider } from '@terradharitri/sdk-passkey-provider/out';
+import { IframeProvider } from '@terradharitri/sdk-web-wallet-iframe-provider/out';
 import { WalletProvider } from '@terradharitri/sdk-web-wallet-provider';
 import { LEDGER_CONTRACT_DATA_ENABLED_VALUE } from 'constants/index';
 import { CrossWindowProvider } from 'lib/sdkWebWalletCrossWindowProvider';
@@ -28,12 +30,16 @@ export const getProviderType = <TProvider extends object>(
       return LoginMethodsEnum.ledger;
     case ExtensionProvider:
       return LoginMethodsEnum.extension;
+    case PasskeyProvider:
+      return LoginMethodsEnum.passkey;
     case MetamaskProvider:
       return LoginMethodsEnum.metamask;
     case OperaProvider:
       return LoginMethodsEnum.opera;
     case CrossWindowProvider:
       return LoginMethodsEnum.crossWindow;
+    case IframeProvider:
+      return LoginMethodsEnum.iframe;
     case EmptyProvider:
       return LoginMethodsEnum.none;
     default:
