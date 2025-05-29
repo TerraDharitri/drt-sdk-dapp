@@ -31,13 +31,13 @@ yalc publish
 cd ../..
 
 # Consume drt-sdk-dapp in drt-template-dapp
-echo "Cloning drt-sdk-template-dapp..."
-git clone https://github.com/TerraDharitri/drt-sdk-template-dapp.git
+echo "Cloning drt-template-dapp..."
+git clone https://github.com/TerraDharitri/drt-template-dapp.git
 
 echo "cd drt-template-dapp..."
-cd drt-sdk-template-dapp
+cd drt-template-dapp
 
-echo "Installing dependencies for drt-template-dapp..."
+echo "Installing dependencies for drt-sdk-template-dapp..."
 yarn install
 
 echo "Linking drt-sdk-dapp..."
@@ -48,20 +48,21 @@ yarn build:devnet
 
 cd ..
 
-# Consume drt-sdk-dapp in drt-template-dapp-nextjs
-echo "Cloning drt-sdk-template-dapp-nextjs..."
-git clone https://github.com/TerraDharitri/drt-sdk-template-dapp-nextjs.git
+# Consume drt-sdk-dapp in drt-tempelate-dapp-nextjs
+echo "Cloning drt-tempelate-dapp-nextjs..."
+git clone https://github.com/TerraDharitri/drt-tempelate-dapp-nextjs.git
 
-echo "cd drt-template-dapp-nextjs..."
-cd drt-sdk-template-dapp-nextjs
+echo "cd drt-tempelate-dapp-nextjs..."
+cd drt-template-dapp-nextjs
 
-echo "Installing dependencies for drt-template-dapp-nextjs..."
+echo "Installing dependencies for drt-tempelate-dapp-nextjs..."
 yarn install
 
 echo "Linking drt-sdk-dapp..."
 yalc add @terradharitri/sdk-dapp
 
-echo "Building drt-template-dapp-nextjs..."
+echo "Building drt-tempelate-dapp-nextjs..."
 yarn build-devnet
 
 echo "Script executed successfully!"
+
