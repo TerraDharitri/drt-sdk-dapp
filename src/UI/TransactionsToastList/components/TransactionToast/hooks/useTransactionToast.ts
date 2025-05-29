@@ -55,7 +55,7 @@ export const useTransactionToast = ({
     const startTime = startTimestamp || getUnixTimestamp();
     const endTime =
       endTimeProgress ||
-      getUnixTimestampWithAddedMilliseconds(transactionDuration);
+      getUnixTimestampWithAddedMilliseconds(Number(transactionDuration));
 
     return [startTime, endTime];
   }, []);

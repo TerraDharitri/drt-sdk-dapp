@@ -21,7 +21,7 @@ export function parseTransactionAfterSigning(
     senderUsername: transaction.getSenderUsername().valueOf(),
     receiverUsername: transaction.getReceiverUsername().valueOf(),
     status: TransactionServerStatusesEnum.pending
-  };
+    };
 
   // TODO: Remove when the protocol supports usernames for guardian transactions
   if (isGuardianTx({ data: parsedTransaction.data, onlySetGuardian: true })) {

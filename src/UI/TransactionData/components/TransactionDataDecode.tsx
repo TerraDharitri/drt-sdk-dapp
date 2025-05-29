@@ -53,7 +53,7 @@ export const TransactionDataDecode = ({
   useEffect(() => {
     const { displayValue, validationWarnings } = decodeForDisplay({
       input: data,
-      decodeMethod: DecodeMethodEnum[method.value]
+      decodeMethod: method.value as DecodeMethodEnum
     });
 
     onDecode(displayValue);

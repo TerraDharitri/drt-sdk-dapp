@@ -10,12 +10,18 @@ import { AccountName } from 'UI/TransactionsTable/components';
 import { addressIsValid } from 'utils/account/addressIsValid';
 import { explorerUrlBuilder } from 'utils/transactions/getInterpretedTransaction/helpers';
 import { WithTransactionType } from '../../../../../UI/types';
-
+const directions = {
+  Internal: 'Internal',
+  In: 'In',
+  Out: 'Out',
+  Self: 'Self',
+} as const;
+type DirectionKey = keyof typeof directions;
 export interface OperationBlockPropsType extends WithTransactionType {
   address: string;
   action?: string;
   isFullSize?: boolean;
-  direction?: string;
+  direction?: DirectionKey;
 }
 
 const OperationBlockComponent = ({
@@ -54,16 +60,17 @@ const OperationBlockComponent = ({
         [globalStyles?.colXl4 ?? '']: !isFullSize && !operationAssets
       })}
     >
-      {direction && (
-        <div
-          className={classNames(
-            styles?.direction,
-            styles?.[directions[direction]]
-          )}
-        >
-          {directions[direction]}
-        </div>
-      )}
+{direction && (
+  <div
+    className={classNames(
+      styles?.direction,
+      styles?.[directions[direction]]
+    )}
+  >
+    {directions[direction]}
+  </div>
+)}
+
 
       {action && (
         <FontAwesomeIcon

@@ -149,7 +149,8 @@ const SignStepComponent = (props: SignStepType & WithStylesImportType) => {
     }
   ];
 
-  const isSigningReady = nonceDataStepMap[currentNonceData] === currentStep;
+  const isSigningReady =
+  nonceDataStepMap[Number(currentNonceData)] === currentStep;
 
   return (
     <div

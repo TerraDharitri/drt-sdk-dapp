@@ -1,9 +1,9 @@
 import { useSelector } from 'reduxStore/DappProviderContext';
-import { transactionDisplayInfoSelector } from 'reduxStore/selectors';
+import { transactionsInfoSelectors } from 'reduxStore/selectors';
 import { RootState } from 'reduxStore/store';
 
-export function useGetTransactionDisplayInfo(toastId: string | null) {
+export function useGetTransactionDisplayInfo(_toastId: string | null) {
   return useSelector((state: RootState) =>
-    transactionDisplayInfoSelector(state, toastId)
+    transactionsInfoSelectors(state)
   );
 }

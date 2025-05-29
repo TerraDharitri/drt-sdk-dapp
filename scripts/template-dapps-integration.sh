@@ -1,4 +1,3 @@
-
 #!/bin/sh
 
 # Exit with nonzero exit code if anything fails
