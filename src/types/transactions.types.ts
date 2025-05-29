@@ -1,6 +1,9 @@
 import { ReactNode, Dispatch, SetStateAction } from 'react';
-import { Address, Transaction } from '@terradharitri/sdk-core';
-import { IPlainTransactionObject } from '@terradharitri/sdk-core/out/interface';
+import {
+  Address,
+  IPlainTransactionObject,
+  Transaction
+} from '@terradharitri/sdk-core';
 
 import { SignStepInnerClassesType } from '../UI/SignTransactionsModals/SignWithDeviceModal/SignStep';
 import { WithClassnameType } from '../UI/types';
@@ -86,6 +89,7 @@ export interface MultiSignTransactionType {
   multiTxData?: string;
   transactionIndex: number;
   transaction: Transaction;
+  needsSigning: boolean;
 }
 
 export interface TokenOptionType {
@@ -120,7 +124,6 @@ export interface TransactionsDisplayInfoType {
   timedOutMessage?: string;
   invalidMessage?: string;
 }
-
 
 export interface SendSimpleTransactionPropsType {
   transactions: SimpleTransactionType[];
@@ -172,6 +175,8 @@ export interface ActiveLedgerTransactionType {
   isTokenTransaction: boolean;
   receiverScamInfo: string | null;
   transaction: Transaction;
+  ppu: number;
+  needsSigning: boolean;
   transactionIndex: number;
   transactionTokenInfo: TransactionDataTokenType;
 }

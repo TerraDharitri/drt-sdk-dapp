@@ -6,14 +6,11 @@ import {
 } from 'reduxStore/selectors';
 import { TransactionBatchStatusesEnum } from 'types';
 import { useGetSignedTransactions } from '../transactions';
-import { RootState } from 'reduxStore/store';
 
 export const useTransactionsToasts = () => {
   const transactionsToasts = useSelector(transactionToastsSelector);
-  const transactionsInfo = useSelector((state: RootState) =>
-    transactionsInfoSelectors(state)
-  );
-    const { signedTransactions } = useGetSignedTransactions();
+  const transactionsInfo = useSelector(transactionsInfoSelectors);
+  const { signedTransactions } = useGetSignedTransactions();
 
   const transactionsToastsInfo = useMemo(() => {
     return transactionsToasts.map((toast) => {

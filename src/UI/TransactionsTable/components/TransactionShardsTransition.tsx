@@ -33,7 +33,7 @@ const TransactionShardsTransitionComponent = ({
     </ExplorerLink>
 
     <span
-      className={classNames(globalStyles?.textSecondary, globalStyles?.mx2)}
+      className={classNames(globalStyles?.textSecondary, globalStyles?.drt2)}
     >
       &#10132;
     </span>

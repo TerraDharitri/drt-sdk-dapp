@@ -18,7 +18,7 @@ describe('TransactionInfoTo tests', () => {
     );
 
     expect(transactionToExplorerLink.getAttribute('href')).toBe(
-      'http://devnet-explorer.dharitri.org/accounts/drt1yvesqqqqqqqqqqqqqqqqqqqqqqqqyvesqqqqqqqqqqqqqz8llllsan65ch'
+      'http://devnet-explorer.dharitri.org/accounts/drt1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqz8lllls2xtk3l'
     );
 
     const transactionToAccount = methods.getByTestId('transactionToAccount');
@@ -26,7 +26,7 @@ describe('TransactionInfoTo tests', () => {
     expect(transactionToAccount.textContent).toBe('Staking: ARC Stake');
 
     expect(transactionToAccount.getAttribute('title')).toBe(
-      'Staking: ARC Stake (drt1yvesqqqqqqqqqqqqqqqqqqqqqqqqyvesqqqqqqqqqqqqqz8llllsan65ch)'
+      'Staking: ARC Stake (drt1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqz8lllls2xtk3l)'
     );
 
     const transactionToShard = methods.getByTestId('transactionToShard');

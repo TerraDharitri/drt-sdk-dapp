@@ -19,6 +19,7 @@ export const fallbackNetworkConfigurations: Record<
     walletAddress: 'https://devnet-wallet.dharitri.org',
     xAliasAddress: 'https://devnet.xalias.com',
     apiAddress: 'https://devnet-api.dharitri.org',
+    extrasApiAddress: 'https://devnet-extras-api.dharitri.org',
     explorerAddress: 'http://devnet-explorer.dharitri.org',
     metamaskSnapWalletAddress: 'https://devnet-iframe-wallet.dharitri.org',
     apiTimeout: '4000',
@@ -39,6 +40,7 @@ export const fallbackNetworkConfigurations: Record<
     walletAddress: 'https://testnet-wallet.dharitri.org',
     xAliasAddress: 'https://testnet.xalias.com',
     apiAddress: 'https://testnet-api.dharitri.org',
+    extrasApiAddress: 'https://testnet-extras-api.dharitri.org',
     explorerAddress: 'http://testnet-explorer.dharitri.org',
     metamaskSnapWalletAddress: 'https://testnet-iframe-wallet.dharitri.org',
     apiTimeout: '4000',
@@ -59,6 +61,7 @@ export const fallbackNetworkConfigurations: Record<
     walletAddress: 'https://wallet.dharitri.org',
     xAliasAddress: 'https://xalias.com',
     apiAddress: 'https://api.dharitri.org',
+    extrasApiAddress: 'https://extras-api.dharitri.org',
     explorerAddress: 'https://explorer.dharitri.org',
     metamaskSnapWalletAddress: 'https://iframe-wallet.dharitri.org',
     apiTimeout: '4000',
@@ -94,5 +97,10 @@ export const chainIdToEnvironment: Record<string, EnvironmentsEnum> = {
   [MAINNET_CHAIN_ID]: EnvironmentsEnum.mainnet
 };
 
-export const DHARITRI_ORIGIN = 'dharitri://';
+export const Dharitri_ORIGIN = 'dharitri://';
 export const TIMEOUT = 3000;
+
+/**
+ * PPU value that is used when the user doesn't want a higher gas price for the transaction
+ */
+export const EMPTY_PPU = 0;

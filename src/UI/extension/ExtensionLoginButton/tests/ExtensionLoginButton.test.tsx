@@ -84,7 +84,7 @@ describe('ExtensionLoginButton tests', () => {
 
   it('should perform login and redirect to URL', async () => {
     const methods = renderWithProvider({
-      children: <ExtensionLoginButton callbackRoute='https://multivers.com' />
+      children: <ExtensionLoginButton callbackRoute='https://terradharitri.org' />
     });
 
     const loginButton = await methods.findByTestId('extensionLoginButton');
@@ -95,7 +95,7 @@ describe('ExtensionLoginButton tests', () => {
 
     await waitFor(() => {
       expect(window?.location.assign).toHaveBeenCalledWith(
-        'https://multivers.com'
+        'https://terradharitri.org'
       );
     });
   });

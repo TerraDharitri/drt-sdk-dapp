@@ -29,7 +29,7 @@ const LoginButtonComponent = ({
         globalStyles?.btnPrimary,
         globalStyles?.px4,
         globalStyles?.m1,
-        globalStyles?.mx3,
+        globalStyles?.drt3,
         {
           [btnClassName]: btnClassName != null
         },

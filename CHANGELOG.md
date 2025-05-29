@@ -7,12 +7,91 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-- Added support for `dharitriWallet` detection in `getIsExtensionAvailable.ts`.
+## [[v4.1.2](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1403)] - 2025-04-15
+- [Upgrade passkey provider](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1403)
 
-### Fixed
-- Fixed type errors related to `useSelector` usage with extra parameters.
-- Resolved CHANGELOG.md enforcement error by adding this entry.
+## [[v4.1.1](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1402)] - 2025-04-14
+- [Upgrade passkey provider](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1400)
+
+## [[v4.1.0](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1399)] - 2025-04-09
+- [Upgrade passkey provider and add `extrasApiAddress` to network](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1399)
+- [Added shard data to the Ledger address table](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1396)
+
+## [[v4.0.0](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1395)] - 2025-03-27
+
+- [Changed sdk-core dependecy to `^14x`](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1394)
+
+## [[v4.0.0-alpha.0](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1393)] - 2025-03-27
+
+- [Upgrade to sdk-core v.14](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1392)
+
+## [[v3.3.2](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1391)] - 2025-03-17
+
+- [Fixed floating data field decode dropdown](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1390)
+- [Updated address validation](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1389)
+- [Added conditional price radios visibility per radio button](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1388)
+
+## [[v3.3.1](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1387)] - 2025-03-13
+
+- [Added conditional price radios visibility](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1386)
+
+## [[v3.3.0](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1380)] - 2025-03-11
+
+- [Added gasPrice editing](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1377)
+
+## [[v3.2.7](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1384)] - 2025-03-11
+
+- [Fixed cancel action is not called on all providers](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1383)
+
+## [[v3.2.6](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1382)] - 2025-03-11
+
+- [Fixed sign screen layout and move decoder styles inside the package](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1381)
+
+## [[v3.2.5](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1379)] - 2025-03-11
+
+- [Fixed websocket connection and fallback mechanism](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1378)
+
+## [[v3.2.4](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1376)] - 2025-02-17
+
+- [Added a warning toast when an unconfirmed guardian change took place](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1375)
+- [Fixed metamask addon link to use new Chrome Web Store domain](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1374)
+
+## [[v3.2.3](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1373)] - 2025-02-06
+
+- [Fixed wallet tab reopens immediately after close/cancel during cross window login](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1372)
+
+## [[v3.2.2](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1371)] - 2025-02-04
+
+- [Fixed walletconnect init fails after cross window login attempt](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1370)
+
+## [[v3.2.1](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1368)] - 2025-01-31
+
+- [Added optional receiver trimming option](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1367)
+- [Added test badge on readme](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1369)
+
+## [[v3.2.0](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1366)] - 2025-01-28
+
+- [Added support for relayed transactions](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1365)
+
+## [[v3.1.9](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1360)] - 2025-01-17
+
+- [Fix useTransactionsTracker export](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1363)
+- [Added dharitriWallet](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1361)
+- [Added ability to close transaction toasts on timeout](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1352)
+
+## [[v3.1.8](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1360)] - 2025-01-15
+
+- [Added search tooltip to the Ledger address table pagination](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1359)
+
+## [[v3.1.7](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1358)] - 2025-01-14
+
+- [Fixed double rendering](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1357)
+
+## [[v3.1.7-alpha.0](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1356)] - 2025-01-13
+
+- [Fix ledger stax signing error](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1355)
+
+## [[v3.1.6](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1354)] - 2025-01-09
 
 - [WalletConnect: show loading state until initialized](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1353)
 
@@ -726,7 +805,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [[v2.20.2](https://github.com/TerraDharitri/drt-sdk-dapp/pull/913)] - 2023-09-13
 
 - [Changed Ledger authentication texts for v.23 of Dharitri app](https://github.com/TerraDharitri/drt-sdk-dapp/pull/910)
-- [Fix transaction cancellation when a transaction toast is discarded](https://github.com/TerraDharitri/drt-sdkwallet-dapp/pull/915)
+- [Fix transaction cancellation when a transaction toast is discarded](https://github.com/TerraDharitri/drt-wallet-dapp/pull/915)
 
 ## [[v2.20.1](https://github.com/TerraDharitri/drt-sdk-dapp/pull/913)] - 2023-09-08
 
@@ -1269,17 +1348,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [[v2.2.10-alpha.0](https://github.com/TerraDharitri/drt-sdk-dapp/pull/584)] - 2023-01-17
 
 - [Increase hw-provider package version](https://github.com/TerraDharitri/drt-sdk-dapp/pull/583)
-- [Change dharitri defi wallet store urls](https://github.com/TerraDharitri/drt-sdk-dapp/pull/582)
+- [Change Dharitri defi wallet store urls](https://github.com/TerraDharitri/drt-sdk-dapp/pull/582)
 
 ## [[v2.2.9](https://github.com/TerraDharitri/drt-sdk-dapp/pull/577)] - 2023-01-12
 
 - [Added partial support for Next.js](https://github.com/TerraDharitri/drt-sdk-dapp/pull/559)
 
-## [[2.2.8](https://api.github.com/repos/TerraDharitri/drt-dapp/pulls/557)] - 2023-01-12
+## [[2.2.8](https://api.github.com/repos/TerraDharitri/drt-sdk-dapp/pulls/557)] - 2023-01-12
 
 - [Created first version of @terradharitri/sdk-dapp](https://github.com/TerraDharitri/drt-sdk-dapp/pull/538)
 
-## [[2.2.7](https://api.github.com/repos/TerraDharitri/drt-dapp/pulls/554)] - 2023-01-10
+## [[2.2.7](https://api.github.com/repos/TerraDharitri/drt-sdk-dapp/pulls/554)] - 2023-01-10
 
 - [Changed branding from numbat to dharitri](https://github.com/TerraDharitri/drt-sdk-dapp/pull/538)
 
@@ -1317,7 +1396,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - [Added Axios interceptor wrapper to be used with `nativeAuth`](https://github.com/TerraDharitri/drt-sdk-dapp/pull/506)
 - [Changed `signTransactions.ts` import to resolve Next.js support](https://github.com/TerraDharitri/drt-sdk-dapp/pull/505)
-- [Upgraded `@terradharitri/drtjs-web-wallet-provider` to vesion 2.1.2](https://github.com/TerraDharitri/drt-sdk-dapp/pull/503)
+- [Upgraded `@numbatnetwork/drtjs-web-wallet-provider` to vesion 2.1.2](https://github.com/TerraDharitri/drt-sdk-dapp/pull/503)
 - [Added `nativeAuth` and Storybook](https://github.com/TerraDharitri/drt-sdk-dapp/pull/504)
 
 ## [[2.1.20](https://github.com/TerraDharitri/drt-sdk-dapp/pull/500)] - 2022-12-07
@@ -1428,7 +1507,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [[2.1.0-rc1](https://github.com/TerraDharitri/drt-sdk-dapp/pull/424)] - 2022-09-21
 
 - [Added documentation about registering a websocket listener](https://github.com/TerraDharitri/drt-sdk-dapp/pull/423)
-- [Updated @terradharitri/drtjs-wallet-connect-provider to 2.1.0-beta.1 with @walletconnect 2.0.0-rc.3](https://github.com/TerraDharitri/drt-sdk-dapp/pull/422)
+- [Updated @numbatnetwork/drtjs-wallet-connect-provider to 2.1.0-beta.1 with @walletconnect 2.0.0-rc.3](https://github.com/TerraDharitri/drt-sdk-dapp/pull/422)
 - [Added option for showing equal sign in front of computed USD value by `getUsdValue` function](https://github.com/TerraDharitri/drt-sdk-dapp/pull/421)
 - [Fixed fetching transaction count and smart contract results count from accounts endpoint](https://github.com/TerraDharitri/drt-sdk-dapp/pull/420)
 - [Added extra actions names](https://github.com/TerraDharitri/drt-sdk-dapp/pull/419)

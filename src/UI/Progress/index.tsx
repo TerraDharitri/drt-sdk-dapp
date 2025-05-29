@@ -66,13 +66,13 @@ const ProgressComponent = ({
     const toastProgress: Record<number, number> =
       storage.session.getItem(TOAST_PROGRESS_KEY);
 
-      const hasSessionStoredTx = Boolean(toastProgress?.[id as unknown as keyof typeof toastProgress]);
+    const hasSessionStoredTx = Boolean(toastProgress?.[id]);
 
     if (!hasSessionStoredTx) {
       return;
     }
 
-    delete toastProgress[id as unknown as keyof typeof toastProgress];
+    delete toastProgress[id];
 
     saveToSession(toastProgress);
   }
@@ -81,7 +81,7 @@ const ProgressComponent = ({
     const toastProgress: Record<number, number> =
       storage.session.getItem(TOAST_PROGRESS_KEY) || {};
 
-      toastProgress[id as unknown as keyof typeof toastProgress] = value;
+    toastProgress[id] = value;
 
     saveToSession(toastProgress);
   }
@@ -124,7 +124,7 @@ const ProgressComponent = ({
   function handleRunningProgress() {
     const toastProgress: Record<number, number> =
       storage.session.getItem(TOAST_PROGRESS_KEY) || {};
-      const currentToast = toastProgress[Number(id)];
+    const currentToast = toastProgress[id];
 
     if (currentToast === percentRemainingRef.current) {
       // Set the remaining value before starting the interval

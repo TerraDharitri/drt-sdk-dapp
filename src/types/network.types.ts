@@ -9,6 +9,7 @@ export interface BaseNetworkType {
   walletConnectDeepLink: string;
   walletAddress: string;
   apiAddress: string;
+  extrasApiAddress?: string;
   explorerAddress: string;
   apiTimeout: string;
   walletConnectV2ProjectId?: string;
@@ -17,6 +18,11 @@ export interface BaseNetworkType {
   roundDuration: number;
   metamaskSnapWalletAddress?: string;
   websocketUrl?: string;
+  gasStationMetadata?: {
+    fast: number;
+    faster: number;
+    excellentJustLikeMoveBalance?: number;
+  }[];
 }
 
 export interface AccountInfoSliceNetworkType extends BaseNetworkType {
@@ -42,6 +48,13 @@ export interface CustomNetworkType {
   walletConnectBridgeAddresses?: string[];
   walletAddress?: string;
   apiAddress?: string;
+  /**
+   * If set, allow editing gasPrice
+   */
+  ppuForGasPrice?: {
+    fast: number;
+    faster: number;
+  };
   explorerAddress?: string;
   skipFetchFromServer?: boolean;
   apiTimeout?: string | number;

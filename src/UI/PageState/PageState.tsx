@@ -39,7 +39,7 @@ const PageStateComponent = ({
         globalStyles?.textCenter,
         className
       ),
-      iconContainer: classNames(globalStyles?.iconState, globalStyles?.mxAuto, {
+      iconContainer: classNames(globalStyles?.iconState, globalStyles?.drtAuto, {
         [iconBgClass ?? '']: Boolean(iconBgClass)
       }),
       iconClass: classNames(iconClass != null && iconClass),

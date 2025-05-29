@@ -1,5 +1,7 @@
-import React from 'react';
-import { Transaction } from '@terradharitri/sdk-core/out';
+import React, { MouseEvent, useEffect, useState } from 'react';
+import { faGear } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import classNames from 'classnames';
 
 import {
   DataTestIdsEnum,
@@ -7,34 +9,57 @@ import {
   GAS_PRICE_MODIFIER
 } from 'constants/index';
 import { withStyles, WithStylesImportType } from 'hocs/withStyles';
-import { useGetRewaPrice } from 'hooks';
+import { useGetAccount, useGetRewaPrice } from 'hooks';
+import { useSelector } from 'reduxStore/DappProviderContext';
+import { networkConfigSelector } from 'reduxStore/selectors';
 import { Balance } from 'UI/Balance';
 import { LoadingDots } from 'UI/LoadingDots';
-import { getRewaLabel } from 'utils';
 import {
   calculateFeeInFiat,
   calculateFeeLimit,
   formatAmount
 } from 'utils/operations';
 
-export interface FeePropsType {
-  transaction: Transaction;
-}
+import { GasDetails } from './components';
+import { GasDetailsPropsType } from './components/GasDetails/gasDetails.types';
+import { getGasPriceDetails } from './components/GasDetails/helpers/getGasPriceDetails';
+export type ConfirmFeePropsType = GasDetailsPropsType & WithStylesImportType;
 
 const ConfirmFeeComponent = ({
   transaction,
+  ppu,
+  needsSigning,
+  updatePPU,
   styles
-}: FeePropsType & WithStylesImportType) => {
+}: ConfirmFeePropsType) => {
   const { price } = useGetRewaPrice();
+  const [showGasDetails, setShowGasDetails] = useState(false);
+  const { shard } = useGetAccount();
 
-  const rewaLabel = getRewaLabel();
+  const nonce = Number(transaction.nonce);
+
+  const [initialGasPriceInfo, setInitialGasPriceInfo] = useState({
+    [nonce]: Number(transaction.gasPrice)
+  });
+
+  useEffect(() => {
+    setInitialGasPriceInfo((existing) => ({
+      ...existing,
+      [nonce]: Number(transaction.gasPrice)
+    }));
+  }, [nonce]);
+
+  const {
+    network: { rewaLabel, gasStationMetadata }
+  } = useSelector(networkConfigSelector);
+
   const feeLimit = calculateFeeLimit({
     gasPerDataByte: String(GAS_PER_DATA_BYTE),
     gasPriceModifier: String(GAS_PRICE_MODIFIER),
-    gasLimit: transaction.getGasLimit().valueOf().toString(),
-    gasPrice: transaction.getGasPrice().valueOf().toString(),
-    data: transaction.getData().toString(),
-    chainId: transaction.getChainID().valueOf()
+    gasLimit: transaction.gasLimit.toString(),
+    gasPrice: transaction.gasPrice.toString(),
+    data: transaction.data.toString(),
+    chainId: transaction.chainID.valueOf()
   });
 
   const feeLimitFormatted = formatAmount({
@@ -50,39 +75,76 @@ const ConfirmFeeComponent = ({
       })
     : null;
 
+  const initialGasPrice = initialGasPriceInfo[nonce];
+
+  const { areRadiosEditable } = getGasPriceDetails({
+    shard,
+    gasStationMetadata,
+    transaction,
+    initialGasPrice
+  });
+
+  const handleToggleGasDetails = (event: MouseEvent<SVGSVGElement>) => {
+    event.preventDefault();
+    setShowGasDetails((isDetailsVisible) => !isDetailsVisible);
+  };
+
   return (
-    <div className={styles?.confirmFee}>
-      <div className={styles?.confirmFeeLabel}>Transaction Fee</div>
+    <>
+      <div className={styles?.confirmFee}>
+        <div className={styles?.confirmFeeLabel}>
+          <span className={styles?.confirmFeeLabelText}>Transaction Fee</span>
 
-      <div className={styles?.confirmFeeData}>
-        <Balance
-          className={styles?.confirmFeeDataBalance}
-          data-testid={DataTestIdsEnum.confirmFee}
-          rewaIcon
-          showTokenLabel
-          showTokenLabelSup
-          tokenLabel={rewaLabel}
-          amount={feeLimitFormatted}
-        />
-
-        {feeInFiatLimit ? (
-          <span className={styles?.confirmFeeDataPriceWrapper}>
-            (
-            <Balance
-              amount={feeInFiatLimit}
-              displayAsUsd
-              addEqualSign
-              className={styles?.confirmFeeDataPrice}
+          {needsSigning && areRadiosEditable && (
+            <FontAwesomeIcon
+              icon={faGear}
+              onClick={handleToggleGasDetails}
+              className={classNames(styles?.confirmFeeLabelIcon, {
+                [styles?.toggled]: showGasDetails
+              })}
             />
-            )
-          </span>
-        ) : (
-          <span className={styles?.confirmFeeDataPriceWrapper}>
-            <LoadingDots />
-          </span>
-        )}
+          )}
+        </div>
+
+        <div className={styles?.confirmFeeData}>
+          <Balance
+            className={styles?.confirmFeeDataBalance}
+            data-testid={DataTestIdsEnum.confirmFee}
+            rewaIcon
+            showTokenLabel
+            showTokenLabelSup
+            tokenLabel={rewaLabel}
+            amount={feeLimitFormatted}
+          />
+
+          {feeInFiatLimit ? (
+            <span className={styles?.confirmFeeDataPriceWrapper}>
+              (
+              <Balance
+                amount={feeInFiatLimit}
+                displayAsUsd
+                addEqualSign
+                className={styles?.confirmFeeDataPrice}
+              />
+              )
+            </span>
+          ) : (
+            <span className={styles?.confirmFeeDataPriceWrapper}>
+              <LoadingDots />
+            </span>
+          )}
+        </div>
       </div>
-    </div>
+      {areRadiosEditable && (
+        <GasDetails
+          transaction={transaction}
+          isVisible={showGasDetails}
+          needsSigning={needsSigning}
+          ppu={ppu}
+          updatePPU={updatePPU}
+        />
+      )}
+    </>
   );
 };
 

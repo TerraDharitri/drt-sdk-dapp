@@ -7,7 +7,7 @@ export default [
     miniBlockHash:
       '54d07f7c1e4d3f66e9f2c30d44d1e35d768a2da98dfe50cc437d485b9c2afb92',
     nonce: 241,
-    receiver: 'drt1yvesqqqqqqqqqqqqqqqqqqqqqqqqyvesqqqqqqqqqqqqqz8llllsan65ch',
+    receiver: 'drt1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqz8lllls2xtk3l',
     receiverAssets: {
       name: 'Staking: ARC Stake',
       description:
@@ -49,9 +49,9 @@ export default [
         gasPrice: 1000000000,
         value: '14167802221131358682',
         sender:
-          'drt1yvesqqqqqqqqqqqqqqqqqqqqqqqqyvesqqqqqqqqqqqqqz8llllsan65ch',
+          'drt1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqz8lllls2xtk3l',
         receiver:
-          'drt1yvesqqqqqqqqqqqqqqqqqqqqqqqqyvesqqqqqqqqqqqqqqqplllsphc9lf',
+          'drt1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqplllskzf8kp',
         senderAssets: {
           name: 'Staking: ARC Stake',
           description:
@@ -66,9 +66,9 @@ export default [
             'Smart contract containing all staked REWA on the network',
           tags: ['system', 'staking'],
           iconPng:
-            'https://raw.githubusercontent.com/Dharitri/assets/master/accounts/icons/dharitri.png',
+            'https://raw.githubusercontent.com/TerraDharitri/assets/master/accounts/icons/TerraDharitri.png',
           iconSvg:
-            'https://raw.githubusercontent.com/Dharitri/assets/master/accounts/icons/dharitri.svg'
+            'https://raw.githubusercontent.com/TerraDharitri/assets/master/accounts/icons/TerraDharitri.svg'
         },
         prevTxHash:
           '5996572de1fc5df2c456602467e8cc1a446b8145ae79df8f6c670e0732ab3b04',
@@ -86,7 +86,7 @@ export default [
         gasPrice: 1000000000,
         value: '59380000000000',
         sender:
-          'drt1yvesqqqqqqqqqqqqqqqqqqqqqqqqyvesqqqqqqqqqqqqqz8llllsan65ch',
+          'drt1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqz8lllls2xtk3l',
         receiver:
           'drt1zwq3qaa3vk5suenlkj4cf0ullwefa6h3n2394k25pxv4sz0pwhhs0etx0g',
         senderAssets: {
@@ -124,7 +124,7 @@ export default [
     price: 240.75,
     logs: {
       id: '5996572de1fc5df2c456602467e8cc1a446b8145ae79df8f6c670e0732ab3b04',
-      address: 'drt1yvesqqqqqqqqqqqqqqqqqqqqqqqqyvesqqqqqqqqqqqqqz8llllsan65ch',
+      address: 'drt1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqz8lllls2xtk3l',
       addressAssets: {
         name: 'Staking: ARC Stake',
         description:
@@ -149,9 +149,9 @@ export default [
         action: 'transfer',
         type: 'rewa',
         sender:
-          'drt1yvesqqqqqqqqqqqqqqqqqqqqqqqqyvesqqqqqqqqqqqqqz8llllsan65ch',
+          'drt1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqz8lllls2xtk3l',
         receiver:
-          'drt1yvesqqqqqqqqqqqqqqqqqqqqqqqqyvesqqqqqqqqqqqqqqqplllsphc9lf',
+          'drt1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqplllskzf8kp',
         senderAssets: {
           name: 'Staking: ARC Stake',
           description:
@@ -166,9 +166,9 @@ export default [
             'Smart contract containing all staked REWA on the network',
           tags: ['system', 'staking'],
           iconPng:
-            'https://raw.githubusercontent.com/Dharitri/assets/master/accounts/icons/dharitri.png',
+            'https://raw.githubusercontent.com/TerraDharitri/assets/master/accounts/icons/TerraDharitri.png',
           iconSvg:
-            'https://raw.githubusercontent.com/Dharitri/assets/master/accounts/icons/dharitri.svg'
+            'https://raw.githubusercontent.com/TerraDharitri/assets/master/accounts/icons/TerraDharitri.svg'
         },
         value: '14167802221131358682'
       }
@@ -182,7 +182,7 @@ export default [
     miniBlockHash:
       'e233dd9bc6f3b886ef3c4c5dfd722b291ea189bd4cd7065720730bee84553774',
     nonce: 348,
-    receiver: 'drt1yvesqqqqqqqqqqqqqqqqqqqqqqqqyvesqqqqqqqqqqqqqz8llllsan65ch',
+    receiver: 'drt1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqz8lllls2xtk3l',
     receiverAssets: {
       name: 'Staking: ARC Stake',
       description:
@@ -223,7 +223,7 @@ export default [
     miniBlockHash:
       '4bd1cc674dffdb322aa9d88d023fa8ec8a4f1f93bee73b00ee261bef7e5c4ce0',
     nonce: 55,
-    receiver: 'drt1yvesqqqqqqqqqqqqqqqqqqqqqqqqyvesqqqqqqqqqqqqqz8llllsan65ch',
+    receiver: 'drt1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqz8lllls2xtk3l',
     receiverAssets: {
       name: 'Staking: ARC Stake',
       description:
@@ -263,7 +263,7 @@ export default [
     miniBlockHash:
       'f7ce09752494703b0f7e70f65a6e8ce7cf91684db94056e95300bc94e0f2a4da',
     nonce: 174,
-    receiver: 'drt1yvesqqqqqqqqqqqqqqqqqqqqqqqqyvesqqqqqqqqqqqqqz8llllsan65ch',
+    receiver: 'drt1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqz8lllls2xtk3l',
     receiverAssets: {
       name: 'Staking: ARC Stake',
       description:
@@ -331,7 +331,7 @@ export default [
           }
         ],
         receiver:
-          'drt1w9mmxz6533m7cf08gehs8phkun2x4e8689ecfk3makk3dgzsgurslt894t'
+          'drt1w9mdrtz6533m7cf08gehs8phkun2x4e8689ecfk3makk3dgzsgurszhsxk4'
       }
     }
   },
@@ -343,7 +343,7 @@ export default [
     miniBlockHash:
       'f5d84f705198e940905b36bc6231a90bdb3c1cf6f7af1776bc33bae34e103180',
     nonce: 256,
-    receiver: 'drt1yvesqqqqqqqqqqqqqqqqqqqqqqqqyvesqqqqqqqqqqqqq2lllllstegy6y',
+    receiver: 'drt1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqq2lllllsuvexnv',
     receiverAssets: {
       name: 'Staking: Unity Stake',
       description:
@@ -430,7 +430,7 @@ export default [
           'drt1qqqqqqqqqqqqqpgqjpt0qqgsrdhp2xqygpjtfrpwf76f9nvg2jps4fhagf',
         functionName: 'mergeLockedAssetTokens',
         receiverAssets: {
-          name: 'DharitriX: Locked asset Contract',
+          name: 'xExchange: Locked asset Contract',
           tags: ['moa', 'lockedasset']
         }
       }
@@ -489,7 +489,7 @@ export default [
     nonce: 864,
     receiver: 'drt1qqqqqqqqqqqqqpgqa0fsfshnff4n76jhcye6k7uvd7qacsq42jpsux8555',
     receiverAssets: {
-      name: 'DharitriX: MOA/WREWA Liquidity Pool',
+      name: 'xExchange: MOA/WREWA Liquidity Pool',
       tags: ['moa', 'liquiditypool']
     },
     receiverShard: 1,
@@ -535,9 +535,9 @@ export default [
         receiver:
           'drt1qqqqqqqqqqqqqpgqa0fsfshnff4n76jhcye6k7uvd7qacsq42jpsux8555',
         functionName: 'swapTokensFixedInput',
-        functionArgs: ['4d4f412d343535633537', '3b84a8c6fbf6b2ad09cf'],
+        functionArgs: ['4d45582d343535633537', '3b84a8c6fbf6b2ad09cf'],
         receiverAssets: {
-          name: 'DharitriX: MOA/WREWA Liquidity Pool',
+          name: 'xExchange: MOA/WREWA Liquidity Pool',
           tags: ['moa', 'liquiditypool']
         }
       }
@@ -730,12 +730,12 @@ export default [
           '0000000000000000050026751893d6789be9e5a99863ba9eeaa8088dd25f5483'
         ],
         receiverAssets: {
-          name: 'DharitriX: Proxy',
+          name: 'xExchange: Proxy',
           tags: ['durian', 'exchange', 'proxy'],
           iconPng:
-            'https://raw.githubusercontent.com/Dharitri/assets/master/accounts/icons/dharitri.png',
+            'https://raw.githubusercontent.com/TerraDharitri/assets/master/accounts/icons/TerraDharitri.png',
           iconSvg:
-            'https://raw.githubusercontent.com/Dharitri/assets/master/accounts/icons/dharitri.svg'
+            'https://raw.githubusercontent.com/TerraDharitri/assets/master/accounts/icons/TerraDharitri.svg'
         }
       }
     }
@@ -794,7 +794,7 @@ export default [
         functionName: 'addLiquidity',
         functionArgs: ['0441f414ffa9826f', '12800a1914f9d3e59017'],
         receiverAssets: {
-          name: 'DharitriX: MOA/WREWA Liquidity Pool',
+          name: 'xExchange: MOA/WREWA Liquidity Pool',
           tags: ['moa', 'liquiditypool']
         }
       }
@@ -846,12 +846,12 @@ export default [
           '00000000000000000500656d0acc53561c5d6f6fd7d7e82bf13247014f615483'
         ],
         receiverAssets: {
-          name: 'DharitriX: Proxy',
+          name: 'xExchange: Proxy',
           tags: ['durian', 'exchange', 'proxy'],
           iconPng:
-            'https://raw.githubusercontent.com/Dharitri/assets/master/accounts/icons/dharitri.png',
+            'https://raw.githubusercontent.com/TerraDharitri/assets/master/accounts/icons/TerraDharitri.png',
           iconSvg:
-            'https://raw.githubusercontent.com/Dharitri/assets/master/accounts/icons/dharitri.svg'
+            'https://raw.githubusercontent.com/TerraDharitri/assets/master/accounts/icons/TerraDharitri.svg'
         }
       }
     }
@@ -899,7 +899,7 @@ export default [
           'drt1qqqqqqqqqqqqqpgqye633y7k0zd7nedfnp3m48h24qygm5jl2jpsz62uuf',
         functionName: 'enterFarmAndLockRewards',
         receiverAssets: {
-          name: 'DharitriX: REWAMOALPStaked Farm',
+          name: 'xExchange: REWAMOALPStaked Farm',
           tags: ['moa', 'farm']
         }
       }
@@ -951,12 +951,12 @@ export default [
           '00000000000000000500656d0acc53561c5d6f6fd7d7e82bf13247014f615483'
         ],
         receiverAssets: {
-          name: 'DharitriX: Proxy',
+          name: 'xExchange: Proxy',
           tags: ['durian', 'exchange', 'proxy'],
           iconPng:
-            'https://raw.githubusercontent.com/Dharitri/assets/master/accounts/icons/dharitri.png',
+            'https://raw.githubusercontent.com/TerraDharitri/assets/master/accounts/icons/TerraDharitri.png',
           iconSvg:
-            'https://raw.githubusercontent.com/Dharitri/assets/master/accounts/icons/dharitri.svg'
+            'https://raw.githubusercontent.com/TerraDharitri/assets/master/accounts/icons/TerraDharitri.svg'
         }
       }
     }
@@ -971,7 +971,7 @@ export default [
     nonce: 806,
     receiver: 'drt1qqqqqqqqqqqqqpgqa0fsfshnff4n76jhcye6k7uvd7qacsq42jpsux8555',
     receiverAssets: {
-      name: 'DharitriX: MOA/WREWA Liquidity Pool',
+      name: 'xExchange: MOA/WREWA Liquidity Pool',
       tags: ['moa', 'liquiditypool']
     },
     receiverShard: 1,
@@ -1008,7 +1008,7 @@ export default [
         functionName: 'removeLiquidity',
         functionArgs: ['09a7b49520052edb', '29f515780f425df36331'],
         receiverAssets: {
-          name: 'DharitriX: MOA/WREWA Liquidity Pool',
+          name: 'xExchange: MOA/WREWA Liquidity Pool',
           tags: ['moa', 'liquiditypool']
         }
       }
@@ -1060,12 +1060,12 @@ export default [
           '00000000000000000500656d0acc53561c5d6f6fd7d7e82bf13247014f615483'
         ],
         receiverAssets: {
-          name: 'DharitriX: Proxy',
+          name: 'xExchange: Proxy',
           tags: ['durian', 'exchange', 'proxy'],
           iconPng:
-            'https://raw.githubusercontent.com/Dharitri/assets/master/accounts/icons/dharitri.png',
+            'https://raw.githubusercontent.com/TerraDharitri/assets/master/accounts/icons/TerraDharitri.png',
           iconSvg:
-            'https://raw.githubusercontent.com/Dharitri/assets/master/accounts/icons/dharitri.svg'
+            'https://raw.githubusercontent.com/TerraDharitri/assets/master/accounts/icons/TerraDharitri.svg'
         }
       }
     }
@@ -1104,7 +1104,7 @@ export default [
     miniBlockHash:
       'c72fca9867293054d9182aad167674142cf57c2fc3958282792ecddc55a74cca',
     nonce: 446,
-    receiver: 'drt1yvesqqqqqqqqqqqqqqqqqqqqqqqqyvesqqqqqqqqqqqqqphllllseyyy0h',
+    receiver: 'drt1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqphllllsw34xxl',
     receiverShard: 4294967295,
     round: 1812226,
     sender: 'drt1axhx4kenjlae6sknq7zjg2g4fvzavv979r2fg425p62wkl84avtqd4f00j',
@@ -1135,7 +1135,7 @@ export default [
         gasPrice: 1000000000,
         value: '67861704531764158',
         sender:
-          'drt1yvesqqqqqqqqqqqqqqqqqqqqqqqqyvesqqqqqqqqqqqqqphllllseyyy0h',
+          'drt1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqphllllsw34xxl',
         receiver:
           'drt1axhx4kenjlae6sknq7zjg2g4fvzavv979r2fg425p62wkl84avtqd4f00j',
         prevTxHash:
@@ -1154,7 +1154,7 @@ export default [
         gasPrice: 1000000000,
         value: '49320000000000',
         sender:
-          'drt1yvesqqqqqqqqqqqqqqqqqqqqqqqqyvesqqqqqqqqqqqqqphllllseyyy0h',
+          'drt1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqphllllsw34xxl',
         receiver:
           'drt1axhx4kenjlae6sknq7zjg2g4fvzavv979r2fg425p62wkl84avtqd4f00j',
         data: 'QDZmNmI=',
@@ -1173,7 +1173,7 @@ export default [
         action: 'transfer',
         type: 'rewa',
         sender:
-          'drt1yvesqqqqqqqqqqqqqqqqqqqqqqqqyvesqqqqqqqqqqqqqphllllseyyy0h',
+          'drt1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqphllllsw34xxl',
         receiver:
           'drt1axhx4kenjlae6sknq7zjg2g4fvzavv979r2fg425p62wkl84avtqd4f00j',
         value: '67861704531764158'
@@ -1188,7 +1188,7 @@ export default [
     miniBlockHash:
       '3a7470a369d5e5bf6b5e984df1f6fdbed2fb260bb81574b1392e8f42d3c17f96',
     nonce: 445,
-    receiver: 'drt1yvesqqqqqqqqqqqqqqqqqqqqqqqqyvesqqqqqqqqqqqqq9lllllsrcaqle',
+    receiver: 'drt1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqq9llllls5dvzk3',
     receiverShard: 4294967295,
     round: 1809456,
     sender: 'drt1axhx4kenjlae6sknq7zjg2g4fvzavv979r2fg425p62wkl84avtqd4f00j',
@@ -1221,9 +1221,9 @@ export default [
         gasPrice: 1000000000,
         value: '392502810808819111',
         sender:
-          'drt1yvesqqqqqqqqqqqqqqqqqqqqqqqqyvesqqqqqqqqqqqqq9lllllsrcaqle',
+          'drt1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqq9llllls5dvzk3',
         receiver:
-          'drt1yvesqqqqqqqqqqqqqqqqqqqqqqqqyvesqqqqqqqqqqqqqqqplllsphc9lf',
+          'drt1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqplllskzf8kp',
         prevTxHash:
           '5e73704d40fdef680bd8839cd277827209f5decd3679b235efddd921f1c9fb3b',
         originalTxHash:
@@ -1240,7 +1240,7 @@ export default [
         gasPrice: 1000000000,
         value: '59245000000000',
         sender:
-          'drt1yvesqqqqqqqqqqqqqqqqqqqqqqqqyvesqqqqqqqqqqqqq9lllllsrcaqle',
+          'drt1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqq9llllls5dvzk3',
         receiver:
           'drt1axhx4kenjlae6sknq7zjg2g4fvzavv979r2fg425p62wkl84avtqd4f00j',
         data: 'QDZmNmI=',
@@ -1259,9 +1259,9 @@ export default [
         action: 'transfer',
         type: 'rewa',
         sender:
-          'drt1yvesqqqqqqqqqqqqqqqqqqqqqqqqyvesqqqqqqqqqqqqq9lllllsrcaqle',
+          'drt1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqq9llllls5dvzk3',
         receiver:
-          'drt1yvesqqqqqqqqqqqqqqqqqqqqqqqqyvesqqqqqqqqqqqqqqqplllsphc9lf',
+          'drt1qqqqqqqqqqqqqqqpqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqplllskzf8kp',
         value: '392502810808819111'
       }
     ]
