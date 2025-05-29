@@ -27,7 +27,7 @@ export const CustomToast = (props: CustomToastPropsType) => {
     return (
       <TransactionToast
         {...props}
-        status={props.transaction.status as TransactionBatchStatusesEnum}
+        status={TransactionBatchStatusesEnum[props.transaction.status]}
         transactions={[{ ...signedTransaction, hash: transactionHash }]}
       />
     );

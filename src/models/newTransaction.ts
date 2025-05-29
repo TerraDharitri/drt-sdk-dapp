@@ -1,9 +1,4 @@
-import {
-  Address,
-  Transaction,
-  TransactionOptions,
-  TransactionVersion
-} from '@terradharitri/sdk-core';
+import { Address, Transaction } from '@terradharitri/sdk-core';
 import { GAS_LIMIT, GAS_PRICE, VERSION } from 'constants/index';
 import { RawTransactionType } from 'types';
 import { getDataPayloadForTransaction } from 'utils/transactions/getDataPayloadForTransaction';
@@ -19,33 +14,35 @@ export function newTransaction(rawTransaction: RawTransactionType) {
   }
 
   const transaction = new Transaction({
-    value: rawTx.value.valueOf(),
+    value: BigInt(rawTx.value.valueOf()),
     data: getDataPayloadForTransaction(rawTx.data),
-    nonce: rawTx.nonce.valueOf(),
+    nonce: BigInt(rawTx.nonce.valueOf()),
     receiver: new Address(rawTx.receiver),
     ...(rawTx.receiverUsername
       ? { receiverUsername: rawTx.receiverUsername }
       : {}),
+    ...(rawTx.relayer ? { relayer: new Address(rawTx.relayer) } : {}),
+    ...(rawTx.relayerSignature
+      ? {
+          relayerSignature: new Uint8Array(Buffer.from(rawTx.relayerSignature))
+        }
+      : {}),
     sender: new Address(rawTx.sender),
     ...(rawTx.senderUsername ? { senderUsername: rawTx.senderUsername } : {}),
-    gasLimit: rawTx.gasLimit.valueOf() ?? GAS_LIMIT,
-    gasPrice: rawTx.gasPrice.valueOf() ?? GAS_PRICE,
+    gasLimit: BigInt(rawTx.gasLimit.valueOf() ?? GAS_LIMIT),
+    gasPrice: BigInt(rawTx.gasPrice.valueOf() ?? GAS_PRICE),
     chainID: rawTx.chainID.valueOf(),
-    version: new TransactionVersion(rawTx.version ?? VERSION),
-    ...(rawTx.options
-      ? { options: new TransactionOptions(rawTx.options) }
-      : {}),
+    version: rawTx.version ?? VERSION,
+    ...(rawTx.options ? { options: rawTx.options } : {}),
     ...(rawTx.guardian ? { guardian: new Address(rawTx.guardian) } : {})
   });
 
   if (rawTx.guardianSignature) {
-    transaction.applyGuardianSignature(
-      Buffer.from(rawTx.guardianSignature, 'hex')
-    );
+    transaction.guardianSignature = Buffer.from(rawTx.guardianSignature, 'hex');
   }
 
   if (rawTx.signature) {
-    transaction.applySignature(Buffer.from(rawTx.signature, 'hex'));
+    transaction.signature = Buffer.from(rawTx.signature, 'hex');
   }
 
   return transaction;

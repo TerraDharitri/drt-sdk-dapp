@@ -7,7 +7,10 @@ import {
 } from '@terradharitri/sdk-core';
 
 import { useGetAccountFromApi } from 'apiCalls/accounts/useGetAccountFromApi';
-import { SENDER_DIFFERENT_THAN_LOGGED_IN_ADDRESS } from 'constants/index';
+import {
+  EMPTY_PPU,
+  SENDER_DIFFERENT_THAN_LOGGED_IN_ADDRESS
+} from 'constants/index';
 import { useParseMultiDcdtTransferData } from 'hooks/transactions/useParseMultiDcdtTransferData';
 import {
   ActiveLedgerTransactionType,
@@ -21,6 +24,7 @@ import {
   checkIsValidSender,
   getAreAllTransactionsSignedByGuardian
 } from './helpers';
+import { recommendGasPrice } from './helpers/recommendGasPrice';
 import { UseSignTransactionsWithDeviceReturnType } from './useSignTransactionsWithDevice';
 
 export interface UseSignMultipleTransactionsPropsType {
@@ -50,6 +54,8 @@ let verifiedAddresses: VerifiedAddressesType = {};
 export interface UseSignMultipleTransactionsReturnType
   extends Omit<UseSignTransactionsWithDeviceReturnType, 'callbackRoute'> {
   shouldContinueWithoutSigning: boolean;
+  updatePPU: UseSignTransactionsWithDeviceReturnType['updatePPU'];
+  currentTransaction: ActiveLedgerTransactionType | null;
   isFirstTransaction: boolean;
   hasMultipleTransactions: boolean;
 }
@@ -73,6 +79,15 @@ export const useSignMultipleTransactions = ({
     useState<DeviceSignedTransactions>();
   const [currentTransaction, setCurrentTransaction] =
     useState<ActiveLedgerTransactionType | null>(null);
+  const [ppuMap, setPpuMap] = useState<
+    Record<
+      number,
+      {
+        initialGasPrice: number;
+        ppu: ActiveLedgerTransactionType['ppu'];
+      }
+    >
+  >({});
 
   const [waitingForDevice, setWaitingForDevice] = useState(false);
 
@@ -80,21 +95,25 @@ export const useSignMultipleTransactions = ({
     useParseMultiDcdtTransferData({
       transactions: activeGuardianAddress
         ? transactionsToSign?.map((transaction) => {
-            transaction.setSender(Address.fromBech32(address));
-            transaction.setVersion(TransactionVersion.withTxOptions());
-            transaction.setGuardian(Address.fromBech32(activeGuardianAddress));
+            transaction.sender = Address.newFromBech32(address);
+            transaction.version = TransactionVersion.withTxOptions().valueOf();
+            transaction.guardian = Address.newFromBech32(activeGuardianAddress);
             const options = {
               guarded: true,
               ...(isLedger ? { hashSign: true } : {})
             };
-            transaction.setOptions(TransactionOptions.withOptions(options));
+            transaction.options =
+              TransactionOptions.withOptions(options).valueOf();
             return transaction;
           })
         : transactionsToSign
     });
 
-  const isLastTransaction = currentStep === allTransactions.length - 1;
-  const currentTx = allTransactions[currentStep];
+  const [allEditedTransactions, setAllEditedTransactions] =
+    useState(allTransactions);
+
+  const isLastTransaction = currentStep === allEditedTransactions.length - 1;
+  const currentTx = allEditedTransactions[currentStep];
   const sender = currentTransaction?.transaction?.getSender().toString();
 
   // Skip account fetching if the sender is missing or same as current account
@@ -142,15 +161,92 @@ export const useSignMultipleTransactions = ({
       tokenId && isTokenTransfer({ tokenId, drtLabel: rewaLabel })
     );
 
+    const needsSigning = currentTx.needsSigning;
+    const nonce = transaction.getNonce().valueOf();
+
     setCurrentTransaction({
       transaction,
+      ppu: ppuMap[Number(nonce)].ppu || EMPTY_PPU,
       receiverScamInfo: verifiedAddresses[receiver]?.info || null,
       transactionTokenInfo,
       isTokenTransaction,
       dataField,
-      transactionIndex
+      transactionIndex,
+      needsSigning
     });
   };
+
+  const updatePPU = (newPPU: ActiveLedgerTransactionType['ppu']) => {
+    const currentEditedTransaction =
+      allEditedTransactions[currentStep].transaction;
+
+    const nonce = currentEditedTransaction.getNonce().valueOf();
+
+    const currentMultiplier = ppuMap[Number(nonce)].ppu;
+    const initialGasPrice = ppuMap[Number(nonce)].initialGasPrice;
+
+    if (currentMultiplier === newPPU) {
+      return;
+    }
+
+    setPpuMap((existing) => {
+      const newPpuMap = { ...existing };
+      newPpuMap[Number(nonce)] = {
+        ...newPpuMap[Number(nonce)],
+        ppu: newPPU
+      };
+      return newPpuMap;
+    });
+
+    const newGasPrice = newPPU
+      ? recommendGasPrice({
+          transactionDataLength: currentEditedTransaction.data.length,
+          transactionGasLimit: Number(currentEditedTransaction.gasLimit),
+          ppu: newPPU
+        })
+      : initialGasPrice;
+
+    const transaction = Transaction.fromPlainObject({
+      ...currentEditedTransaction.toPlainObject(),
+      gasPrice: newGasPrice
+    });
+
+    const newEditedTransaction = {
+      ...allEditedTransactions[currentStep],
+      transaction
+    };
+
+    setAllEditedTransactions((existing) => {
+      const newTransactions = [...existing];
+      newTransactions[currentStep] = newEditedTransaction;
+      return newTransactions;
+    });
+
+    setCurrentTransaction((existing) => {
+      if (!existing) {
+        return existing;
+      }
+
+      return {
+        ...existing,
+        transaction,
+        ppu: newPPU
+      };
+    });
+  };
+
+  useEffect(() => {
+    const newPpuMap: typeof ppuMap = {};
+    allTransactions.forEach((transaction) => {
+      const nonce = transaction.transaction.nonce;
+      newPpuMap[Number(nonce)] = {
+        initialGasPrice: Number(transaction.transaction.gasPrice),
+        ppu: EMPTY_PPU
+      };
+    });
+    setPpuMap(newPpuMap);
+    setAllEditedTransactions(allTransactions);
+  }, [allTransactions]);
 
   useEffect(() => {
     extractTransactionsInfo();
@@ -307,7 +403,7 @@ export const useSignMultipleTransactions = ({
   };
 
   return {
-    allTransactions,
+    allTransactions: allEditedTransactions,
     onSignTransaction: handleSignTransaction,
     onNext,
     onPrev,
@@ -320,6 +416,7 @@ export const useSignMultipleTransactions = ({
     currentStep,
     signedTransactions,
     setSignedTransactions,
+    updatePPU,
     currentTransaction
   };
 };
