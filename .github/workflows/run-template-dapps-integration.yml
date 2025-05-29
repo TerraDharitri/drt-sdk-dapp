@@ -11,7 +11,7 @@ jobs:
   run_template_dapps_integration_script:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3.5.3
         with:
           ref: ${{ github.ref }}
       - name: Run script file

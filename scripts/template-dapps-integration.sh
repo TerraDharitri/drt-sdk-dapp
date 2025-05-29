@@ -1,3 +1,4 @@
+
 #!/bin/sh
 
 # Exit with nonzero exit code if anything fails
@@ -65,4 +66,3 @@ echo "Building drt-tempelate-dapp-nextjs..."
 yarn build-devnet
 
 echo "Script executed successfully!"
-

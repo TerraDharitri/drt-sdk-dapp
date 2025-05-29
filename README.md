@@ -4,7 +4,7 @@
 
 [![NPM](https://img.shields.io/npm/v/@terradharitri/sdk-dapp.svg)](https://www.npmjs.com/package/@terradharitri/sdk-dapp) [![JavaScript Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 
-See [Dapp template](https://template-dapp.dharitri.org/) for live demo or checkout usage in the [Github repo](https://github.com/TerraDharitri/drt-sdk-template-dapp)
+See [Dapp template](https://template-dapp.dharitri.org/) for live demo or checkout usage in the [Github repo](https://github.com/TerraDharitri/drt-sdktemplate-dapp)
 
 # Installation
 
@@ -1216,7 +1216,7 @@ There are also guide for doing this from the [community](https://github.com/sash
 
 ## Next.js support
 
-If you are using [Next.js](https://nextjs.org/), make sure to check out the [README](https://github.com/TerraDharitri/drt-sdk-template-nextjs-dapp/blob/main/README.md) and implementation of the [Next.js Template dApp](https://github.com/TerraDharitri/drt-sdk-template-nextjs-dapp).
+If you are using [Next.js](https://nextjs.org/), make sure to check out the [README](https://github.com/TerraDharitri/drt-sdktemplate-nextjs-dapp/blob/main/README.md) and implementation of the [Next.js Template dApp](https://github.com/TerraDharitri/drt-sdktemplate-nextjs-dapp).
 
 ## WalletConnect 2.0 Setup
 
