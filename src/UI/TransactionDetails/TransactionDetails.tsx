@@ -25,7 +25,7 @@ const TransactionDetailsComponent = ({
   className = 'dapp-transaction-details',
   styles
 }: TransactionDetailsType & WithStylesImportType) => {
-  if (!transactions) {
+  if (transactions == null) {
     return null;
   }
 
@@ -33,14 +33,16 @@ const TransactionDetailsComponent = ({
 
   const processedTransactionsStatus = useMemo(() => {
     const processedTransactions = transactions.filter(
-      (tx) => !isServerTransactionPending(tx.status as TransactionServerStatusesEnum)
+      (tx) =>
+        !isServerTransactionPending(TransactionServerStatusesEnum[tx?.status])
     ).length;
 
     const totalTransactions = transactions.length;
 
     if (totalTransactions === 1 && processedTransactions === 1) {
-      // Use status directly here, no enum indexing
-      return isServerTransactionPending(transactions[0].status as TransactionServerStatusesEnum)
+      return isServerTransactionPending(
+        TransactionServerStatusesEnum[transactions[0].status]
+      )
         ? 'Processing transaction'
         : 'Transaction processed';
     }
@@ -63,16 +65,17 @@ const TransactionDetailsComponent = ({
         const transactionDetailsBodyProps: TransactionDetailsBodyPropsType = {
           className,
           hash,
-          status: status as TransactionServerStatusesEnum,
+          status: TransactionServerStatusesEnum[status],
           isTimedOut
         };
 
-        return <TransactionDetailsBody {...transactionDetailsBodyProps} key={hash} />;
+        return (
+          <TransactionDetailsBody {...transactionDetailsBodyProps} key={hash} />
+        );
       })}
     </>
   );
 };
-
 
 export const TransactionDetails = withStyles(TransactionDetailsComponent, {
   ssrStyles: () =>

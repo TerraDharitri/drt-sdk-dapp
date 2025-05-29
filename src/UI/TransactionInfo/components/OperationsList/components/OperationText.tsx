@@ -12,15 +12,6 @@ import {
 } from '../../../../../UI/types';
 import { OperationBlock } from './OperationBlock';
 
-// Allowed directions as array for validation
-const allowedDirections = Object.values(TransactionDirectionEnum);
-
-function isValidDirection(
-  dir: string | undefined
-): dir is TransactionDirectionEnum {
-  return dir !== undefined && allowedDirections.includes(dir as TransactionDirectionEnum);
-}
-
 export const OperationText = ({
   operation,
   transaction
@@ -30,9 +21,6 @@ export const OperationText = ({
     address: transaction.sender
   });
 
-  // Use validated direction or undefined
-  const safeDirection = isValidDirection(direction) ? direction : undefined;
-
   switch (operation.action) {
     case TransactionOperationActionTypeEnum.create:
     case TransactionOperationActionTypeEnum.localMint:
@@ -41,8 +29,8 @@ export const OperationText = ({
         <OperationBlock
           transaction={transaction}
           address={operation.sender}
-          action="Mint by"
-          direction={TransactionDirectionEnum.INTERNAL} // ensure casing matches enum keys
+          action='Mint by'
+          direction={TransactionDirectionEnum.INTERNAL}
         />
       );
     case TransactionOperationActionTypeEnum.addQuantity:
@@ -50,7 +38,7 @@ export const OperationText = ({
         <OperationBlock
           transaction={transaction}
           address={operation.sender}
-          action="Add quantity by"
+          action='Add quantity by'
           direction={TransactionDirectionEnum.INTERNAL}
         />
       );
@@ -61,7 +49,7 @@ export const OperationText = ({
         <OperationBlock
           transaction={transaction}
           address={operation.sender}
-          action="Burn by"
+          action='Burn by'
           direction={TransactionDirectionEnum.INTERNAL}
         />
       );
@@ -70,7 +58,7 @@ export const OperationText = ({
         <OperationBlock
           transaction={transaction}
           address={operation.receiver}
-          action="Wipe from"
+          action='Wipe from'
           direction={TransactionDirectionEnum.INTERNAL}
         />
       );
@@ -80,13 +68,13 @@ export const OperationText = ({
           <OperationBlock
             transaction={transaction}
             address={operation.sender}
-            action="Multi transfer from"
-            direction={safeDirection}
+            action='Multi transfer from'
+            direction={direction}
           />{' '}
           <OperationBlock
             transaction={transaction}
             address={operation.receiver}
-            action="To"
+            action='To'
           />
         </>
       );
@@ -96,13 +84,13 @@ export const OperationText = ({
           <OperationBlock
             transaction={transaction}
             address={operation.sender}
-            action="Transfer from"
-            direction={safeDirection}
+            action='Transfer from'
+            direction={direction}
           />{' '}
           <OperationBlock
             transaction={transaction}
             address={operation.receiver}
-            action="To"
+            action='To'
           />
         </>
       );
@@ -111,7 +99,7 @@ export const OperationText = ({
         <OperationBlock
           transaction={transaction}
           address={operation.sender}
-          action="Write log by"
+          action='Write log by'
           direction={TransactionDirectionEnum.INTERNAL}
           isFullSize
         />
@@ -121,7 +109,7 @@ export const OperationText = ({
         <OperationBlock
           transaction={transaction}
           address={operation.sender}
-          action="Signal error by"
+          action='Signal error by'
           direction={TransactionDirectionEnum.INTERNAL}
           isFullSize
         />
@@ -132,13 +120,13 @@ export const OperationText = ({
           <OperationBlock
             transaction={transaction}
             address={operation.sender}
-            action="From"
-            direction={safeDirection}
+            action='From'
+            direction={direction}
           />{' '}
           <OperationBlock
             transaction={transaction}
             address={operation.receiver}
-            action="To"
+            action='To'
           />
         </>
       );

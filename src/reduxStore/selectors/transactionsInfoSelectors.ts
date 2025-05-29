@@ -16,15 +16,15 @@ const defaultTransactionInfo: TransactionsDisplayInfoType = {
 export const transactionsInfoSelectors = (state: RootState) =>
   state.transactionsInfo;
 
-
-export const selectTransactionDisplayInfo = createDeepEqualSelector(
+export const transactionDisplayInfoSelector = createDeepEqualSelector(
   transactionsInfoSelectors,
   (_: RootState, transactionSessionId: string | null) => transactionSessionId,
   (
-    transactionsDisplayInfoMap: Record<string, TransactionsDisplayInfoType>,
+    transactionsDisplayInfo: TransactionsDisplayInfoType,
     transactionSessionId: string | null
   ) =>
-    transactionSessionId !== null
-      ? transactionsDisplayInfoMap?.[transactionSessionId] || defaultTransactionInfo
+    transactionSessionId != null
+      ? transactionsDisplayInfo?.[Number(transactionSessionId)] ||
+        defaultTransactionInfo
       : defaultTransactionInfo
 );

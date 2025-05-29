@@ -44,10 +44,12 @@ export function parseMultiDcdtTransferDataForMultipleTransactions({
 
     if (multiTxs.length > 0) {
       multiTxs.forEach((trx, idx) => {
+        const isLastView = idx === multiTxs.length - 1;
         const newTx: MultiSignTransactionType = {
           transaction,
           multiTxData: trx.data,
-          transactionIndex: idx
+          transactionIndex: idx,
+          needsSigning: isLastView
         };
 
         addTransactionDataToParsedInfo({
@@ -84,7 +86,8 @@ export function parseMultiDcdtTransferDataForMultipleTransactions({
       allTransactions.push({
         transaction,
         transactionIndex,
-        multiTxData: transactionData
+        multiTxData: transactionData,
+        needsSigning: true
       });
     }
   });

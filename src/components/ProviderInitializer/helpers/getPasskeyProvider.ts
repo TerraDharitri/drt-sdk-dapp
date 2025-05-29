@@ -1,8 +1,16 @@
-import { PasskeyProvider } from '@terradharitri/sdk-passkey-provider/out';
+import { PasskeyProvider } from '@terradharitri/sdk-passkey-provider/out/passkeyProvider';
 
-export async function getPasskeyProvider(address: string) {
+export async function getPasskeyProvider({
+  address,
+  extrasApiAddress = ''
+}: {
+  address: string;
+  extrasApiAddress?: string;
+}) {
   try {
-    const provider = PasskeyProvider.getInstance().setAddress(address);
+    const provider = PasskeyProvider.getInstance()
+      .setPasskeyServiceUrl(extrasApiAddress)
+      .setAddress(address);
 
     const success = await provider.init();
 
