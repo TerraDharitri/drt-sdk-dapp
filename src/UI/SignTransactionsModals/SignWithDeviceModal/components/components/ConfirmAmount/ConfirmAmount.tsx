@@ -37,6 +37,7 @@ const ConfirmAmountComponent = ({
   });
 
   const { price: rewaPrice } = useGetRewaPrice();
+
   const {
     type,
     dcdtPrice,
