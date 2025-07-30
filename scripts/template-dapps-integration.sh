@@ -7,7 +7,7 @@ set -e
 echo "Installing yarn..."
 npm install --global yarn
 echo "Installing yalc..."
-npm install -global yalc
+npm install --global yalc
 
 
 # Prepare drt-sdk-dapp for publishing
@@ -15,7 +15,7 @@ git clone https://github.com/TerraDharitri/drt-sdk-dapp.git
 
 echo "cd drt-sdk-dapp..."
 cd drt-sdk-dapp
-git checkout development
+git checkout main   # <-- Updated from 'development' to 'main'
 
 echo "Installing dependencies for drt-sdk-dapp..."
 yarn install
