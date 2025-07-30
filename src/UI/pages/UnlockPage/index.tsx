@@ -64,7 +64,7 @@ const UnlockPageComponent = ({
       globalStyles?.py4,
       globalStyles?.px2,
       globalStyles?.pxSm2,
-      globalStyles?.drtLg4
+      globalStyles?.mxLg4
     )
   };
   const { isLoggedIn } = useGetLoginInfo();

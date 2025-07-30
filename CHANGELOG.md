@@ -7,13 +7,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [[v4.1.7](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1415)] - 2025-05-12
+
+- [Added `apiAddress` option to getAccount](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1413)
+
+## [[v4.1.6](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1413)] - 2025-05-08
+
+- [Fixed walletconnect login](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1413)
+
+## [[v4.1.5](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1412)] - 2025-05-07
+
+- [Added support for two cross-window wallets](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1411)
+
+## [[v4.1.4](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1409)] - 2025-05-07
+
+- [Added account cleanup on login](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1408)
+- [Fixed sdk-core imports](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1405)
+- [Added dynamic gas station metadata fetch](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1404)
+
+## [[v4.1.3](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1407)] - 2025-05-06
+
+- [Update WalletConnect Provider](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1407)
+
 ## [[v4.1.2](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1403)] - 2025-04-15
+
 - [Upgrade passkey provider](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1403)
 
 ## [[v4.1.1](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1402)] - 2025-04-14
+
 - [Upgrade passkey provider](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1400)
 
 ## [[v4.1.0](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1399)] - 2025-04-09
+
 - [Upgrade passkey provider and add `extrasApiAddress` to network](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1399)
 - [Added shard data to the Ledger address table](https://github.com/TerraDharitri/drt-sdk-dapp/pull/1396)
 
@@ -1348,7 +1373,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [[v2.2.10-alpha.0](https://github.com/TerraDharitri/drt-sdk-dapp/pull/584)] - 2023-01-17
 
 - [Increase hw-provider package version](https://github.com/TerraDharitri/drt-sdk-dapp/pull/583)
-- [Change Dharitri defi wallet store urls](https://github.com/TerraDharitri/drt-sdk-dapp/pull/582)
+- [Change dharitrI defi wallet store urls](https://github.com/TerraDharitri/drt-sdk-dapp/pull/582)
 
 ## [[v2.2.9](https://github.com/TerraDharitri/drt-sdk-dapp/pull/577)] - 2023-01-12
 

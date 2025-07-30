@@ -20,7 +20,7 @@ const IconStateComponent = ({
   const classes = {
     wrapper: classNames(
       globalStyles?.iconState,
-      globalStyles?.drtAuto,
+      globalStyles?.mxAuto,
       {
         half: iconSize === '2x'
       },

@@ -1,4 +1,4 @@
-import { Transaction } from '@terradharitri/sdk-core/out';
+import { Transaction } from '@terradharitri/sdk-core';
 import {
   SendTransactionReturnType,
   SendTransactionsPropsType,

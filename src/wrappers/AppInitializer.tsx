@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Address } from '@terradharitri/sdk-core/out';
+import { Address } from '@terradharitri/sdk-core';
 import { getServerConfiguration } from 'apiCalls';
 import { fallbackNetworkConfigurations } from 'constants/network';
 import { useGetAccountInfo } from 'hooks/account/useGetAccountInfo';

@@ -50,7 +50,7 @@ const ModalLinkComponent = (
               You are about to navigate to an external website.
             </p>
 
-            <div className={globalStyles?.drtAuto}>
+            <div className={globalStyles?.mxAuto}>
               <p>
                 This link is not part of Dharitri. Do not enter your private
                 words, your keystore file or any of your Dharitri account

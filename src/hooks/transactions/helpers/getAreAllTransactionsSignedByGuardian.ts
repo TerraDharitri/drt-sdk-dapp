@@ -1,4 +1,4 @@
-import { Transaction } from '@terradharitri/sdk-core/out';
+import { Transaction } from '@terradharitri/sdk-core';
 
 export const getAreAllTransactionsSignedByGuardian = ({
   transactions,

@@ -25,7 +25,7 @@ const ActionTextComponent = ({
 }: ActionTextPropsType & WithStylesImportType) => {
   if (typeof entry === 'string') {
     return (
-      <span className={globalStyles?.mr1}>{entry.replace('REWA', 'REWA')}</span>
+      <span className={globalStyles?.mr1}>{entry.replace('rEWA', 'REWA')}</span>
     );
   }
 

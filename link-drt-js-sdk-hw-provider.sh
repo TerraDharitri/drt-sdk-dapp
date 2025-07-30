@@ -5,7 +5,7 @@ echo 'Make sure you are using Node v18^ and have node_modules installed'
 # nvm use 18
 
 # Uncomment if you want to install node_modules as well
-# echo 'Installing node_modules in drtwallet-dapp'
+# echo 'Installing node_modules in drt-wallet-dapp'
 # rm -rf node_modules
 # rm -rf yarn.lock
 # yar

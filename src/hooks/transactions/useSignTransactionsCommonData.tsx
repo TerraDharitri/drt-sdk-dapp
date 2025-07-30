@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { Transaction } from '@terradharitri/sdk-core/out';
+import { Transaction } from '@terradharitri/sdk-core';
 import { ExtensionProvider } from '@terradharitri/sdk-extension-provider';
 import { MetamaskProvider } from '@terradharitri/sdk-metamask-provider/out/metamaskProvider';
 import { PasskeyProvider } from '@terradharitri/sdk-passkey-provider/out';

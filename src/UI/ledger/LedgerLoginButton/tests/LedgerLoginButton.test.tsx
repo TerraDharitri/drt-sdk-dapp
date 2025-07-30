@@ -78,7 +78,7 @@ describe('LedgerLoginButton tests', () => {
 
   it('should perform login and redirect to URL', async () => {
     const methods = renderWithProvider({
-      children: <LedgerLoginButton callbackRoute='https://terradharitri.org' />
+      children: <LedgerLoginButton callbackRoute='https://multivers.com' />
     });
 
     await ledgerLogin(methods);
@@ -86,7 +86,7 @@ describe('LedgerLoginButton tests', () => {
 
     await waitFor(() => {
       expect(window?.location.assign).toHaveBeenCalledWith(
-        'https://terradharitri.org'
+        'https://multivers.com'
       );
     });
   });

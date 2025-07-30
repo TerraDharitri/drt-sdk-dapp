@@ -1,4 +1,4 @@
-import { Transaction } from '@terradharitri/sdk-core/out';
+import { Transaction } from '@terradharitri/sdk-core';
 import BigNumber from 'bignumber.js';
 import { recommendGasPrice } from 'hooks/transactions/helpers/recommendGasPrice';
 import { NetworkType } from 'types/network.types';

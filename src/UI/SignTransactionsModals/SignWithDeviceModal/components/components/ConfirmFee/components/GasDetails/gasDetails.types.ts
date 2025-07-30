@@ -1,4 +1,4 @@
-import { Transaction } from '@terradharitri/sdk-core/out';
+import { Transaction } from '@terradharitri/sdk-core';
 
 import { WithStylesImportType } from 'hocs/useStyles';
 import { UseSignTransactionsWithDeviceReturnType } from 'hooks';
