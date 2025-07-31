@@ -117,7 +117,7 @@ describe('Tx Description unwrapper tests', () => {
       action: {
         category: 'stake',
         name: TransactionActionsEnum.unDelegate,
-        description: 'Undelegate 5 REWA from staking provider ARC Stake',
+        description: 'Undelegate 5 rEWA from staking provider ARC Stake',
         arguments: { value: '5000000000000000000', providerName: 'ARC Stake' }
       }
     };

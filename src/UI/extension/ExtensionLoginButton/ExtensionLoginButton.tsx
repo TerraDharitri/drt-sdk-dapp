@@ -54,7 +54,7 @@ const ExtensionLoginButtonComponent: (
       globalStyles?.btnPrimary,
       globalStyles?.px4,
       globalStyles?.m1,
-      globalStyles?.drt3,
+      globalStyles?.mx3,
       styles?.noExtensionButtonWrapper,
       {
         [buttonClassName]: buttonClassName != null

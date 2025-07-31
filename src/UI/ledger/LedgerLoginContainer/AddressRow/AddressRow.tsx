@@ -1,5 +1,5 @@
 import React from 'react';
-import { Address, AddressComputer } from '@terradharitri/sdk-core/out';
+import { Address, AddressComputer } from '@terradharitri/sdk-core';
 import classNames from 'classnames';
 
 import ShardLogo from 'assets/icons/shard-icon.svg';

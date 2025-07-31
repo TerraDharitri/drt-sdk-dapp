@@ -15,7 +15,7 @@ describe('TransactionsMethod tests', () => {
 
     expect(transactionMethod.textContent).toContain(value);
     expect(transactionMethod.getAttribute('title')).toBe(
-      'Delegate 14.167802221131358682 REWA to staking provider ARC Stake'
+      'Delegate 14.167802221131358682 rEWA to staking provider ARC Stake'
     );
   });
 });

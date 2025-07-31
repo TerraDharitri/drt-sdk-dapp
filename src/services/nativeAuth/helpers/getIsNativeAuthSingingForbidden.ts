@@ -1,4 +1,4 @@
-import { Dharitri_ORIGIN } from 'constants/index';
+import { DHARITRI_ORIGIN } from 'constants/index';
 import { useSelector } from 'reduxStore/DappProviderContext';
 import { tokenLoginSelector } from 'reduxStore/selectors';
 import { decodeLoginToken } from './decodeLoginToken';
@@ -17,5 +17,5 @@ export const getIsNativeAuthSingingForbidden = (token?: string) => {
     return;
   }
 
-  return decoded.origin.toLowerCase().startsWith(Dharitri_ORIGIN);
+  return decoded.origin.toLowerCase().startsWith(DHARITRI_ORIGIN);
 };

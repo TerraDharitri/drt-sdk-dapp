@@ -7,7 +7,8 @@ import { setAccountProvider } from 'providers/accountProvider';
 import { loginAction } from 'reduxStore/commonActions';
 import { useDispatch, useSelector } from 'reduxStore/DappProviderContext';
 import { networkSelector } from 'reduxStore/selectors/networkConfigSelectors';
-import { setAccount, setAddress } from 'reduxStore/slices';
+import { setCustomWalletAddress } from 'reduxStore/slices';
+import { emptyAccount, setAccount, setAddress } from 'reduxStore/slices';
 import {
   InitiateLoginFunctionType,
   LoginHookGenericStateType,
@@ -56,9 +57,16 @@ export const useCrossWindowLogin = ({
       skipLoginMethod: LoginMethodsEnum.crossWindow
     });
 
+    dispatch(setAddress(emptyAccount.address));
+    dispatch(setAccount(emptyAccount));
+
     setIsLoading(true);
     const isSuccessfullyInitialized: boolean =
       await CrossWindowProvider.getInstance().init();
+
+    if (walletAddress) {
+      dispatch(setCustomWalletAddress(walletAddress));
+    }
 
     const provider: CrossWindowProvider =
       CrossWindowProvider.getInstance().setWalletUrl(

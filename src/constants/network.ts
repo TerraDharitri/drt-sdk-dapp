@@ -97,7 +97,7 @@ export const chainIdToEnvironment: Record<string, EnvironmentsEnum> = {
   [MAINNET_CHAIN_ID]: EnvironmentsEnum.mainnet
 };
 
-export const Dharitri_ORIGIN = 'dharitri://';
+export const DHARITRI_ORIGIN = 'dharitri://';
 export const TIMEOUT = 3000;
 
 /**

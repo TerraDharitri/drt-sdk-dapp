@@ -1,4 +1,4 @@
-import { PasskeyProvider } from '@terradharitri/sdk-passkey-provider/out/passkeyProvider';
+import { PasskeyProvider } from '@terradharitri/sdk-passkey-provider/out';
 
 export async function getPasskeyProvider({
   address,

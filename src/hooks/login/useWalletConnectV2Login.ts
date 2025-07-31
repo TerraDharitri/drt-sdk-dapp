@@ -13,7 +13,12 @@ import {
   walletConnectV2ProjectIdSelector,
   walletConnectV2RelaySelector
 } from 'reduxStore/selectors/networkConfigSelectors';
-import { setWalletConnectLogin } from 'reduxStore/slices';
+import {
+  emptyAccount,
+  setAccount,
+  setAddress,
+  setWalletConnectLogin
+} from 'reduxStore/slices';
 import { LoginMethodsEnum } from 'types/enums.types';
 import { getHasNativeAuth } from 'utils/getHasNativeAuth';
 import { getIsLoggedIn } from 'utils/getIsLoggedIn';
@@ -286,6 +291,11 @@ export const useWalletConnectV2Login = ({
 
   async function initiateLogin(loginProvider = true) {
     clearInitiatedLogins();
+
+    if (loginProvider) {
+      dispatch(setAddress(emptyAccount.address));
+      dispatch(setAccount(emptyAccount));
+    }
 
     const chainId = await waitForChainID({ maxRetries: 15 });
 
