@@ -109,7 +109,7 @@
     "process": "0.11.10",
     "react": "18.2.0",
     "react-router-dom": "6.4.4",
-    "rimraf": "3.0.2",
+    "rimraf": "^3.0.2",
     "sass": "1.56.1",
     "sass-loader": "10.1.1",
     "storybook-css-modules": "1.0.8",
